@@ -1,10 +1,10 @@
 module.exports = function (grunt) {
 	var config = {
-		pkg         : grunt.file.readJSON('package.json'),
+		pkg     : grunt.file.readJSON('package.json'),
 		// -------------------------------------------------------------------------------------
-		uglify      : {
+		uglify  : {
 			options: {
-				banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd H:M:s") %> */\n'
+				banner: '/*! <%= pkg.name %>  <%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd H:M:s") %> */\n'
 			},
 			build  : {
 				src : 'build/<%= pkg.name %>.js',
@@ -13,9 +13,9 @@ module.exports = function (grunt) {
 		},
 
 		// -------------------------------------------------------------------------------------
-		concat      : {
+		concat  : {
 			options: {
-				banner : grunt.file.read('src/banner.js.tmpl'),
+				banner : grunt.file.read('src/banner.js.tmpl').replace('VERSION', '<%= pkg.version %>'),
 				footer : grunt.file.read('src/footer.js.tmpl'),
 				process: function (src, filepath) {
 					return '\n\t// Source: ' + filepath + '\n' +
@@ -30,7 +30,7 @@ module.exports = function (grunt) {
 
 
 		// -------------------------------------------------------------------------------------
-		watch       : {
+		watch   : {
 			src  : {
 				files  : ['src/*.js'],
 				tasks  : ['concat', 'uglify'],
@@ -40,7 +40,7 @@ module.exports = function (grunt) {
 			},
 			tests: {
 				files  : ['src/*.js*', 'test/*.js'],
-				tasks  : ['concat', 'uglify', 'nodeunit','notify' ],
+				tasks  : ['concat', 'uglify', 'nodeunit', 'notify' ],
 				options: {
 					forever: true
 				}
@@ -48,18 +48,22 @@ module.exports = function (grunt) {
 		},
 
 		// -------------------------------------------------------------------------------------
-		nodeunit    : ['test/*_test.js'],
+		nodeunit: ['test/*_test.js'],
 
 		// -------------------------------------------------------------------------------------
-		notify: { 
+		notify  : {
 			watch: {
 				options: {
 					title  : 'Tests ran',  // optional
 					message: 'no errors found' //required
 				}
 			}
-		}
+		}, 
+		
+		// -------------------------------------------------------------------------------------
+		bumpup  :   ['package.json' ] 
 
+		
 	};
 
 	// Project configuration.
@@ -69,16 +73,20 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-nodeunit');
-	grunt.loadNpmTasks('grunt-notify');
-	
+	grunt.loadNpmTasks('grunt-notify'); 
+
 	// https://github.com/Darsain/grunt-bumpup
 	grunt.loadNpmTasks('grunt-bumpup');
-	grunt.registerTask('release', function (type) {
-		type = type ? type : 'patch';     // Set the release type
-		grunt.task.run('build');         // Lint stuff 
-		grunt.task.run('bumpup:' + type); // Bump up the version
+	grunt.registerTask('updatePkg', function () {
+		grunt.config.set('pkg', grunt.file.readJSON('package.json'));
 	});
-	
+	grunt.registerTask('release', function (type) {
+		type = type ? type : 'patch';     // Set the release type 
+		grunt.task.run('bumpup:' + type); // Bump up the version 
+		grunt.task.run('updatePkg');          // build
+		grunt.task.run('build');          // build
+	});
+
 
 	// Default task(s).
 	grunt.registerTask('default', ['build']);

@@ -1,6 +1,6 @@
 "use strict";
 /*!
- * AdServ - Brian Demant <brian.demantgmail.com> (2013)
+ * AdServ 0.0.1 - Brian Demant <brian.demantgmail.com> (2013)
  */
 (function (scope, definition) {
 	// export as node module for testing purposes
