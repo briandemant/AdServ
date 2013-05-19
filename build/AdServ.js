@@ -2,16 +2,12 @@
 /*!
  * AdServ 0.0.2 - Brian Demant <brian.demantgmail.com> (2013)
  */
-(function (scope, definition) {
-	// export as node module for testing purposes
-	if (typeof module != 'undefined') {
-		module.exports = definition
-	} else {
-		scope['AdServ'] = definition(scope);
-	}
+(function (scope, definition) { 
+	scope['AdServ'] = definition(scope); 
 })(this, function (scope) {
 	var AdServ = scope['AdServ'] || {};
 	scope['AdServ'] = AdServ;
+	var doc = scope.document; 
 	// Source: src/ajax.js
 	AdServ.conf = {xhrTimeout: 5000, baseUrl: ''};
 	
@@ -77,17 +73,17 @@
 	 *
 	 * @param event eventname
 	 * @param fn callback
-	 * @param scope scope to bind to .. defaults to window
+	 * @param context scope to bind to .. defaults to window
 	 */
-	AdServ.on = function (event, fn, scope) {
+	AdServ.on = function (event, fn, context) {
 		var bound = function () {};
 		// initialze if first
 		eventHandlers[event] = (eventHandlers[event] === undefined) ? [] : eventHandlers[event];
 		// bind if obj provided
-		scope = (typeof scope === "object") ? scope : window;
+		context = (typeof context === "object") ? context : scope;
 	
 		bound = function (args) {
-			return fn.apply(scope, Array.prototype.slice.call(args, 1));
+			return fn.apply(context, Array.prototype.slice.call(args, 1));
 		};
 	
 		eventHandlers[event].push(bound);
@@ -169,7 +165,7 @@
 					var url = baseUrl + '/api/v1/get/campaigns.json?adspaces=' + context.adspaces.join(',')
 							          + '&keyword=' + context.keyword
 							          + '&searchword=' + context.searchword;
-	
+		 
 					AdServ.getJSON(url, (function (ctx) {
 						return function (err, data) {
 	
@@ -189,10 +185,11 @@
 										if (campaign.campaign && campaign.banner && campaign.adspace) {
 											campaign.found = true;
 											var id = 'script_' + adspace.target + "_" + campaign.adspace;
-											var script = scope.document.getElementById(id);
+											
+											var script = doc.getElementById(id);
 	
 											if (!script) {
-												script = scope.document.createElement('script');
+												script = doc.createElement('script');
 												script.id = id;
 												script.type = 'text/javascript';
 												script.async = false;
@@ -257,8 +254,7 @@
 	 * @param callback
 	 */ 
 	AdServ.ready = (function (ready) {
-		var fns = [], fn, f = false
-				, doc = scope.document 
+		var fns = [], fn, f = false 
 				, testEl = doc.documentElement
 				, hack = testEl.doScroll
 				, domContentLoaded = 'DOMContentLoaded'

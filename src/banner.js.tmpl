@@ -2,13 +2,9 @@
 /*!
  * AdServ VERSION - Brian Demant <brian.demantgmail.com> (2013)
  */
-(function (scope, definition) {
-	// export as node module for testing purposes
-	if (typeof module != 'undefined') {
-		module.exports = definition
-	} else {
-		scope['AdServ'] = definition(scope);
-	}
+(function (scope, definition) { 
+	scope['AdServ'] = definition(scope); 
 })(this, function (scope) {
 	var AdServ = scope['AdServ'] || {};
 	scope['AdServ'] = AdServ;
+	var doc = scope.document; 

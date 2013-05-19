@@ -5,17 +5,17 @@ var eventHandlers = {};
  *
  * @param event eventname
  * @param fn callback
- * @param scope scope to bind to .. defaults to window
+ * @param context scope to bind to .. defaults to window
  */
-AdServ.on = function (event, fn, scope) {
+AdServ.on = function (event, fn, context) {
 	var bound = function () {};
 	// initialze if first
 	eventHandlers[event] = (eventHandlers[event] === undefined) ? [] : eventHandlers[event];
 	// bind if obj provided
-	scope = (typeof scope === "object") ? scope : window;
+	context = (typeof context === "object") ? context : scope;
 
 	bound = function (args) {
-		return fn.apply(scope, Array.prototype.slice.call(args, 1));
+		return fn.apply(context, Array.prototype.slice.call(args, 1));
 	};
 
 	eventHandlers[event].push(bound);

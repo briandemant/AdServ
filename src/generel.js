@@ -60,7 +60,7 @@ AdServ.loadAdspaces = function (baseUrl) {
 				var url = baseUrl + '/api/v1/get/campaigns.json?adspaces=' + context.adspaces.join(',')
 						          + '&keyword=' + context.keyword
 						          + '&searchword=' + context.searchword;
-
+	 
 				AdServ.getJSON(url, (function (ctx) {
 					return function (err, data) {
 
@@ -80,10 +80,11 @@ AdServ.loadAdspaces = function (baseUrl) {
 									if (campaign.campaign && campaign.banner && campaign.adspace) {
 										campaign.found = true;
 										var id = 'script_' + adspace.target + "_" + campaign.adspace;
-										var script = scope.document.getElementById(id);
+										
+										var script = doc.getElementById(id);
 
 										if (!script) {
-											script = scope.document.createElement('script');
+											script = doc.createElement('script');
 											script.id = id;
 											script.type = 'text/javascript';
 											script.async = false;

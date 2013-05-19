@@ -9,8 +9,7 @@
  * @param callback
  */ 
 AdServ.ready = (function (ready) {
-	var fns = [], fn, f = false
-			, doc = scope.document 
+	var fns = [], fn, f = false 
 			, testEl = doc.documentElement
 			, hack = testEl.doScroll
 			, domContentLoaded = 'DOMContentLoaded'

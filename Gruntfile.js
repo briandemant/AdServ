@@ -39,8 +39,8 @@ module.exports = function (grunt) {
 				}
 			},
 			tests: {
-				files  : ['src/*.js*', 'test/*.js'],
-				tasks  : ['concat', 'uglify', 'nodeunit', 'notify' ],
+				files  : ['src/*.*', 'test/browser/unit/*.js'],
+				tasks  : ['concat', 'uglify', 'karma:unit:run', 'notify' ],
 				options: {
 					forever: true
 				}
@@ -48,7 +48,15 @@ module.exports = function (grunt) {
 		},
 
 		// -------------------------------------------------------------------------------------
-		nodeunit: ['test/*_test.js'],
+		karma   : {
+			unit: {
+				configFile: 'test/karma.conf.js',
+				background: true
+			}
+		},
+
+		// -------------------------------------------------------------------------------------
+		nodeunit: ['test/server/*_test.js'],
 
 		// -------------------------------------------------------------------------------------
 		notify  : {
@@ -58,12 +66,12 @@ module.exports = function (grunt) {
 					message: 'no errors found' //required
 				}
 			}
-		}, 
-		
-		// -------------------------------------------------------------------------------------
-		bumpup  :   ['package.json' ] 
+		},
 
-		
+		// -------------------------------------------------------------------------------------
+		bumpup  : ['package.json' ]
+
+
 	};
 
 	// Project configuration.
@@ -73,7 +81,8 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-nodeunit');
-	grunt.loadNpmTasks('grunt-notify'); 
+	grunt.loadNpmTasks('grunt-karma');
+	grunt.loadNpmTasks('grunt-notify');
 
 	// https://github.com/Darsain/grunt-bumpup
 	grunt.loadNpmTasks('grunt-bumpup');
