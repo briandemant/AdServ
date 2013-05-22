@@ -14,8 +14,9 @@ files = [
 	'node_modules/expect.js/expect.js', 
 	'test/browser/unit/test-main.js',
 
-//	'test/browser/unit/*.test.js', 
-	'test/browser/unit/test.test.js', 
+	//'test/browser/unit/test_setup.js', 
+	'test/browser/unit/*.test.js', 
+
 	{pattern: 'build/AdServ.js', watched: true, included: false, served: true},
  
 	// test main require module last

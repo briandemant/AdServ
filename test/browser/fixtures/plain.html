@@ -2,23 +2,64 @@
 <html lang="en-US">
 <head>
 	<meta charset="UTF-8">
-	<title></title>
-</head> 
-<body>
-	<div id="dynamic">default</div>
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>Plain</title>
 	<script type="text/javascript">
-		document.getElementById('dynamic').innerHTML = 'changed';
-		origOnload = window.onload;
-		window.onload = function () {
-		//	origOnload();
-			window.parent.iframe.readyForTest(window, document);
-		};
-		
-		window.onresize = function () {
-			console.log('resize');
-			
-			document.getElementById('dynamic').innerHTML = document.body.clientWidth + 'px';
-		}; 
+		isIE = isIE8 = isIE9 = isIE10 = false;
+		isStandAlone = (window === window.top);
+	</script>
+	<!--[if lt IE 8]>
+	<script type="text/javascript">alert('this browser is not supported')</script><![endif]-->
+	<!--[if IE 8]>
+	<script type="text/javascript">isIE = isIE8 = true;</script><![endif]-->
+	<!--[if IE 9]>
+	<script type="text/javascript">isIE = isIE9 = true;</script><![endif]-->
+	<!--[if gt IE 9]>
+	<script type="text/javascript">isIE = isIE10 = true;</script><![endif]--> 
+</head>
+<body>
+	<h1>Plain</h1>
+
+	<h3>Manuel checks:</h3>
+	<ul>
+		<li>console errors</li>
+	</ul>
+	<script type="text/javascript">
+		if (isStandAlone) {
+			//alert('stand alone!');
+		} else {
+			window.parent.iframe.beforeLoad(window, document);
+		}
+		var scriptLoadCount = 0;
+	</script>
+
+	<script type="text/javascript">
+		(function () {
+			"use strict";
+
+			var script = document.createElement("script");
+			script.type = "text/javascript";
+			script.async = true;
+			script.src = "/base/build/AdServ.js";
+			// hook for test only .. start
+			var callback = function () {
+				if (!isIE || script.readyState == 'loaded') {
+					scriptLoadCount++;
+					if (!isStandAlone) {
+						window.parent.iframe.readyForTest(window, document);
+					}
+				}
+			};
+			if (script.addEventListener) {
+				script.addEventListener("load", callback, false);
+			} else if (script.readyState) {
+				script.onreadystatechange = callback;
+			}
+			//  hook for test only .. end
+
+			var first = document.getElementsByTagName("script")[0];
+			first.parentNode.insertBefore(script, first);
+		})();
 	</script>
 </body>
 </html> 

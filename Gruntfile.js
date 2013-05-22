@@ -35,16 +35,17 @@ module.exports = function (grunt) {
 				files  : ['src/*.js'],
 				tasks  : ['concat', 'uglify'],
 				options: {
-					nospawn: true
-				}
-			},
-			fixtures: {
-				files  : [ 'test/browser/fixtures/*.html'],
-				tasks  : [ 'html2js:fixtures' ],
-				options: {
+					nospawn: true,
 					forever: true
 				}
-			}
+			},
+//			fixtures: {
+//				files  : [ 'test/browser/fixtures/*.html'],
+//				tasks  : [ 'html2js:fixtures' ],
+//				options: {
+//					forever: true
+//				}
+//			}
 		},
 
 		// -------------------------------------------------------------------------------------
@@ -72,12 +73,12 @@ module.exports = function (grunt) {
 		bumpup  : ['package.json' ],
 
 		// -------------------------------------------------------------------------------------
-		html2js : {
-			fixtures: {
-				src : ['test/browser/fixtures/*.html'],
-				dest: 'test/browser/fixtures.js'
-			}
-		}
+//		html2js : {
+//			fixtures: {
+//				src : ['test/browser/fixtures/*.html'],
+//				dest: 'test/browser/fixtures.js'
+//			}
+//		}
 
 	};
 
@@ -104,48 +105,48 @@ module.exports = function (grunt) {
 	});
 
 
-	grunt.registerMultiTask('html2js', function () {
-		function filenameToKey(filename) {
-			return (filename.split('/').pop()).split('.').shift();
-		}
-
-		// Merge task-specific and/or target-specific options with these defaults.
-		var options = this.options({ name: this.target, header: '/* generated <%= grunt.template.today("yyyy-mm-dd H:M:s") %> */\n' });
-
-
-		// Process header  
-		var header = grunt.template.process(options.header);
-
-		// Iterate over all src-dest file pairs.
-		this.files.forEach(function (f) {
-			// Concat banner + specified files + footer.
-			var map = {};
-
-			f.src.filter(function (filepath) {
-				// Warn on and remove invalid source files (if nonull was set).
-				if (!grunt.file.exists(filepath)) {
-					grunt.log.warn('Source file "' + filepath + '" not found.');
-					return false;
-				} else {
-					return true;
-				}
-			}).forEach(function (filepath) {
-				           // Read file source. 
-				           map[filenameToKey(filepath)] = grunt.file.read(filepath);
-			           });
-
-			// Write the destination file.
-			grunt.file.write(f.dest, header + '\nvar ' + options.name + ' = ' + JSON.stringify(map, null, true) + ';');
-
-			// Print a success message.
-			grunt.log.writeln('File "' + f.dest + '" created.');
-		});
-	});
+//	grunt.registerMultiTask('html2js', function () {
+//		function filenameToKey(filename) {
+//			return (filename.split('/').pop()).split('.').shift();
+//		}
+//
+//		// Merge task-specific and/or target-specific options with these defaults.
+//		var options = this.options({ name: this.target, header: '/* generated <%= grunt.template.today("yyyy-mm-dd H:M:s") %> */\n' });
+//
+//
+//		// Process header  
+//		var header = grunt.template.process(options.header);
+//
+//		// Iterate over all src-dest file pairs.
+//		this.files.forEach(function (f) {
+//			// Concat banner + specified files + footer.
+//			var map = {};
+//
+//			f.src.filter(function (filepath) {
+//				// Warn on and remove invalid source files (if nonull was set).
+//				if (!grunt.file.exists(filepath)) {
+//					grunt.log.warn('Source file "' + filepath + '" not found.');
+//					return false;
+//				} else {
+//					return true;
+//				}
+//			}).forEach(function (filepath) {
+//				           // Read file source. 
+//				           map[filenameToKey(filepath)] = grunt.file.read(filepath);
+//			           });
+//
+//			// Write the destination file.
+//			grunt.file.write(f.dest, header + '\nvar ' + options.name + ' = ' + JSON.stringify(map, null, true) + ';');
+//
+//			// Print a success message.
+//			grunt.log.writeln('File "' + f.dest + '" created.');
+//		});
+//	});
 
 	// Default task(s).
 	grunt.registerTask('default', ['build']);
 	grunt.registerTask('build', ['concat', 'uglify']);
-	grunt.registerTask('dev', ['concat', 'uglify', 'html2js:fixtures', 'watch']);
+	grunt.registerTask('dev', ['concat', 'uglify',   'watch']);
 
 };
  

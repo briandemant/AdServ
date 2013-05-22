@@ -2,30 +2,39 @@
 <html lang="en-US">
 <head>
 	<meta charset="UTF-8">
-	<script type="text/javascript">isIE = isIE8 = isIE9 = isIE10 = false;</script>	
-	<!--[if lt IE 8]><script type="text/javascript">alert('this browser is not supported')</script><![endif]--> 
-	<!--[if IE 8]><script type="text/javascript">isIE = isIE8 = true;</script><![endif]-->
-	<!--[if IE 9]><script type="text/javascript">isIE = isIE9 = true;</script><![endif]-->
-	<!--[if gt IE 9]><script type="text/javascript">isIE = isIE10 = true;</script><![endif]-->
-	<!--<script type="text/javascript" src='/base/node_modules/es5-shim/es5-shim.js'></script>-->
+	<title>Test Setup</title>
+	<script type="text/javascript">
+		isIE = isIE8 = isIE9 = isIE10 = false;
+		isStandAlone = (window === window.top);
+	</script>
+	<!--[if lt IE 8]>
+	<script type="text/javascript">alert('this browser is not supported')</script><![endif]-->
+	<!--[if IE 8]>
+	<script type="text/javascript">isIE = isIE8 = true;</script><![endif]-->
+	<!--[if IE 9]>
+	<script type="text/javascript">isIE = isIE9 = true;</script><![endif]-->
+	<!--[if gt IE 9]>
+	<script type="text/javascript">isIE = isIE10 = true;</script><![endif]-->
 </head> 
 <body>
+	<h1>Test Setup</h1>
 	<div id="dynamic">default</div>
 	<script type="text/javascript">
 		document.getElementById('dynamic').innerHTML = 'changed';
-		origOnload = window.onload;
-		window.onload = function () {
-		//	origOnload();
-			window.parent.iframe.readyForTest(window, document);
-		};
-		
+
+		// make sure es5-shim.js is not applied 
+		var isShimApplied = isIE8 && typeof Array.isArray == 'function';
+
 		window.onresize = function () {
-			console.log('resize'); 
 			document.getElementById('dynamic').innerHTML = document.body.clientWidth + 'px';
 		};
- 
-		// make sure es5-shim.js is not applied 
-		var isShimApplied = isIE8 && typeof Array.isArray == 'function';   
+	</script>
+	
+	<!-- trigger test start -->
+	<script type="text/javascript">  
+		window.onload = function () { 
+			window.parent.iframe.readyForTest(window, document);
+		}; 
 	</script>
 </body>
 </html> 
