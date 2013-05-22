@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+./node_modules/karma/bin/karma start test/browser/karma_unit.conf.js

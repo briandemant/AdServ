@@ -1,6 +1,6 @@
 //chai.Assertion.includeStack = true;
 
-var assert = chai.assert;
+var assert ;//= chai.assert;
 
 if (!__karma__.loadedLater) {
 	__karma__.loadedLater = __karma__.loaded;
@@ -12,18 +12,8 @@ __karma__.loaded = function () {
 
 var nextTick = function (cb) {
 	setTimeout(cb, 100);
-}
-
-var reload = function (newAdServ, after) {
-//	delete this['AdServ'];
-//	AdServ = newAdServ;
-//	var script = document.createElement("script");
-//	script.type = "text/javascript";
-//	script.onload = after;
-//	script.src = "/base/build/AdServ.js";
-//	var first = document.getElementsByTagName("script")[0];
-//	first.parentNode.insertBefore(script, first); 
 };
+ 
 var loadFixture = function (template, done) {
 	var templateUrl = '/base/test/browser/fixtures/' + template + '.html';
 //	console.log('loading ' + templateUrl);

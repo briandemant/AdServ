@@ -10,19 +10,17 @@ basePath = '../..';
 files = [
 	MOCHA,
 	MOCHA_ADAPTER,
-	'node_modules/chai/chai.js',
-	'test/browser/fixtures.js',
+	'node_modules/es5-shim/es5-shim.js', 
+	'node_modules/expect.js/expect.js', 
 	'test/browser/unit/test-main.js',
 
 //	'test/browser/unit/*.test.js', 
 	'test/browser/unit/test.test.js', 
 	{pattern: 'build/AdServ.js', watched: true, included: false, served: true},
-
-
+ 
 	// test main require module last
 	{pattern: 'test/browser/fixtures/*.html', watched: true, included: false, served: true},
-
-	'test/browser/unit/test-load-fixture.js',
+ 
 	'test/browser/unit/test-execute-now.js'
 ];
 
