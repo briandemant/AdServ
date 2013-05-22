@@ -3,11 +3,22 @@
 <head>
 	<meta charset="UTF-8">
 	<title></title>
-</head>
+</head> 
 <body>
+	<div id="dynamic">default</div>
 	<script type="text/javascript">
-		console.log('plain');
+		document.getElementById('dynamic').innerHTML = 'changed';
+		origOnload = window.onload;
+		window.onload = function () {
+		//	origOnload();
+			window.parent.iframe.readyForTest(window, document);
+		};
 		
+		window.onresize = function () {
+			console.log('resize');
+			
+			document.getElementById('dynamic').innerHTML = document.body.clientWidth + 'px';
+		};
 	</script>
 </body>
-</html>
+</html> 

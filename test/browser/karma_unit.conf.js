@@ -11,14 +11,19 @@ files = [
 	MOCHA,
 	MOCHA_ADAPTER,
 	'node_modules/chai/chai.js',
+	'test/browser/fixtures.js',
+	'test/browser/unit/test-main.js',
 
-	'test/browser/unit/*.test.js',
-	'build/AdServ.js',
+//	'test/browser/unit/*.test.js', 
+	'test/browser/unit/test.test.js', 
+	{pattern: 'build/AdServ.js', watched: true, included: false, served: true},
 
-	{pattern: 'test/browser/fixtures/*', watched: true, included: false, served: true},
 
 	// test main require module last
-	'test/browser/unit/test-main.js'
+	{pattern: 'test/browser/fixtures/*.html', watched: true, included: false, served: true},
+
+	'test/browser/unit/test-load-fixture.js',
+	'test/browser/unit/test-execute-now.js'
 ];
 
 
@@ -62,7 +67,7 @@ autoWatch = true;
 // - Safari (only Mac)
 // - PhantomJS
 // - IE (only Windows)
-browsers = ['Chrome'];
+browsers = ['PhantomJS'];
 
 
 // If browser does not capture in given timeout [ms], kill it

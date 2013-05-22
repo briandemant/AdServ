@@ -16,6 +16,7 @@
     "grunt-notify": "~0.2.3",
     "grunt-bump": "0.0.2",
     "grunt-bumpup": "~0.2.0",
-    "grunt-karma": "~0.4.4"
+    "grunt-karma": "~0.4.4",
+    "grunt-html2js": "~0.1.3"
   }
 }
