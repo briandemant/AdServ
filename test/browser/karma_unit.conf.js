@@ -14,7 +14,7 @@ files = [
 	'node_modules/expect.js/expect.js', 
 	'test/browser/unit/test-main.js',
 
-	//'test/browser/unit/test_setup.js', 
+	'test/browser/unit/test_setup.js', 
 	'test/browser/unit/*.test.js', 
 
 	{pattern: 'build/AdServ.js', watched: true, included: false, served: true},
@@ -66,7 +66,7 @@ autoWatch = true;
 // - Safari (only Mac)
 // - PhantomJS
 // - IE (only Windows)
-browsers = ['PhantomJS'];
+browsers = [];
 
 
 // If browser does not capture in given timeout [ms], kill it

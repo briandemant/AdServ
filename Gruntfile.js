@@ -4,7 +4,7 @@ module.exports = function (grunt) {
 		// -------------------------------------------------------------------------------------
 		uglify  : {
 			options: {
-				banner: '/*! <%= pkg.name %>  <%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd H:M:s") %> */\n'
+				banner: '/*! <%= pkg.name %>  <%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %> */\n'
 			},
 			build  : {
 				src : 'build/<%= pkg.name %>.js',
@@ -15,15 +15,17 @@ module.exports = function (grunt) {
 		// -------------------------------------------------------------------------------------
 		concat  : {
 			options: {
-				banner : grunt.file.read('src/banner.js.tmpl').replace('VERSION', '<%= pkg.version %>'),
+				banner : grunt.file.read('src/header.js.tmpl').replace('VERSION', '<%= pkg.version %>'),
 				footer : grunt.file.read('src/footer.js.tmpl'),
 				process: function (src, filepath) {
-					return '\n\t// Source: ' + filepath + '\n' +
-					       src.replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1').replace(/(^|\n)/g, '$1\t') + '\n';
+					return '\n\n\t// Source: ' + filepath + '\n\t// -----------------------------------------------------------------------------\n' +
+					       src.replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1').replace(/(^|\n)/g, '$1\t').replace(/(\n\t){2,}/g, '\n\n\t') + '\n';
 				}
 			},
 			dist   : {
-				src : ['src/*.js'],
+//				src : ['src/{xxx}.js'],
+				src : ['src/{json,event}.js'],
+//				src : ['src/*.js'],
 				dest: 'build/<%= pkg.name %>.js'
 			}
 		},
@@ -32,11 +34,11 @@ module.exports = function (grunt) {
 		// -------------------------------------------------------------------------------------
 		watch   : {
 			src     : {
-				files  : ['src/*.js'],
+				files  : ['src/*.js', 'src/*.js.tmpl'],
 				tasks  : ['concat', 'uglify'],
 				options: {
-					nospawn: true,
-					forever: true
+//					nospawn: true,
+//					forever: true
 				}
 			},
 //			fixtures: {

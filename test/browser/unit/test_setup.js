@@ -2,9 +2,9 @@
  * Testing the test setup
  */
 describe('TestSetup:', function () {
-	before(function (done) {
+	before(function (done) {  
 		loadFixture('test_setup', noop, function () {
-			__karma__.before(done);
+			__karma__.before(done); 
 		});
 	});
 
@@ -109,7 +109,7 @@ describe('TestSetup:', function () {
 	it('the content update on resize', function (done) {
 		expect(doc.body.clientWidth).to.be.within(1000, 1024);
 		iframe.width = 400;
-		expect(doc.body.clientWidth).to.within(380, 400);
+		expect(doc.body.clientWidth).to.within(350, 400);
 		nextTick(function () {
 			expect(doc.getElementById('dynamic').innerHTML).to.be(doc.body.clientWidth + 'px');
 			done();

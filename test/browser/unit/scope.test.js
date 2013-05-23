@@ -20,7 +20,7 @@ describe('Scope:', function () {
 		it('should be defined', function () {
 			expect(typeof afterAdServ).to.be('object');
 		});
- 
+
 		it('should onlu call onload callback once', function () {
 			expect(win.scriptLoadCount).to.be(1);
 		});

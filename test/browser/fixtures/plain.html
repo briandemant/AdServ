@@ -5,17 +5,19 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
 	<title>Plain</title>
 	<script type="text/javascript">
-		isIE = isIE8 = isIE9 = isIE10 = false;
+		isIE = isIE7 = isIE8 = isIE9 = isIE10 = false;
 		isStandAlone = (window === window.top);
 	</script>
-	<!--[if lt IE 8]>
+	<!--[if lt IE 7]>
 	<script type="text/javascript">alert('this browser is not supported')</script><![endif]-->
+	<!--[if IE 7]>
+	<script type="text/javascript">isIE = isIE7 = true;</script><![endif]-->
 	<!--[if IE 8]>
 	<script type="text/javascript">isIE = isIE8 = true;</script><![endif]-->
 	<!--[if IE 9]>
 	<script type="text/javascript">isIE = isIE9 = true;</script><![endif]-->
 	<!--[if gt IE 9]>
-	<script type="text/javascript">isIE = isIE10 = true;</script><![endif]--> 
+	<script type="text/javascript">isIE = isIE10 = true;</script><![endif]-->
 </head>
 <body>
 	<h1>Plain</h1>

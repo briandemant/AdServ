@@ -20,8 +20,7 @@ __karma__.loaded = function () {
 
 
 var loadFixture = function (template, beforeLoad, done) {
-	var templateUrl = '/base/test/browser/fixtures/' + template + '.html';
-//	console.log('loading ' + templateUrl);
+	var templateUrl = '/base/test/browser/fixtures/' + template + '.html'; 
 
 	var body = document.getElementsByTagName("body")[0];
 	if (iframe) {
@@ -49,18 +48,21 @@ var loadFixture = function (template, beforeLoad, done) {
 	win.onload = function () {
 		//alert("Local iframe is now loaded.");
 	};
-
+	
 	var link = window.parent.document.getElementById('template_link_' + template);
+	
 	if (!link) {
 
-		link = document.createElement("a");
+		link = window.parent.document.createElement("a");
 		link.id = 'template_link_' + template;
 		link.target = 'template_link_' + template;
 		link.href = templateUrl;
-		link.innerHTML = template;
+		link.innerHTML = ' ' +template+' ';
+
 		var banner = window.parent.document.getElementById('banner');
-		banner.appendChild(link);
+		banner.appendChild(link); 
 	}
+	
 };
 
 

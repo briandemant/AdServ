@@ -2,13 +2,16 @@
 <html lang="en-US">
 <head>
 	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
 	<title>Test Setup</title>
 	<script type="text/javascript">
-		isIE = isIE8 = isIE9 = isIE10 = false;
+		isIE = isIE7 = isIE8 = isIE9 = isIE10 = false;
 		isStandAlone = (window === window.top);
 	</script>
-	<!--[if lt IE 8]>
+	<!--[if lt IE 7]>
 	<script type="text/javascript">alert('this browser is not supported')</script><![endif]-->
+	<!--[if IE 7]>
+	<script type="text/javascript">isIE = isIE7 = true;</script><![endif]-->
 	<!--[if IE 8]>
 	<script type="text/javascript">isIE = isIE8 = true;</script><![endif]-->
 	<!--[if IE 9]>
@@ -23,7 +26,7 @@
 		document.getElementById('dynamic').innerHTML = 'changed';
 
 		// make sure es5-shim.js is not applied 
-		var isShimApplied = isIE8 && typeof Array.isArray == 'function';
+		var isShimApplied = (isIE7 || isIE8) && typeof Array.isArray == 'function';
 
 		window.onresize = function () {
 			document.getElementById('dynamic').innerHTML = document.body.clientWidth + 'px';
