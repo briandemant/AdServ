@@ -1,6 +1,7 @@
 "use strict";
 /*!
- * AdServ 0.0.6 - Brian Demant <brian.demantgmail.com> (2013)
+ * AdServ 0.0.7 2013-05-24 16:10:55
+ * @author Brian Demant <brian.demantgmail.com> (2013)
  */
 (function (window, definition) { 
 	window.AdServ = definition(window, window.document); 
@@ -8,6 +9,15 @@
 	var AdServ = window.AdServ || {};
 	window.AdServ = AdServ; 
 	// header ----------------------------------------------------------------------
+
+	// Source: src/legacy.js
+	// -----------------------------------------------------------------------------
+	AdServ.adspaces = AdServ.adspaces || window.ba_adspaces || [];
+	window.adServingLoad = window.adServingLoad || '';
+
+	 
+
+
 
 	// Source: src/event.js
 	// -----------------------------------------------------------------------------

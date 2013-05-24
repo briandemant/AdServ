@@ -18,14 +18,69 @@
 	<script type="text/javascript">isIE = isIE9 = true;</script><![endif]-->
 	<!--[if gt IE 9]>
 	<script type="text/javascript">isIE = isIE10 = true;</script><![endif]-->
+	<style type="text/css">
+		.group {
+			border: 1px dotted grey;
+			padding: 5px;
+			float: left;
+			width:490px; 
+			margin-bottom: 5px;
+			background: #eee;
+		}
+
+		.group h3 {
+			margin-top: 5px;
+		}
+		
+		.group div div {
+			text-align: center;
+			width: 100px;
+			height: 50px;
+			float: left;
+			border: 1px dotted grey; 
+			padding: 5px;
+			margin: 5px;
+			vertical-align: middle;
+			line-height: 50px;
+		}
+
+		.group div.status div { 
+			height: 25px;
+			line-height: 25px;
+			border-color: #eee; 
+		}
+		.group div.banners div {
+			background: #ddd; 
+		}
+
+		.first  {   
+			clear: left;
+		}
+	</style>
 </head>
 <body>
 	<h1>Plain</h1>
 
 	<h3>Manuel checks:</h3>
 	<ul>
-		<li>console errors</li>
-	</ul>
+		<li>No console errors</li>
+	</ul> 
+	<div id="group1" class="group">
+		<h3>Gruppe 1</h3>
+		<p>Dette er en beskrivelse af denne banner gruppe</p>
+		<div class="banners">
+			<div id="banner1-1" class="first">banner 1</div>
+			<div id="banner1-2">banner 2</div>
+			<div id="banner1-3">banner 3</div>
+			<div id="banner1-4">banner 4</div>
+		</div>
+		<div class="status">
+			<div id="banner1-1-status" class="first">banner 1</div>
+			<div id="banner1-2-status">banner 2</div>
+			<div id="banner1-3-status">banner 3</div>
+			<div id="banner1-4-status">banner 4</div>		
+		</div> 
+	</div> 
 	<script type="text/javascript">
 		if (isStandAlone) {
 			//alert('stand alone!');
@@ -36,7 +91,7 @@
 	</script>
 
 	<script type="text/javascript">
-		(function () {
+		(function() {
 			"use strict";
 
 			var script = document.createElement("script");
@@ -44,7 +99,7 @@
 			script.async = true;
 			script.src = "/base/build/AdServ.js";
 			// hook for test only .. start
-			var callback = function () {
+			var callback = function() {
 				if (!isIE || script.readyState == 'loaded') {
 					scriptLoadCount++;
 					if (!isStandAlone) {

@@ -28,15 +28,22 @@
 		// make sure es5-shim.js is not applied 
 		var isShimApplied = (isIE7 || isIE8) && typeof Array.isArray == 'function';
 
-		window.onresize = function () {
+		window.onresize = function() {
+//			console.log("g");
+//			setTimeout(function() {
 			document.getElementById('dynamic').innerHTML = document.body.clientWidth + 'px';
+//			}, 600);
 		};
 	</script>
 	
 	<!-- trigger test start -->
-	<script type="text/javascript">  
-		window.onload = function () { 
+	<script type="text/javascript">
+//		console.log("b");
+		window.onload = function () {
+//			console.log("c");
+			
 			window.parent.iframe.readyForTest(window, document);
+//			console.log("d");
 		}; 
 	</script>
 </body>

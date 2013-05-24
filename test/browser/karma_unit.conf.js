@@ -15,6 +15,7 @@ files = [
 	'test/browser/unit/test-main.js',
 
 	'test/browser/unit/test_setup.js', 
+//	'test/browser/unit/scope.test.js', 
 	'test/browser/unit/*.test.js', 
 
 	{pattern: 'build/AdServ.js', watched: true, included: false, served: true},

@@ -15,7 +15,7 @@ module.exports = function (grunt) {
 		// -------------------------------------------------------------------------------------
 		concat  : {
 			options: {
-				banner : grunt.file.read('src/header.js.tmpl').replace('VERSION', '<%= pkg.version %>'),
+				banner : grunt.file.read('src/header.js.tmpl').replace('VERSION', '<%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %>'),
 				footer : grunt.file.read('src/footer.js.tmpl'),
 				process: function (src, filepath) {
 					return '\n\n\t// Source: ' + filepath + '\n\t// -----------------------------------------------------------------------------\n' +
@@ -23,8 +23,8 @@ module.exports = function (grunt) {
 				}
 			},
 			dist   : {
-//				src : ['src/{xxx}.js'],
-				src : ['src/{json,event}.js'],
+//				src : ['src/{legacy}.js'],
+				src : ['src/legacy.js','src/{json,event}.js'],
 //				src : ['src/*.js'],
 				dest: 'build/<%= pkg.name %>.js'
 			}
