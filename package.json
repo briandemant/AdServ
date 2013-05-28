@@ -1,26 +1,27 @@
 {
-	"name": "AdServ",
-	"version": "0.0.7",
-	"date": "2013-05-24 14:10:55 +00:00",
-	"author": "Brian Demant <brian.demant@gmail.com>",
-	"license": "Apache Licence 2.0",
-	"description": "Adserving js frontend",
-	"main": "Gruntfile.js",
-	"directories": {
-		"test": "test"
-	},
-	"dependencies": {},
-	"devDependencies": {
-		"grunt": "~0.4.1",
-		"grunt-bumpup": "~0.2.0",
-		"grunt-contrib-concat": "~0.3.0",
-		"grunt-contrib-uglify": "~0.2.0",
-		"grunt-karma": "~0.4.4",
-		"grunt-contrib-watch": "~0.4.3",
-		"karma": "~0.8.5",
-		"mocha": "~1.10.0",
-		"expect.js": "~0.2.0",
-		"es5-shim": "~2.0.11"
-	},
-	"readmeFilename": "README.md"
+  "name": "AdServ",
+  "version": "0.0.8",
+  "date": "2013-05-28 14:16:23 +00:00",
+  "author": "Brian Demant <brian.demant@gmail.com>",
+  "license": "Apache Licence 2.0",
+  "description": "Adserving js frontend",
+  "main": "Gruntfile.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-bumpup": "~0.2.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-karma": "~0.4.4",
+    "grunt-contrib-watch": "~0.4.3",
+    "karma": "~0.8.5",
+    "mocha": "~1.10.0",
+    "expect.js": "~0.2.0",
+    "es5-shim": "~2.0.11",
+    "lodash": "~1.2.1"
+  },
+  "readmeFilename": "README.md"
 }

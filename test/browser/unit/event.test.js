@@ -1,32 +1,35 @@
 "use strict";
 
-describe('Event:', function () {
-	describe('emit/on', function () {
-		var beforeAdServ = {banners: []};
+describe('Event:', function() {
+	describe('emit/on', function() {
+		var beforeAdServ = {banners : []};
 
-		before(function (done) {
-			loadFixture('plain', function (window, document) {
-				window.AdServ = beforeAdServ;
-			}, function () {
-				__karma__.before(done);
-			});
+		before(function(done) {
+			loadFixture({ template : 'plain',
+				            pre : function(window, document) {
+					            window.AdServ = beforeAdServ;
+				            },
+				            post : function() {
+					            __karma__.before(done);
+				            }
+			            });
 		});
 
-		it('should be functions', function () {
+		it('should be functions', function() {
 			expect(typeof win.AdServ.on).to.be('function');
 			expect(typeof win.AdServ.emit).to.be('function');
 		});
 
-		it('should have connect emit and on', function (done) {
-			win.AdServ.on('blah', function () {
+		it('should have connect emit and on', function(done) {
+			win.AdServ.on('blah', function() {
 				done();
 			})
 			win.AdServ.emit('blah');
 		});
 
-		it('should trigger handler on every event', function (done) {
+		it('should trigger handler on every event', function(done) {
 			var count = 0;
-			win.AdServ.on('event1', function () {
+			win.AdServ.on('event1', function() {
 				if (++count == 2) {
 					done();
 				}
@@ -35,10 +38,10 @@ describe('Event:', function () {
 			win.AdServ.emit('event1');
 		});
 
-		it('should trigger handler on  event', function (done) {
+		it('should trigger handler on  event', function(done) {
 			var total = 0;
 			var count = 0;
-			win.AdServ.on('event2', function () {
+			win.AdServ.on('event2', function() {
 				++total;
 				if (++count == 2 && total == 4) {
 					done();
@@ -46,7 +49,7 @@ describe('Event:', function () {
 			});
 
 			var count2 = 0;
-			win.AdServ.on('event2', function () {
+			win.AdServ.on('event2', function() {
 				++total;
 				if (++count2 == 2 && total == 4) {
 					done();
@@ -56,15 +59,15 @@ describe('Event:', function () {
 			win.AdServ.emit('event2');
 		});
 
-		it('should not trigger every handler on every event', function () { 
-			win.AdServ.on('event8', function () {
+		it('should not trigger every handler on every event', function() {
+			win.AdServ.on('event8', function() {
 				expect().fail("event8 should not be triggered")
 			});
 			win.AdServ.emit('event8x');
 		});
 
-		it('should pass on payload to handler', function (done) {
-			win.AdServ.on('event3', function (a, b) {
+		it('should pass on payload to handler', function(done) {
+			win.AdServ.on('event3', function(a, b) {
 				expect(a).to.be(1);
 				expect(b).to.be(noop);
 				done();
@@ -73,11 +76,11 @@ describe('Event:', function () {
 			win.AdServ.emit('event3', 1, noop);
 		});
 
-		it('should bind to window scope', function (done) {
+		it('should bind to window scope', function(done) {
 			win.x = 4;
-			var ctx = { y: 44};
+			var ctx = { y : 44};
 			var z = 444;
-			win.AdServ.on('event4', function () {
+			win.AdServ.on('event4', function() {
 				expect(this).to.be(win);
 				expect(win.x).to.be(4);
 				expect(ctx.y).to.be(44);
@@ -90,9 +93,9 @@ describe('Event:', function () {
 		});
 
 
-		it('should bind to the provided context', function (done) {
-			var ctx = { y: 55};
-			win.AdServ.on('event5', function () {
+		it('should bind to the provided context', function(done) {
+			var ctx = { y : 55};
+			win.AdServ.on('event5', function() {
 				expect(this).to.be(ctx);
 				expect(this.y).to.be(55);
 				done();

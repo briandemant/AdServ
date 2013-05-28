@@ -6,13 +6,17 @@ describe('Scope:', function() {
 		var pre = {AdServ : null};
 		var post = {AdServ : null};
 
+
 		before(function(done) {
-			loadFixture('plain', function(window, document) {
-				pre.AdServ = window.AdServ;
-			}, function(window, document) {
-				post.AdServ = window.AdServ;
-				__karma__.before(done);
-			});
+			loadFixture({ template : 'plain',
+				            pre : function(window, document) {
+					            pre.AdServ = window.AdServ;
+				            },
+				            post : function(window, document) {
+					            post.AdServ = window.AdServ;
+					            __karma__.before(done);
+				            }
+			            });
 		});
 
 		it('should not be defined', function() {
@@ -31,13 +35,18 @@ describe('Scope:', function() {
 	describe('AdServ:loaded', function() {
 		var pre = {AdServ : {banners : []}};
 		var post = {AdServ : null};
+
 		before(function(done) {
-			loadFixture('plain', function(window, document) {
-				window.AdServ = pre.AdServ;
-			}, function(window, document) {
-				post.AdServ = window.AdServ;
-				__karma__.before(done);
-			});
+			loadFixture({ template : 'plain',
+				            pre : function(window, document) {
+					            window.AdServ = pre.AdServ;
+				            },
+				            post : function(window, document) {
+					            post.AdServ = window.AdServ;
+					            __karma__.before(done);
+				            }
+			            });
+
 		});
 
 		it('should be not be redefined when loaded', function() {

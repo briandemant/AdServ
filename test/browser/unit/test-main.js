@@ -37,8 +37,15 @@ __karma__.loaded = function() {
 mocha.setup({globals : ['navigator', 'flashfirebug_cache_xhr', 'fixture_iframe', '0']});
 
 
-var loadFixture = function(template, pre, post) {
-	var templateUrl = '/base/test/browser/fixtures/' + template + '.html';
+var loadFixture = function(options, done) {
+
+	options = _.isString(options) ? {template : options} : options;
+	options['pre'] = options['pre'] || noop;
+	options['post'] = options['post'] || function() {
+		__karma__.before(done);
+	};
+
+	var templateUrl = '/base/test/browser/fixtures/' + options.template + '.html';
 
 	var body = document.getElementsByTagName("body")[0];
 	if (iframe) {
@@ -48,12 +55,12 @@ var loadFixture = function(template, pre, post) {
 	iframe.width = 1024;
 	iframe.height = 768;
 
-	iframe.beforeLoad = pre || noop;
+	iframe.beforeLoad = options.pre || noop;
 
 	iframe.readyForTest = function(window, document) {
 		win = window;
 		doc = document;
-		post(window, document);
+		options.post(window, document);
 	};
 
 	iframe.id = 'fixture_iframe';
@@ -67,15 +74,15 @@ var loadFixture = function(template, pre, post) {
 		//alert("Local iframe is now loaded.");
 	};
 
-	var link = window.parent.document.getElementById('template_link_' + template);
+	var link = window.parent.document.getElementById('template_link_' + options.template);
 
 	if (!link) {
 
 		link = window.parent.document.createElement("a");
-		link.id = 'template_link_' + template;
-		link.target = 'template_link_' + template;
+		link.id = 'template_link_' + options.template;
+		link.target = 'template_link_' + options.template;
 		link.href = templateUrl;
-		link.innerHTML = ' ' + template + ' ';
+		link.innerHTML = ' ' + options.template + ' ';
 
 		var banner = window.parent.document.getElementById('banner');
 		banner.appendChild(link);
@@ -122,3 +129,133 @@ function getIframeWindow(iframe_object) {
 
 	return undefined;
 }
+
+(function() { 
+	// http://www.quirksmode.org/js/detect.html
+	var BrowserDetect = {
+		init : function() {
+			this.browser = this.searchString(this.dataBrowser) || "An unknown browser";
+			this.version = this.searchVersion(navigator.userAgent)
+				               || this.searchVersion(navigator.appVersion)
+				|| "an unknown version";
+			this.OS = this.searchString(this.dataOS) || "an unknown OS";
+		},
+		searchString : function(data) {
+			for (var i = 0; i < data.length; i++) {
+				var dataString = data[i].string;
+				var dataProp = data[i].prop;
+				this.versionSearchString = data[i].versionSearch || data[i].identity;
+				if (dataString) {
+					if (dataString.indexOf(data[i].subString) != -1) {
+						return data[i].identity;
+					}
+				}
+				else if (dataProp) {
+					return data[i].identity;
+				}
+			}
+		},
+		searchVersion : function(dataString) {
+			var index = dataString.indexOf(this.versionSearchString);
+			if (index == -1) {
+				return;
+			}
+			return parseFloat(dataString.substring(index + this.versionSearchString.length + 1));
+		},
+		dataBrowser : [
+			{
+				string : navigator.userAgent,
+				subString : "Chrome",
+				identity : "Chrome"
+			},
+			{   string : navigator.userAgent,
+				subString : "OmniWeb",
+				versionSearch : "OmniWeb/",
+				identity : "OmniWeb"
+			},
+			{
+				string : navigator.vendor,
+				subString : "Apple",
+				identity : "Safari",
+				versionSearch : "Version"
+			},
+			{
+				prop : window.opera,
+				identity : "Opera",
+				versionSearch : "Version"
+			},
+			{
+				string : navigator.vendor,
+				subString : "iCab",
+				identity : "iCab"
+			},
+			{
+				string : navigator.vendor,
+				subString : "KDE",
+				identity : "Konqueror"
+			},
+			{
+				string : navigator.userAgent,
+				subString : "Firefox",
+				identity : "Firefox"
+			},
+			{
+				string : navigator.vendor,
+				subString : "Camino",
+				identity : "Camino"
+			},
+			{		// for newer Netscapes (6+)
+				string : navigator.userAgent,
+				subString : "Netscape",
+				identity : "Netscape"
+			},
+			{
+				string : navigator.userAgent,
+				subString : "MSIE",
+				identity : "IE",
+				versionSearch : "MSIE"
+			},
+			{
+				string : navigator.userAgent,
+				subString : "Gecko",
+				identity : "Mozilla",
+				versionSearch : "rv"
+			},
+			{ 		// for older Netscapes (4-)
+				string : navigator.userAgent,
+				subString : "Mozilla",
+				identity : "Netscape",
+				versionSearch : "Mozilla"
+			}
+		],
+		dataOS : [
+			{
+				string : navigator.platform,
+				subString : "Win",
+				identity : "Windows"
+			},
+			{
+				string : navigator.platform,
+				subString : "Mac",
+				identity : "Mac"
+			},
+			{
+				string : navigator.userAgent,
+				subString : "iPhone",
+				identity : "iPhone/iPod"
+			},
+			{
+				string : navigator.platform,
+				subString : "Linux",
+				identity : "Linux"
+			}
+		]
+
+	};
+	BrowserDetect.init();
+	window['browser'] = {info : BrowserDetect.browser +' '+ BrowserDetect.version + ' ('+ BrowserDetect.OS+')',OS : BrowserDetect.OS, browser : BrowserDetect.browser, version : BrowserDetect.version};
+	window.browser['is' + BrowserDetect.OS] = true; 
+	window.browser['is' + BrowserDetect.browser] = true; 
+	window.browser['is' + BrowserDetect.browser + BrowserDetect.version] = true;
+})();
+

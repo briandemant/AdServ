@@ -4,10 +4,9 @@
 //console.log("a");
 describe('TestSetup:', function() {
 	before(function(done) {
-		loadFixture('test_setup', noop, function() {
-			__karma__.before(done);
-		});
+		loadFixture('test_setup',done);
 	});
+ 
 
 	it('unaffected by shim', function() {
 		expect(win.isShimApplied).to.be(false);

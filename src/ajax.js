@@ -36,7 +36,7 @@ AdServ.get = function (url, cb) {
 			return;
 		}
 		clearTimeout(requestTimeout);
-		cb(xhr.status != 200 ? "err : " + xhr.status : false, xhr.responseText, xhr);
+		cb(xhr.status != 200 ? "err : " + xhr.status : null, xhr.responseText, xhr);
 	};
 	xhr.open("GET", url, true);
 	xhr.send();

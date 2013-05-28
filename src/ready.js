@@ -16,7 +16,7 @@ AdServ.ready = (function (ready) {
 			, addEventListener = 'addEventListener'
 			, onreadystatechange = 'onreadystatechange'
 			, readyState = 'readyState'
-			, loaded = /^loade|c/.test(doc[readyState])
+			, loaded = /^loade|c/.test(doc[readyState]);
 
 	function flush(f) {
 		loaded = 1;
@@ -27,16 +27,16 @@ AdServ.ready = (function (ready) {
 
 	doc[addEventListener] && doc[addEventListener](domContentLoaded, fn = function () {
 		doc.removeEventListener(domContentLoaded, fn, f)
-		flush()
-	}, f)
+		flush();
+	}, f);
 
 
 	hack && doc.attachEvent(onreadystatechange, fn = function () {
 		if (/^c/.test(doc[readyState])) {
-			doc.detachEvent(onreadystatechange, fn)
-			flush()
+			doc.detachEvent(onreadystatechange, fn);
+			flush();
 		}
-	})
+	});
 
 	return (ready = hack ?
 	                function (fn) {

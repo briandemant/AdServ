@@ -11,6 +11,7 @@ files = [
 	MOCHA,
 	MOCHA_ADAPTER,
 	'node_modules/es5-shim/es5-shim.js', 
+	'node_modules/lodash/dist/lodash.min.js', 
 	'node_modules/expect.js/expect.js', 
 	'test/browser/unit/test-main.js',
 
