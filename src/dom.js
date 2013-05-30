@@ -61,3 +61,4 @@ var isVisible = function(elem) {
 };
 
 AdServ.isVisible = isVisible;
+

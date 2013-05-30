@@ -103,5 +103,14 @@ describe('Event:', function() {
 
 			win.AdServ.emit('event5');
 		});
+		
+		it('should fire resize event on browser event', function(done) {
+			win.AdServ.on('resize', function() {
+				//console.log("woot onresize works");  
+				done();
+			});
+
+			iframe.width = 400;
+		});
 	});
 });  

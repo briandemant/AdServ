@@ -1,6 +1,6 @@
 "use strict";
 /*!
- * AdServ 0.0.8 / 2013-05-28 16:17:22
+ * AdServ 0.0.8 / 2013-05-30 08:56:41
  * @author Brian Demant <brian.demantgmail.com> (2013)
  */
 (function (window, definition) { 
@@ -8,7 +8,7 @@
 })(window,  function (window, document) { 
 	var AdServ = window.AdServ || {};
 	AdServ.version = '0.0.8';
-	AdServ.released = '2013-05-28 16:17:22';
+	AdServ.released = '2013-05-30 08:56:41';
 	window.AdServ = AdServ; 
 	// header ----------------------------------------------------------------------
 
@@ -39,6 +39,7 @@
 		return value ? value.nodeType === 9 : false;
 	};
 	 
+	var noop = function () {};
 
 
 
@@ -104,6 +105,7 @@
 	};
 
 	AdServ.isVisible = isVisible;
+
 	
 
 
@@ -118,7 +120,7 @@
 	* @param fn callback
 	* @param context scope to bind to .. defaults to window
 	*/
-	AdServ.on = function (event, fn, context) { 
+	var on = function (event, fn, context) { 
 		// initialze if first
 		eventHandlers[event] = (eventHandlers[event] === undefined) ? [] : eventHandlers[event];
 
@@ -126,12 +128,14 @@
 			return fn.apply(context || window, args);
 		}); 
 	};
+
+	AdServ.on = on;
 	  
 
 	/**
 	* @param event name of event
 	*/
-	AdServ.emit = function (event) {
+	var emit = function (event) {
 		if (eventHandlers[event] !== undefined) {
 			var args = Array.prototype.slice.call(arguments, 1);
 			for (var i = 0; i < eventHandlers[event].length; i++) {
@@ -139,6 +143,15 @@
 			}
 		} 
 	};
+
+	AdServ.emit = emit;
+	// 
+	var originalResize = window.onresize || noop;
+	window.onresize = function() {
+//		console.log('Adserv.emit : resize'); 
+		emit('resize'); 
+		originalResize();
+	} ;
 
 
 

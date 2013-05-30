@@ -5,8 +5,8 @@ module.exports = function(grunt) {
 		uglify : {
 			options : {
 				banner : '/*! <%= pkg.name %>  <%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %> */\n',
-//				beautify : true,
-//				compress : false,
+				beautify : true,
+				compress : false,
 //				mangle : false,
 				report : 'gzip',
 //				preserveComments : 'some',

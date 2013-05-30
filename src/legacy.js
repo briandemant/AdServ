@@ -23,3 +23,4 @@ var isNode = function(value) {
 	return value ? value.nodeType === 9 : false;
 };
  
+var noop = function () {};

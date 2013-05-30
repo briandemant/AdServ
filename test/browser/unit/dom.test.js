@@ -3,7 +3,7 @@
 describe('dom:', function() {
 	describe('getElem', function() {
 		before(function(done) {
-			loadFixture({ template : 'plain'}, done);
+			loadFixture( 'plain' , done);
 		});
 
 		it('should be a function', function() {

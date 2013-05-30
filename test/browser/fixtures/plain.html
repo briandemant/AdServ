@@ -6,7 +6,11 @@
 	<title>Plain</title>
 	<script type="text/javascript">
 		isIE = isIE7 = isIE8 = isIE9 = isIE10 = false;
-		isStandAlone = (window === window.top);
+		isStandAlone = (window.parent === window.top);
+		template = 'plain';
+//		if (typeof console === 'undefined') {
+//			console = {log: function (msg) {alert(msg)}};
+//		} 
 	</script>
 	<!--[if lt IE 7]>
 	<script type="text/javascript">alert('this browser is not supported')</script><![endif]-->
@@ -120,11 +124,14 @@
 			window.parent.iframe.beforeLoad(window, document);
 		}
 		var scriptLoadCount = 0;
+
+		window.onresize = function () {
+//			console.log('i am ' + template); 
+		};
 	</script>
 
 	<script type="text/javascript">
-		(function() {
-			"use strict";
+		(function() { 
 
 			var script = document.createElement("script");
 			script.type = "text/javascript";
@@ -134,10 +141,10 @@
 			var callback = function() {  
 				if (!isIE || script.readyState == 'loaded') {
 					scriptLoadCount++;
-					if (!isStandAlone && scriptLoadCount == 1) {
+					if (!isStandAlone && window.scriptLoadCount == 1) {
 						window.parent.iframe.readyForTest(window, document);
 					}
-					if (scriptLoadCount > 1) {
+					if (window.scriptLoadCount > 1) {
 						throw "onload fired twice!";
 					}
 				}
