@@ -75,10 +75,10 @@ module.exports = function (karma) {
 //		},
 
 		plugins: [
-			'karma-jasmine',
-			'karma-chrome-launcher',
-			'karma-firefox-launcher',
-			'karma-junit-reporter'
+//			'karma-jasmine',
+//			'karma-chrome-launcher',
+//			'karma-firefox-launcher',
+//			'karma-junit-reporter'
 		]
 	};
 	

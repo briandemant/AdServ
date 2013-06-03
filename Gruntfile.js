@@ -33,7 +33,7 @@ module.exports = function(grunt) {
 			},
 			dist : {
 //				src : ['src/{legacy}.js'],
-				src : [ 'src/legacy.js', 'src/{dom,json,event}.js'],
+				src : [ 'src/legacy.js', 'src/{dom,json,event,ajax}.js', 'src/api.js'],
 //				src : ['src/*.js'],
 				dest : 'build/<%= pkg.name %>.js'
 			}

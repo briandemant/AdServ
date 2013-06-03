@@ -10,20 +10,21 @@ basePath = '../..';
 files = [
 	MOCHA,
 	MOCHA_ADAPTER,
-	'node_modules/es5-shim/es5-shim.js', 
-	'node_modules/lodash/dist/lodash.min.js', 
-	'node_modules/expect.js/expect.js', 
+	'node_modules/es5-shim/es5-shim.js',
+	'node_modules/lodash/dist/lodash.min.js',
+	'node_modules/expect.js/expect.js',
 	'test/browser/unit/test-main.js',
 
-	'test/browser/unit/test_setup.js', 
+	'test/browser/unit/test_setup.js',
 //	'test/browser/unit/scope.test.js', 
-	'test/browser/unit/*.test.js', 
+	'test/browser/unit/*.test.js',
 
-	{pattern: 'build/AdServ.js', watched: true, included: false, served: true},
- 
+	{pattern : 'build/AdServ.js', watched : true, included : false, served : true},
+
 	// test main require module last
-	{pattern: 'test/browser/fixtures/*.html', watched: true, included: false, served: true},
- 
+	{pattern : 'test/browser/fixtures/*.html', watched : true, included : false, served : true},
+	{pattern : 'test/browser/manual/*.html', watched : false, included : false, served : true},
+
 	'test/browser/unit/test-execute-now.js'
 ];
 
@@ -33,6 +34,9 @@ exclude = [
 
 ];
 
+proxies = {
+	'/api' : 'http://127.0.0.1:9000'
+};
 
 // test results reporter to use
 // possible values: 'dots', 'progress', 'junit'

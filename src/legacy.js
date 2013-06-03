@@ -1,6 +1,3 @@
-AdServ.adspaces = AdServ.adspaces || window.ba_adspaces || [];
-window.adServingLoad = window.adServingLoad || '';
-
 var isFunction = function(fn) {
 	return fn && typeof fn === "function";
 };

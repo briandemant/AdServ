@@ -1,19 +1,26 @@
 "use strict";
 
-
-var getElem = function(query) {
-	if (isElement(query)) {
-		return query;
+var $ = function(selector, el) {
+	if (isElement(selector)) {
+		return selector;
 	}
-	var kind = query.charAt(0);
-	return (kind === '#') ? document.getElementById(query.substr(1)) : null;
+	if (!el) {el = document;}
+	return el.querySelector(selector);
 };
-AdServ.$ = getElem;
+
+var $$ = function(selector, el) {
+	if (!el) {el = document;}
+	return Array.prototype.slice.call(el.querySelectorAll(selector));
+};
+
+ 
+AdServ.$ = $;
+AdServ.$$ = $$;
 
 var getComputedStyle;
 if (!window.getComputedStyle) {
 	getComputedStyle = function(el, pseudo) {
-		this.el = getElem(el);
+		this.el = $(el);
 		this.getPropertyValue = function(prop) {
 			var re = /(\-([a-z]){1})/g;
 			if (prop == 'float') {
@@ -33,14 +40,14 @@ if (!window.getComputedStyle) {
 }
 
 var css = function(elem, name) {
-	elem = getElem(elem);
-	return getComputedStyle(getElem(elem)).getPropertyValue(name);
+	elem = $(elem);
+	return getComputedStyle($(elem)).getPropertyValue(name);
 };
 
 AdServ.css = css;
 
 var isVisible = function(elem) {
-	elem = getElem(elem);
+	elem = $(elem);
 	if (!elem) {
 		return false;
 	}

@@ -1,39 +1,39 @@
-var noop = function () {};
+var noop = function() {};
 var win = {};
 var doc = {};
 var iframe = null;
-var nextTick = function (cb) {
+var nextTick = function(cb) {
 	setTimeout(cb, 100);
 };
 
-var waitFor = function (check, done, interval) { 
+var waitFor = function(check, done, interval) {
 	if (check()) {
-		done();
-	} else {
-		var retry = setInterval(function () { 
-			if (check()) {
-				clearInterval(retry);
-				done();
-			}
-		}, interval || 100);
+		return done();
 	}
+
+	var retry = setInterval(function() {
+		if (check()) {
+			clearInterval(retry);
+			done();
+		}
+	}, interval || 100); 
 };
 
 if (!__karma__.loadedLater) {
 	__karma__.loadedLater = __karma__.loaded;
 }
 //
-__karma__.loaded = function () {
+__karma__.loaded = function() {
 	//console.log("wazzup? " + new Date());
 };
- 
-mocha.setup({globals: ['navigator', 'flashfirebug_cache_xhr', 'fixture_iframe', '0']});
- 
-var loadFixture = function (options, done) {
 
-	options = _.isString(options) ? {template: options} : options;
+mocha.setup({globals : ['navigator', 'flashfirebug_cache_xhr', 'fixture_iframe', '0']});
+
+var loadFixture = function(options, done) {
+
+	options = _.isString(options) ? {template : options} : options;
 	options['pre'] = options['pre'] || noop;
-	options['post'] = options['post'] || function () {
+	options['post'] = options['post'] || function() {
 		__karma__.before(done);
 	};
 
@@ -57,7 +57,7 @@ var loadFixture = function (options, done) {
 
 	iframe.beforeLoad = options.pre || noop;
 
-	iframe.readyForTest = function (window, document) {
+	iframe.readyForTest = function(window, document) {
 		win = window;
 		doc = document;
 		options.post(window, document);
@@ -78,7 +78,7 @@ var loadFixture = function (options, done) {
 
 	win = getIframeWindow(iframe.contentWindow);
 
-	win.onload = function () {
+	win.onload = function() {
 //	 	alert("Local iframe is now loaded.");
 	};
 
@@ -98,12 +98,25 @@ var loadFixture = function (options, done) {
 	}
 };
 
+var manuallink = window.parent.document.getElementById('manuallink');
 
-__karma__.before = function (cb) {
+if (!manuallink) {
+
+	manuallink = window.parent.document.createElement("a");
+	manuallink.id = 'manuallink';
+	manuallink.target = 'manuallink';
+	manuallink.href = '/base/test/browser/manual/index.html';
+	manuallink.innerHTML = ' Manual ';
+	var banner = window.parent.document.getElementById('banner');
+	banner.appendChild(manuallink);
+}
+
+
+__karma__.before = function(cb) {
 	cb();
 };
 
-__karma__.beforeEach = function (cb) {
+__karma__.beforeEach = function(cb) {
 	cb();
 };
 
@@ -138,17 +151,17 @@ function getIframeWindow(iframe_object) {
 	return undefined;
 }
 
-(function () {
+(function() {
 	// http://www.quirksmode.org/js/detect.html
 	var BrowserDetect = {
-		init         : function () {
+		init : function() {
 			this.browser = this.searchString(this.dataBrowser) || "An unknown browser";
 			this.version = this.searchVersion(navigator.userAgent)
-					               || this.searchVersion(navigator.appVersion)
-					|| "an unknown version";
+				               || this.searchVersion(navigator.appVersion)
+				|| "an unknown version";
 			this.OS = this.searchString(this.dataOS) || "an unknown OS";
 		},
-		searchString : function (data) {
+		searchString : function(data) {
 			for (var i = 0; i < data.length; i++) {
 				var dataString = data[i].string;
 				var dataProp = data[i].prop;
@@ -163,105 +176,105 @@ function getIframeWindow(iframe_object) {
 				}
 			}
 		},
-		searchVersion: function (dataString) {
+		searchVersion : function(dataString) {
 			var index = dataString.indexOf(this.versionSearchString);
 			if (index == -1) {
 				return;
 			}
 			return parseFloat(dataString.substring(index + this.versionSearchString.length + 1));
 		},
-		dataBrowser  : [
+		dataBrowser : [
 			{
-				string   : navigator.userAgent,
-				subString: "Chrome",
+				string : navigator.userAgent,
+				subString : "Chrome",
 				identity : "Chrome"
 			},
-			{   string      : navigator.userAgent,
-				subString    : "OmniWeb",
-				versionSearch: "OmniWeb/",
-				identity     : "OmniWeb"
+			{   string : navigator.userAgent,
+				subString : "OmniWeb",
+				versionSearch : "OmniWeb/",
+				identity : "OmniWeb"
 			},
 			{
-				string       : navigator.vendor,
-				subString    : "Apple",
-				identity     : "Safari",
-				versionSearch: "Version"
+				string : navigator.vendor,
+				subString : "Apple",
+				identity : "Safari",
+				versionSearch : "Version"
 			},
 			{
-				prop         : window.opera,
-				identity     : "Opera",
-				versionSearch: "Version"
+				prop : window.opera,
+				identity : "Opera",
+				versionSearch : "Version"
 			},
 			{
-				string   : navigator.vendor,
-				subString: "iCab",
+				string : navigator.vendor,
+				subString : "iCab",
 				identity : "iCab"
 			},
 			{
-				string   : navigator.vendor,
-				subString: "KDE",
+				string : navigator.vendor,
+				subString : "KDE",
 				identity : "Konqueror"
 			},
 			{
-				string   : navigator.userAgent,
-				subString: "Firefox",
+				string : navigator.userAgent,
+				subString : "Firefox",
 				identity : "Firefox"
 			},
 			{
-				string   : navigator.vendor,
-				subString: "Camino",
+				string : navigator.vendor,
+				subString : "Camino",
 				identity : "Camino"
 			},
 			{		// for newer Netscapes (6+)
-				string   : navigator.userAgent,
-				subString: "Netscape",
+				string : navigator.userAgent,
+				subString : "Netscape",
 				identity : "Netscape"
 			},
 			{
-				string       : navigator.userAgent,
-				subString    : "MSIE",
-				identity     : "IE",
-				versionSearch: "MSIE"
+				string : navigator.userAgent,
+				subString : "MSIE",
+				identity : "IE",
+				versionSearch : "MSIE"
 			},
 			{
-				string       : navigator.userAgent,
-				subString    : "Gecko",
-				identity     : "Mozilla",
-				versionSearch: "rv"
+				string : navigator.userAgent,
+				subString : "Gecko",
+				identity : "Mozilla",
+				versionSearch : "rv"
 			},
 			{ 		// for older Netscapes (4-)
-				string       : navigator.userAgent,
-				subString    : "Mozilla",
-				identity     : "Netscape",
-				versionSearch: "Mozilla"
+				string : navigator.userAgent,
+				subString : "Mozilla",
+				identity : "Netscape",
+				versionSearch : "Mozilla"
 			}
 		],
-		dataOS       : [
+		dataOS : [
 			{
-				string   : navigator.platform,
-				subString: "Win",
+				string : navigator.platform,
+				subString : "Win",
 				identity : "Windows"
 			},
 			{
-				string   : navigator.platform,
-				subString: "Mac",
+				string : navigator.platform,
+				subString : "Mac",
 				identity : "Mac"
 			},
 			{
-				string   : navigator.userAgent,
-				subString: "iPhone",
+				string : navigator.userAgent,
+				subString : "iPhone",
 				identity : "iPhone/iPod"
 			},
 			{
-				string   : navigator.platform,
-				subString: "Linux",
+				string : navigator.platform,
+				subString : "Linux",
 				identity : "Linux"
 			}
 		]
 
 	};
 	BrowserDetect.init();
-	window['browser'] = {info: BrowserDetect.browser + ' ' + BrowserDetect.version + ' (' + BrowserDetect.OS + ')', OS: BrowserDetect.OS, browser: BrowserDetect.browser, version: BrowserDetect.version};
+	window['browser'] = {info : BrowserDetect.browser + ' ' + BrowserDetect.version + ' (' + BrowserDetect.OS + ')', OS : BrowserDetect.OS, browser : BrowserDetect.browser, version : BrowserDetect.version};
 	window.browser['is' + BrowserDetect.OS] = true;
 	window.browser['is' + BrowserDetect.browser] = true;
 	window.browser['is' + BrowserDetect.browser + BrowserDetect.version] = true;

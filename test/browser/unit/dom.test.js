@@ -1,7 +1,7 @@
 "use strict";
 
 describe('dom:', function() {
-	describe('getElem', function() {
+	describe('$', function() {
 		before(function(done) {
 			loadFixture( 'plain' , done);
 		});

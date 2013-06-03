@@ -5,24 +5,17 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
 	<title>Test Setup</title>
 	<script type="text/javascript">
-		isIE = isIE7 = isIE8 = isIE9 = isIE10 = false;
+		isIE  = isIE8 = isIE9 = isIE10 = false;
 		isStandAlone = (window.parent === window.top);
 		template = 'test_setup';
 //		if (typeof console === 'undefined') {
 //			console = {log: function (msg) {alert(msg)}}; 
 //		}
 	</script>
-	<!--[if lt IE 7]>
-	<script type="text/javascript">alert('this browser is not supported')</script><![endif]-->
-	<!--[if IE 7]>
-
-	<script type="text/javascript">isIE = isIE7 = true;</script><![endif]-->
-	<!--[if IE 8]>
-	<script type="text/javascript">isIE = isIE8 = true;</script><![endif]-->
-	<!--[if IE 9]>
-	<script type="text/javascript">isIE = isIE9 = true;</script><![endif]-->
-	<!--[if gt IE 9]>
-	<script type="text/javascript">isIE = isIE10 = true;</script><![endif]-->
+	<!--[if lt IE 8]><script type="text/javascript">alert('this browser is not supported')</script><![endif]--> 
+	<!--[if IE 8]><script type="text/javascript">isIE = isIE8 = true;</script><![endif]-->
+	<!--[if IE 9]><script type="text/javascript">isIE = isIE9 = true;</script><![endif]-->
+	<!--[if gt IE 9]><script type="text/javascript">isIE = isIE10 = true;</script><![endif]-->
 </head>
 <body>
 	<h1>Test Setup</h1>
@@ -37,7 +30,7 @@
 		document.getElementById('dynamic').innerHTML = 'changed';
 
 		// make sure es5-shim.js is not applied 
-		var isShimApplied = (isIE7 || isIE8) && typeof Array.isArray == 'function';
+		var isShimApplied = (isIE8) && typeof Array.isArray == 'function';
 
 
 		window.onresize = function () {
@@ -51,12 +44,10 @@
 	<!-- trigger test start -->
 	<script type="text/javascript">
 
-		window.onload = function () {
-//			console.log("c");
+		window.onload = function () { 
 			if (!isStandAlone) {
 				window.parent.iframe.readyForTest(window, document);
-			}
-//			console.log("d");
+			} 
 		};
 	</script>
 </body>

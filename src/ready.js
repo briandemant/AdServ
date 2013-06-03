@@ -10,13 +10,13 @@
  */ 
 AdServ.ready = (function (ready) {
 	var fns = [], fn, f = false 
-			, testEl = doc.documentElement
+			, testEl = document.documentElement
 			, hack = testEl.doScroll
 			, domContentLoaded = 'DOMContentLoaded'
 			, addEventListener = 'addEventListener'
 			, onreadystatechange = 'onreadystatechange'
 			, readyState = 'readyState'
-			, loaded = /^loade|c/.test(doc[readyState]);
+			, loaded = /^loade|c/.test(document[readyState]);
 
 	function flush(f) {
 		loaded = 1;
@@ -25,15 +25,14 @@ AdServ.ready = (function (ready) {
 		}
 	}
 
-	doc[addEventListener] && doc[addEventListener](domContentLoaded, fn = function () {
-		doc.removeEventListener(domContentLoaded, fn, f)
+	document[addEventListener] && document[addEventListener](domContentLoaded, fn = function () {
+		document.removeEventListener(domContentLoaded, fn, f)
 		flush();
 	}, f);
-
-
-	hack && doc.attachEvent(onreadystatechange, fn = function () {
-		if (/^c/.test(doc[readyState])) {
-			doc.detachEvent(onreadystatechange, fn);
+ 
+	hack && document.attachEvent(onreadystatechange, fn = function () {
+		if (/^c/.test(document[readyState])) {
+			document.detachEvent(onreadystatechange, fn);
 			flush();
 		}
 	});

@@ -111,7 +111,8 @@ describe('TestSetup:', function () {
 		expect(doc.body.clientWidth).to.within(350, 400);
 //		console.log("f");
 		waitFor(function () {
-			return doc.getElementById('dynamic').innerHTML == doc.body.clientWidth + 'px';
+			var elem = doc.getElementById('dynamic');
+			return elem && elem.innerHTML == doc.body.clientWidth + 'px';
 		}, done); 
 	});
 

@@ -1,6 +1,6 @@
 "use strict";
 /*!
- * AdServ 0.0.8 / 2013-05-30 08:56:41
+ * AdServ 0.0.8 / 2013-06-03 13:57:32
  * @author Brian Demant <brian.demantgmail.com> (2013)
  */
 (function (window, definition) { 
@@ -8,15 +8,12 @@
 })(window,  function (window, document) { 
 	var AdServ = window.AdServ || {};
 	AdServ.version = '0.0.8';
-	AdServ.released = '2013-05-30 08:56:41';
+	AdServ.released = '2013-06-03 13:57:32';
 	window.AdServ = AdServ; 
 	// header ----------------------------------------------------------------------
 
 	// Source: src/legacy.js
 	// -----------------------------------------------------------------------------
-	AdServ.adspaces = AdServ.adspaces || window.ba_adspaces || [];
-	window.adServingLoad = window.adServingLoad || '';
-
 	var isFunction = function(fn) {
 		return fn && typeof fn === "function";
 	};
@@ -43,21 +40,90 @@
 
 
 
+	// Source: src/ajax.js
+	// -----------------------------------------------------------------------------
+	AdServ.conf = {xhrTimeout: 5000, baseUrl: ''};
+
+	/**
+	 * basic AJAX get request .. aborts after 5 seconds (AdServ.conf.xhrTimeout = 5000)
+	 *
+	 * usage
+	 *
+	 * AdServ.get('http://something', function (err,data,xhr) {
+		 * if (err)
+		 *   alert(err)
+		 * else
+		 *    process(data);
+		 * });
+	 *
+	 * @param url
+	 * @param cb callback
+	 * @returns XMLHttpRequest
+	 */
+	AdServ.get = function (url, cb) {
+		var requestTimeout, xhr;
+		try { xhr = new XMLHttpRequest(); } catch (e) {
+			try { xhr = new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) {
+				return null;
+			}
+		}
+		var abort = function () {
+			xhr.abort();
+			cb("aborted by a timeout", null, xhr);
+		};
+
+		requestTimeout = setTimeout(abort, AdServ.conf.xhrTimeout);
+		xhr.onreadystatechange = function () {
+			if (xhr.readyState != 4) {
+				return;
+			}
+			clearTimeout(requestTimeout);
+			cb(xhr.status != 200 ? "err : " + xhr.status : null, xhr.responseText, xhr);
+		};
+		xhr.open("GET", url, true);
+		xhr.send();
+		return xhr;
+	};
+
+	/**
+	 * same as AdServ.get but data is passed as parsed json
+	 */
+	AdServ.getJSON = function (url, cb) {
+		return AdServ.get(url, function (err, value, xhr) {
+			var json = value;
+			if (!err) {
+				json = AdServ.parseJSON(value);
+			}
+			cb(err, json, xhr);
+		})
+	};
+	
+
+
+
 	// Source: src/dom.js
 	// -----------------------------------------------------------------------------
-	var getElem = function(query) {
-		if (isElement(query)) {
-			return query;
+	var $ = function(selector, el) {
+		if (isElement(selector)) {
+			return selector;
 		}
-		var kind = query.charAt(0);
-		return (kind === '#') ? document.getElementById(query.substr(1)) : null;
+		if (!el) {el = document;}
+		return el.querySelector(selector);
 	};
-	AdServ.$ = getElem;
+
+	var $$ = function(selector, el) {
+		if (!el) {el = document;}
+		return Array.prototype.slice.call(el.querySelectorAll(selector));
+	};
+
+	 
+	AdServ.$ = $;
+	AdServ.$$ = $$;
 
 	var getComputedStyle;
 	if (!window.getComputedStyle) {
 		getComputedStyle = function(el, pseudo) {
-			this.el = getElem(el);
+			this.el = $(el);
 			this.getPropertyValue = function(prop) {
 				var re = /(\-([a-z]){1})/g;
 				if (prop == 'float') {
@@ -77,14 +143,14 @@
 	}
 
 	var css = function(elem, name) {
-		elem = getElem(elem);
-		return getComputedStyle(getElem(elem)).getPropertyValue(name);
+		elem = $(elem);
+		return getComputedStyle($(elem)).getPropertyValue(name);
 	};
 
 	AdServ.css = css;
 
 	var isVisible = function(elem) {
-		elem = getElem(elem);
+		elem = $(elem);
 		if (!elem) {
 			return false;
 		}
@@ -115,75 +181,96 @@
 	var eventHandlers = {};
 
 	/**
-	*
-	* @param event eventname
-	* @param fn callback
-	* @param context scope to bind to .. defaults to window
-	*/
-	var on = function (event, fn, context) { 
+	 *
+	 * @param event eventname
+	 * @param fn callback
+	 * @param context scope to bind to .. defaults to window
+	 */
+	var on = function (event, fn, context) {
 		// initialze if first
-		eventHandlers[event] = (eventHandlers[event] === undefined) ? [] : eventHandlers[event];
+		eventHandlers[event] = (typeof eventHandlers[event] === 'undefined') ? [] : eventHandlers[event];
 
 		eventHandlers[event].push(function (args) {
 			return fn.apply(context || window, args);
-		}); 
+		});
 	};
 
 	AdServ.on = on;
-	  
+
+	var once = function (event, fn, context) {
+		on(event, function () {
+			fn();
+			fn = noop;
+		}, context);
+	};
+
+	AdServ.once = once;
 
 	/**
-	* @param event name of event
-	*/
+	 * @param event name of event
+	 */
 	var emit = function (event) {
-		if (eventHandlers[event] !== undefined) {
+		if (typeof eventHandlers[event] !== 'undefined') {
 			var args = Array.prototype.slice.call(arguments, 1);
 			for (var i = 0; i < eventHandlers[event].length; i++) {
 				eventHandlers[event][i](args);
 			}
-		} 
+		}
 	};
 
 	AdServ.emit = emit;
 	// 
-	var originalResize = window.onresize || noop;
-	window.onresize = function() {
-//		console.log('Adserv.emit : resize'); 
-		emit('resize'); 
-		originalResize();
-	} ;
+	var originalResize = window['onresize'] || noop;
+	window.onresize = function () {
+		try {
+			originalResize();
+		} catch (e) {}
+		//console.log('Adserv.emit : resize'); 
+		emit('resize');
+	};
+
+	var loaded = false;
+
+	var originalLoad = window.onload || noop;
+
+	window.onload = function () { 
+		loaded = true;
+		try {
+			originalLoad();
+		} catch (e) {}
+
+		//console.log('Adserv.emit : resize'); 
+		emit('load');
+	};
+
+	var ready = function (fn) {
+		if (loaded) {
+			fn()
+		} else {
+			once('load', fn);
+		}
+	};
+
+	AdServ.ready = ready;
 
 
 
 	// Source: src/json.js
 	// -----------------------------------------------------------------------------
-	var evil = function(s) {
-		return (new Function("return (" + s + ")"))();
-	};
+	// IE7 was the last not to have JSON.parse so we can remove the backup (loog in git if you need it)
+	var parseJSON = JSON.parse;
 
-	/**
-	 * a minimal JSON parser .. based on json2 (https://github.com/douglascrockford/JSON-js)
-	 *
-	 * defaults to built in JSON.parse
-	 */
-	AdServ.parseJSON = typeof JSON === 'object' ? JSON.parse : function(source) {
-		source += "";
-		if (source != '') {
+	AdServ.parseJSON = parseJSON;
 
-			// support for chinese?
-	//	var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
-	//	//cx.lastIndex = 0;
-	//	if (cx.test(source)) {source = source.replace(cx, function (a) {return"\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4)})}
-			var simplified = source
-				.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, "@")
-				.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]")
-				.replace(/(?:^|:|,)(?:\s*\[)+/g, "");
-			if (/^[\],:{}\s]*$/.test(simplified)) {
-				return evil(source);
-			}
-		}
-		throw  "parseJSON failed";
+
+
+	// Source: src/api.js
+	// -----------------------------------------------------------------------------
+	var load = function() {
+		console.log('loading %o', AdServ);
+
 	};
+	AdServ.load = load;
 
 	// footer ----------------------------------------------------------------------
 	return AdServ; 
