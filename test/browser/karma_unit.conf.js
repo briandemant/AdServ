@@ -35,7 +35,8 @@ exclude = [
 ];
 
 proxies = {
-	'/api' : 'http://127.0.0.1:9000'
+	'/creatives/' : 'http://dr.op1.adservinginternational.com/creatives/'
+	//'/api' : 'http://127.0.0.1:9000'
 };
 
 // test results reporter to use

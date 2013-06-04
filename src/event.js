@@ -8,42 +8,39 @@ var eventHandlers = {};
  * @param fn callback
  * @param context scope to bind to .. defaults to window
  */
-var on = function (event, fn, context) {
+var on = AdServ.on = function(event, fn, context) {
 	// initialze if first
 	eventHandlers[event] = (typeof eventHandlers[event] === 'undefined') ? [] : eventHandlers[event];
 
-	eventHandlers[event].push(function (args) {
+	eventHandlers[event].push(function(args) {
 		return fn.apply(context || window, args);
 	});
 };
 
-AdServ.on = on;
 
-var once = function (event, fn, context) {
-	on(event, function () {
+var once = AdServ.once = function(event, fn, context) {
+	on(event, function() {
 		fn();
 		fn = noop;
 	}, context);
 };
 
-AdServ.once = once;
 
 /**
  * @param event name of event
  */
-var emit = function (event) {
+var emit = AdServ.emit = function(event) {
 	if (typeof eventHandlers[event] !== 'undefined') {
-		var args = Array.prototype.slice.call(arguments, 1);
+		var args = slice.call(arguments, 1);
 		for (var i = 0; i < eventHandlers[event].length; i++) {
 			eventHandlers[event][i](args);
 		}
 	}
 };
 
-AdServ.emit = emit;
 // 
 var originalResize = window['onresize'] || noop;
-window.onresize = function () {
+window.onresize = function() {
 	try {
 		originalResize();
 	} catch (e) {}
@@ -55,7 +52,7 @@ var loaded = false;
 
 var originalLoad = window.onload || noop;
 
-window.onload = function () { 
+window.onload = function() {
 	loaded = true;
 	try {
 		originalLoad();
@@ -65,7 +62,7 @@ window.onload = function () {
 	emit('load');
 };
 
-var ready = function (fn) {
+var ready = function(fn) {
 	if (loaded) {
 		fn()
 	} else {

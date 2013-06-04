@@ -1,6 +1,6 @@
 "use strict";
 
-var $ = function(selector, el) {
+var $ = AdServ.$ = function(selector, el) {
 	if (isElement(selector)) {
 		return selector;
 	}
@@ -8,14 +8,11 @@ var $ = function(selector, el) {
 	return el.querySelector(selector);
 };
 
-var $$ = function(selector, el) {
+var $$ = AdServ.$$ = function(selector, el) {
 	if (!el) {el = document;}
-	return Array.prototype.slice.call(el.querySelectorAll(selector));
+	return slice.call(el.querySelectorAll(selector));
 };
 
- 
-AdServ.$ = $;
-AdServ.$$ = $$;
 
 var getComputedStyle;
 if (!window.getComputedStyle) {
@@ -39,14 +36,12 @@ if (!window.getComputedStyle) {
 	getComputedStyle = window.getComputedStyle;
 }
 
-var css = function(elem, name) {
+var css = AdServ.css = function(elem, name) {
 	elem = $(elem);
 	return getComputedStyle($(elem)).getPropertyValue(name);
 };
 
-AdServ.css = css;
-
-var isVisible = function(elem) {
+var isVisible = AdServ.isVisible = function(elem) {
 	elem = $(elem);
 	if (!elem) {
 		return false;
@@ -66,6 +61,4 @@ var isVisible = function(elem) {
 	}
 	return isVisible(elem.parentNode);
 };
-
-AdServ.isVisible = isVisible;
-
+ 

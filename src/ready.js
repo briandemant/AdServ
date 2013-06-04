@@ -8,7 +8,7 @@
  *
  * @param callback
  */ 
-AdServ.ready = (function (ready) {
+var ready = AdServ.ready = (function (ready) {
 	var fns = [], fn, f = false 
 			, testEl = document.documentElement
 			, hack = testEl.doScroll

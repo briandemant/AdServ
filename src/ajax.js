@@ -1,6 +1,5 @@
 "use strict";
 
-AdServ.conf = {xhrTimeout: 5000, baseUrl: ''};
 
 /**
  * basic AJAX get request .. aborts after 5 seconds (AdServ.conf.xhrTimeout = 5000)
@@ -18,20 +17,20 @@ AdServ.conf = {xhrTimeout: 5000, baseUrl: ''};
  * @param cb callback
  * @returns XMLHttpRequest
  */
-AdServ.get = function (url, cb) {
+var get = AdServ.get = function(url, cb) {
 	var requestTimeout, xhr;
 	try { xhr = new XMLHttpRequest(); } catch (e) {
 		try { xhr = new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) {
 			return null;
 		}
 	}
-	var abort = function () {
+	var abort = function() {
 		xhr.abort();
 		cb("aborted by a timeout", null, xhr);
 	};
 
-	requestTimeout = setTimeout(abort, AdServ.conf.xhrTimeout);
-	xhr.onreadystatechange = function () {
+	requestTimeout = setTimeout(abort, 5000);
+	xhr.onreadystatechange = function() {
 		if (xhr.readyState != 4) {
 			return;
 		}
@@ -46,11 +45,11 @@ AdServ.get = function (url, cb) {
 /**
  * same as AdServ.get but data is passed as parsed json
  */
-AdServ.getJSON = function (url, cb) {
-	return AdServ.get(url, function (err, value, xhr) {
+var getJSON = AdServ.getJSON = function(url, cb) {
+	return get(url, function(err, value, xhr) {
 		var json = value;
 		if (!err) {
-			json = AdServ.parseJSON(value);
+			json = parseJSON(value);
 		}
 		cb(err, json, xhr);
 	})
