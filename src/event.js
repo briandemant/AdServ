@@ -32,7 +32,7 @@ var once = AdServ.once = function(event, fn, context) {
 var emit = AdServ.emit = function(event) {
 	if (typeof eventHandlers[event] !== 'undefined') {
 		var args = slice.call(arguments, 1);
-		for (var i = 0; i < eventHandlers[event].length; i++) {
+		for (var i = 0; i < len(eventHandlers[event]); i++) {
 			eventHandlers[event][i](args);
 		}
 	}

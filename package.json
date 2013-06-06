@@ -1,7 +1,7 @@
 {
   "name": "AdServ",
-  "version": "0.0.8",
-  "date": "2013-05-28 14:16:23 +00:00",
+  "version": "0.0.9",
+  "date": "2013-06-06 12:47:37 +00:00",
   "author": "Brian Demant <brian.demant@gmail.com>",
   "license": "Apache Licence 2.0",
   "description": "Adserving js frontend",

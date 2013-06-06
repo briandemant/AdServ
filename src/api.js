@@ -2,7 +2,7 @@
 
 var prepareContexts = function(args) {
 	var conf = { baseUrl : '', xhrTimeout : 5000 };
-	for (var index = 0; index < args.length; index++) {
+	for (var index = 0; index < len(args); index++) {
 		var arg = args[index];
 		if (isFunction(arg)) {
 			conf.ondone = arg;
@@ -16,7 +16,7 @@ var prepareContexts = function(args) {
 	}
 	if (!isArray(conf['adspaces'])) {
 		var global = window['ba_adspaces'];
-		if (!global || global.length === 0 || global.loaded) {
+		if (!global || len(global) === 0 || global.loaded) {
 			console.error('adspaces empty');
 			return false;
 		} else {
@@ -27,7 +27,7 @@ var prepareContexts = function(args) {
 
 	var contexts = conf.contexts = {};
 	var adspaces = conf.adspaces;
-	for (index = 0; index < adspaces.length; index++) {
+	for (index = 0; index < len(adspaces); index++) {
 		var adspace = adspaces[index];
 		if (adspace.id > 0) {
 			var ctxName = adspace.context || '_GLOBAL_';
@@ -68,7 +68,7 @@ var load = AdServ.load = function() {
 					console.log('error', err);
 				} else {
 					var campaigns = data.campaigns;
-					for (var index = 0; index < campaigns.length; index++) {
+					for (var index = 0; index < len(campaigns) ; index++) {
 						var campaign = campaigns[index];
 						var adspace = ctx.adspaces[campaign.adspace];
 						adspace.campaign = campaign;
