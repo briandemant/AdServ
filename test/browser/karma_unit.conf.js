@@ -35,7 +35,8 @@ exclude = [
 ];
 
 proxies = {
-	'/creatives/' : 'http://dr.op1.adservinginternational.com/creatives/'
+	'/creatives/' : 'http://jv.adservinginternational.com/creatives/'
+//	'/creatives/' : 'http://dr.op1.adservinginternational.com/creatives/'
 	//'/api' : 'http://127.0.0.1:9000'
 };
 

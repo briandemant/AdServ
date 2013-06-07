@@ -25,7 +25,6 @@
 			border: 1px dotted grey;
 			padding: 5px;
 			float: left;
-			width: 490px;
 			margin-bottom: 5px;
 			background: #eee;
 		}
@@ -37,13 +36,21 @@
 		.group div div {
 			text-align: center;
 			width: 100px;
-			height: 50px;
+			height: 30px;
 			float: left;
 			border: 1px dotted grey;
 			padding: 5px;
 			margin: 5px;
 			vertical-align: middle;
 			line-height: 50px;
+			overflow: hidden;
+		}
+
+		.group div div div {
+			width: 80px;
+			padding: 0;
+			margin: 0;
+			border: 0;
 		}
 
 		.group div.status div {
@@ -88,11 +95,13 @@
 <body>
 	<h1>Simple</h1>
 	<script type="text/javascript">
+		var adsapceids = [54, 1, 7, 9, 10, 21, 5, 42, 6, 4, 45];
+
 		if (!window.ba_adspaces) {
 			window.ba_adspaces = [];
 		}
 
-		window.ba_adspaces.push({ 'id' : 22, 'target' : 'solo-banner' }); 
+		window.ba_adspaces.push({ 'id' : 54, 'target' : 'solo-banner' });
 	</script>
 	<div id="solo-banner" class="banner">solo</div>
 	<div id="group1" class="group">
@@ -106,7 +115,7 @@
 			}
 			for (var i = 1; i <= 4; i++) {
 				window.ba_adspaces.push({
-					                        'id' : 154+i,
+					                        'id' : 154 + i,
 					                        'target' : 'banner1-' + i,
 					                        'keyword' : '',
 					                        'searchword' : '',
@@ -138,8 +147,8 @@
 			script.type = "text/javascript";
 			script.async = true;
 			script.src = "/base/build/AdServ.js";
-			var callback = function() { 
-				var conf = AdServ.load('/creatives', function(err, conf) {
+			var callback = function() {
+				var conf = AdServ.loadAdspaces('/creatives', function(err, conf) {
 					console.log("hey I'm done!");
 				});
 //				var conf = AdServ.load(window.ba_adspaces);
@@ -147,7 +156,7 @@
 				console.log('adspaces', conf.adspaces);
 				console.log('contexts', conf.contexts);
 			};
-			
+
 			if (script.addEventListener) {
 				script.addEventListener("load", callback, false);
 			} else if (script.readyState) {
@@ -157,7 +166,7 @@
 					}
 				};
 			}
-			 
+
 			var first = document.getElementsByTagName("script")[0];
 			first.parentNode.insertBefore(script, first);
 		})();
