@@ -1,7 +1,8 @@
 "use strict";
 
 var prepareContexts = function (args) {
-	var conf = { baseUrl: '', xhrTimeout: 5000 };
+	AdServ.baseUrl = AdServ.baseUrl || '';
+	var conf = { baseUrl: AdServ.baseUrl, xhrTimeout: 5000 };
 	for (var index = 0; index < len(args); index++) {
 		var arg = args[index];
 		if (isFunction(arg)) {
@@ -65,10 +66,12 @@ var throttle = function (fn, ms) {
 };
 
 var showCampaignX = function (campaign) {
+	var ctx = campaign.ctx;
+	var conf = ctx.conf;
+	var url;
 	if (campaign.campaign && campaign.banner && campaign.adspace) {
 		console.log(campaign.target);
-		var ctx = campaign.ctx;
-		var conf = ctx.conf;
+
 		var adspace = ctx.adspaces[campaign.adspace];
 		var id = 'script_' + adspace.target + "_" + adspace.id; // adspace id is just for easier debug
 		var script = document.getElementById(id);
@@ -79,7 +82,14 @@ var showCampaignX = function (campaign) {
 			script.async = false;
 			script.onload = script.onreadystatechange = (function (cmp, ctx2) {
 				return function () {
-					//emit_campaign(cmp, ctx2[cmp.adspace]);
+					url = conf.baseUrl + '/api/v2/count/view?adspaceid=' + cmp.adspace
+							      + '&campaignid=' + urlencode(cmp.campaign)
+							      + '&bannerid=' + urlencode(cmp.banner)
+							      + '&keyword=' + urlencode(ctx2.keyword)
+							      + '&searchword=' + urlencode(ctx2.searchword);
+					get(url, function (err, data) {
+						console.log(arguments);
+					})
 				};
 			})(campaign, ctx);
 			script.src = conf.baseUrl + '/api/v1/get/js_banner'
@@ -90,13 +100,16 @@ var showCampaignX = function (campaign) {
 
 			var elem = document.getElementById(adspace.target);
 			elem.innerHTML = "";
-			elem.parentNode.insertBefore(script, elem);
+			elem.parentNode.insertBefore(script, elem);  
 		} else {
 			console.error("already loaded " + id);
 			// emit_campaign.waiting--;
 		}
 	} else {
-		console.log("COUNT empty view");
+		url = conf.baseUrl + '/api/v2/count/load?adspaceid=' + campaign.adspace
+		get(url, function (err, data) {
+			console.log(arguments);
+		})
 	}
 };
 
@@ -116,7 +129,6 @@ var checkVisibility = throttle(function () {
 AdServ.on('resize', checkVisibility);
 
 
-
 var invisibleAdspaces = [];
 
 var loadAdspaces = AdServ.loadAdspaces = function () {
@@ -126,19 +138,19 @@ var loadAdspaces = AdServ.loadAdspaces = function () {
 		//noinspection JSUnfilteredForInLoop
 		var ctx = conf.contexts[ctxName];
 
-		var url = conf.baseUrl + '/api/v1/get/campaigns.json?adspaces=' + ctx.ids.join(',')
+		var url = conf.baseUrl + '/api/v2/get/campaigns.json?adspaces=' + ctx.ids.join(',')
 				          + '&adServingLoad=' + urlencode(ctx.adServingLoad)
 				          + '&keyword=' + urlencode(ctx.keyword)
 				          + '&searchword=' + urlencode(ctx.searchword);
 		getJSON(url, (function (ctx) {
 			ctx.conf = conf;
-			return function (err, data) { 
+			return function (err, data) {
 				if (err) {
 					console.log('error', err);
 				} else {
 					var campaigns = data.campaigns;
 					for (var index = 0; index < len(campaigns); index++) {
-						var campaign = campaigns[index];  
+						var campaign = campaigns[index];
 						campaign.ctx = ctx;
 						campaign.target = ctx.adspaces[campaign.adspace].target;
 						invisibleAdspaces.push(campaign);
@@ -149,7 +161,7 @@ var loadAdspaces = AdServ.loadAdspaces = function () {
 					var recheck = setInterval(function () {
 						checkVisibility();
 						if (len(invisibleAdspaces) == 0) {
-							alert('no more adspaces to check');
+							console.log('No more adspaces to check');
 							clearInterval(recheck);
 						}
 					}, 500);
