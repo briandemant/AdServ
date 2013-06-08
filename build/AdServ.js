@@ -1,14 +1,14 @@
 "use strict";
 /*!
- * AdServ 0.1.0 / 2013-06-07 16:39:10
+ * AdServ 0.1.1 / 2013-06-08 21:23:39
  * @author Brian Demant <brian.demantgmail.com> (2013)
  */
 (function (window, definition) { 
 	window.AdServ = definition(window, window.document); 
 })(window,  function (window, document) { 
 	var AdServ = window.AdServ || {};
-	AdServ.version = '0.1.0';
-	AdServ.released = '2013-06-07 16:39:10';
+	AdServ.version = '0.1.1';
+	AdServ.released = '2013-06-08 21:23:39';
 	window.AdServ = AdServ; 
 	// header ----------------------------------------------------------------------
 
@@ -33,6 +33,65 @@
 	}
 
 	window.adServingLoad = window.adServingLoad || '';
+
+
+
+	// Source: src/ready.js
+	// -----------------------------------------------------------------------------
+	/**
+	 * basic onload wrapper
+	 *
+	 * https://github.com/ded/domready
+	 * domready (c) Dustin Diaz 2012 - License MIT
+	 *
+	 * @param callback
+	 */ 
+	var ready = AdServ.ready = (function (ready) {
+		var fns = [], fn, f = false 
+				, testEl = document.documentElement
+				, hack = testEl.doScroll
+				, domContentLoaded = 'DOMContentLoaded'
+				, addEventListener = 'addEventListener'
+				, onreadystatechange = 'onreadystatechange'
+				, readyState = 'readyState'
+				, loaded = /^loade|c/.test(document[readyState]);
+
+		function flush(f) {
+			loaded = 1;
+			while (f = fns.shift()) {
+				f()
+			}
+		}
+
+		document[addEventListener] && document[addEventListener](domContentLoaded, fn = function () {
+			document.removeEventListener(domContentLoaded, fn, f)
+			flush();
+		}, f);
+	 
+		hack && document.attachEvent(onreadystatechange, fn = function () {
+			if (/^c/.test(document[readyState])) {
+				document.detachEvent(onreadystatechange, fn);
+				flush();
+			}
+		});
+
+		return (ready = hack ?
+		                function (fn) {
+			                self != top ?
+			                loaded ? fn() : fns.push(fn) :
+			                function () {
+				                try {
+					                testEl.doScroll('left')
+				                } catch (e) {
+					                return setTimeout(function () { ready(fn) }, 50)
+				                }
+				                fn()
+			                }()
+		                } :
+		                function (fn) {
+			                loaded ? fn() : fns.push(fn)
+		                })
+	})();
 
 
 
@@ -73,7 +132,7 @@
 			}
 			clearTimeout(requestTimeout);
 			cb(xhr.status != 200 ? "err : " + xhr.status : null, xhr.responseText, xhr);
-		};
+		};  
 		xhr.open("GET", url, true);
 		xhr.send();
 		return xhr;
@@ -172,17 +231,17 @@
 	 * @param fn callback
 	 * @param context scope to bind to .. defaults to window
 	 */
-	var on = AdServ.on = function(event, fn, context) {
+	var on = AdServ.on = function (event, fn, context) {
 		// initialze if first
 		eventHandlers[event] = (typeof eventHandlers[event] === 'undefined') ? [] : eventHandlers[event];
 
-		eventHandlers[event].push(function(args) {
+		eventHandlers[event].push(function (args) {
 			return fn.apply(context || window, args);
 		});
 	};
 
-	var once = AdServ.once = function(event, fn, context) {
-		on(event, function() {
+	var once = AdServ.once = function (event, fn, context) {
+		on(event, function () {
 			fn();
 			fn = noop;
 		}, context);
@@ -191,7 +250,7 @@
 	/**
 	 * @param event name of event
 	 */
-	var emit = AdServ.emit = function(event) {
+	var emit = AdServ.emit = function (event) {
 		if (typeof eventHandlers[event] !== 'undefined') {
 			var args = slice.call(arguments, 1);
 			for (var i = 0; i < len(eventHandlers[event]); i++) {
@@ -202,7 +261,7 @@
 
 	// 
 	var originalResize = window['onresize'] || noop;
-	window.onresize = function() {
+	window.onresize = function () {
 		try {
 			originalResize();
 		} catch (e) {}
@@ -210,29 +269,9 @@
 		emit('resize');
 	};
 
-	var loaded = false;
-
-	var originalLoad = window.onload || noop;
-
-	window.onload = function() {
-		loaded = true;
-		try {
-			originalLoad();
-		} catch (e) {}
-
-		//console.log('Adserv.emit : resize'); 
+	ready(function () {
 		emit('load');
-	};
-
-	var ready = function(fn) {
-		if (loaded) {
-			fn()
-		} else {
-			once('load', fn);
-		}
-	};
-
-	AdServ.ready = ready;
+	}); 
 
 
 
@@ -547,7 +586,7 @@
 	};
 
 	var checkVisibility = throttle(function () {
-		var notReady = [];
+		var notReady = []; 
 		for (var index = 0; index < len(invisibleAdspaces); index++) {
 			var campaign = invisibleAdspaces[index];
 			if (isVisible('#' + campaign.target)) {
@@ -557,43 +596,43 @@
 			}
 		}
 		invisibleAdspaces = notReady;
-	}, 100);
+	}, 1000);
 
 	AdServ.on('resize', checkVisibility);
 
 	var invisibleAdspaces = [];
 
 	var loadAdspaces = AdServ.loadAdspaces = function () {
-		var conf = prepareContexts(arguments);
-
+		var conf = prepareContexts(arguments); 
+		
 		for (var ctxName in conf.contexts) {
 			//noinspection JSUnfilteredForInLoop
-			var ctx = conf.contexts[ctxName];
-
+			var ctx = conf.contexts[ctxName]; 
 			var url = conf.baseUrl + '/api/v2/get/campaigns.json?adspaces=' + ctx.ids.join(',')
 					          + '&adServingLoad=' + urlencode(ctx.adServingLoad)
 					          + '&keyword=' + urlencode(ctx.keyword)
 					          + '&searchword=' + urlencode(ctx.searchword);
 			getJSON(url, (function (ctx) {
+				
 				ctx.conf = conf;
-				return function (err, data) {
+				return function (err, data) { 
 					if (err) {
 						console.log('error', err);
 					} else {
-						var campaigns = data.campaigns;
+						var campaigns = data.campaigns; 
 						for (var index = 0; index < len(campaigns); index++) {
 							var campaign = campaigns[index];
 							campaign.ctx = ctx;
-							campaign.target = ctx.adspaces[campaign.adspace].target;
+							campaign.target = ctx.adspaces[campaign.adspace].target; 
 							invisibleAdspaces.push(campaign);
 						}
 					}
-					ready(function () {
-						console.timeEnd("ready");
+					ready(function () { 
+	//					console.timeEnd("ready");
 						var recheck = setInterval(function () {
 							checkVisibility();
 							if (len(invisibleAdspaces) == 0) {
-								console.log('No more adspaces to check');
+								console.log('No more adspaces to load');
 								clearInterval(recheck);
 							}
 						}, 500);

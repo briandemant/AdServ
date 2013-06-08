@@ -114,7 +114,7 @@ var showCampaignX = function (campaign) {
 };
 
 var checkVisibility = throttle(function () {
-	var notReady = [];
+	var notReady = []; 
 	for (var index = 0; index < len(invisibleAdspaces); index++) {
 		var campaign = invisibleAdspaces[index];
 		if (isVisible('#' + campaign.target)) {
@@ -124,7 +124,7 @@ var checkVisibility = throttle(function () {
 		}
 	}
 	invisibleAdspaces = notReady;
-}, 100);
+}, 1000);
 
 AdServ.on('resize', checkVisibility);
 
@@ -132,36 +132,36 @@ AdServ.on('resize', checkVisibility);
 var invisibleAdspaces = [];
 
 var loadAdspaces = AdServ.loadAdspaces = function () {
-	var conf = prepareContexts(arguments);
-
+	var conf = prepareContexts(arguments); 
+	
 	for (var ctxName in conf.contexts) {
 		//noinspection JSUnfilteredForInLoop
-		var ctx = conf.contexts[ctxName];
-
+		var ctx = conf.contexts[ctxName]; 
 		var url = conf.baseUrl + '/api/v2/get/campaigns.json?adspaces=' + ctx.ids.join(',')
 				          + '&adServingLoad=' + urlencode(ctx.adServingLoad)
 				          + '&keyword=' + urlencode(ctx.keyword)
 				          + '&searchword=' + urlencode(ctx.searchword);
 		getJSON(url, (function (ctx) {
+			
 			ctx.conf = conf;
-			return function (err, data) {
+			return function (err, data) { 
 				if (err) {
 					console.log('error', err);
 				} else {
-					var campaigns = data.campaigns;
+					var campaigns = data.campaigns; 
 					for (var index = 0; index < len(campaigns); index++) {
 						var campaign = campaigns[index];
 						campaign.ctx = ctx;
-						campaign.target = ctx.adspaces[campaign.adspace].target;
+						campaign.target = ctx.adspaces[campaign.adspace].target; 
 						invisibleAdspaces.push(campaign);
 					}
 				}
-				ready(function () {
-					console.timeEnd("ready");
+				ready(function () { 
+//					console.timeEnd("ready");
 					var recheck = setInterval(function () {
 						checkVisibility();
 						if (len(invisibleAdspaces) == 0) {
-							console.log('No more adspaces to check');
+							console.log('No more adspaces to load');
 							clearInterval(recheck);
 						}
 					}, 500);

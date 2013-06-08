@@ -53,7 +53,7 @@
 
 		for (var index = 0; index < adspaces.length; index++) {
 			var id = adspaces[index]; 
-			document.write('<a onclick="showAdspace(' + id + ')" class="button">banner ' + id + '</a>');
+			document.write('<a href="javascript:showAdspace(' + id + ');false" class="button">banner ' + id + '</a>');
 		}
 		for (var index = 0; index < adspaces.length; index++) {
 			var id = adspaces[index];
