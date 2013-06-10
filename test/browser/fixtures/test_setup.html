@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>Test Setup</title>
+	<script type="text/javascript">
+		isIE  = isIE8 = isIE9 = isIE10 = false;
+		isStandAlone = (window.parent === window.top);
+		template = 'test_setup';
+//		if (typeof console === 'undefined') {
+//			console = {log: function (msg) {alert(msg)}}; 
+//		}
+	</script>
+	<!--[if lt IE 8]><script type="text/javascript">alert('this browser is not supported')</script><![endif]--> 
+	<!--[if IE 8]><script type="text/javascript">isIE = isIE8 = true;</script><![endif]-->
+	<!--[if IE 9]><script type="text/javascript">isIE = isIE9 = true;</script><![endif]-->
+	<!--[if gt IE 9]><script type="text/javascript">isIE = isIE10 = true;</script><![endif]-->
+</head>
+<body>
+	<h1>Test Setup</h1>
+
+	<div id="dynamic">default</div>
+	<script type="text/javascript">
+		if (isStandAlone) {
+			//alert('stand alone!');
+		} else {
+			window.parent.iframe.beforeLoad(window, document);
+		}
+		document.getElementById('dynamic').innerHTML = 'changed';
+
+		// make sure es5-shim.js is not applied 
+		var isShimApplied = (isIE8) && typeof Array.isArray == 'function';
+
+
+		window.onresize = function () {
+//			console.log('i am ' + template); 
+//			setTimeout(function() {
+			document.getElementById('dynamic').innerHTML = document.body.clientWidth + 'px';
+//			}, 600);
+		};
+	</script>
+
+	<!-- trigger test start -->
+	<script type="text/javascript">
+
+		window.onload = function () { 
+			if (!isStandAlone) {
+				window.parent.iframe.readyForTest(window, document);
+			} 
+		};
+	</script>
+</body>
+</html> 

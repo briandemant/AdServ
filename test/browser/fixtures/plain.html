@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>Plain</title>
+	<script type="text/javascript">
+		isIE  = isIE8 = isIE9 = isIE10 = false;
+		isStandAlone = (window.parent === window.top);
+		template = 'plain';
+		//		if (typeof console === 'undefined') {
+		//			console = {log: function (msg) {alert(msg)}};
+		//		} 
+	</script>
+	<!--[if lt IE 8]>
+	<script type="text/javascript">alert('this browser is not supported')</script><![endif]--> 
+	<!--[if IE 8]>
+	<script type="text/javascript">isIE = isIE8 = true;</script><![endif]-->
+	<!--[if IE 9]>
+	<script type="text/javascript">isIE = isIE9 = true;</script><![endif]-->
+	<!--[if gt IE 9]>
+	<script type="text/javascript">isIE = isIE10 = true;</script><![endif]-->
+	<style type="text/css">
+		.group {
+			border: 1px dotted grey;
+			padding: 5px;
+			float: left;
+			width: 490px;
+			margin-bottom: 5px;
+			background: #eee;
+		}
+
+		.group h3 {
+			margin-top: 5px;
+		}
+
+		.group div div {
+			text-align: center;
+			width: 100px;
+			height: 50px;
+			float: left;
+			border: 1px dotted grey;
+			padding: 5px;
+			margin: 5px;
+			vertical-align: middle;
+			line-height: 50px;
+		}
+
+		.group div.status div {
+			height: 25px;
+			line-height: 25px;
+			border-color: #eee;
+		}
+
+		.group div.banners div {
+			background: #ddd;
+		}
+
+		.first {
+			clear: left;
+		}
+
+		#with-style {
+			opacity: 0.7;
+			visibility: inherit;
+			display: inline;
+		}
+
+		#without-style {
+			opacity: 0.5;
+			visibility: hidden;
+			display: block;
+		}
+
+		#opaque {
+			opacity: 0;
+		}
+
+		#hidden {
+			visibility: hidden;
+		}
+
+		#not-displayed {
+			display: none;
+		}
+	</style>
+</head>
+<body>
+	<h1>Plain</h1>
+
+	<h3>Manuel checks:</h3>
+	<ul>
+		<li>No console errors</li>
+	</ul>
+	<div id='with-style' style='visibility: inherit;display:none;'></div>
+	<div id='without-style' class='with-class'></div>
+	<div id='hidden'>
+		<div id="parent-hidden"></div>
+	</div>
+	<div id='opaque'>
+		<div id="parent-opaque"></div>
+	</div>
+	<div id='not-displayed'>div#parent-not-displayed</div>
+	<div id="group1" class="group">
+		<h3 id="group1-child">Gruppe 1</h3>
+
+		<p>Dette er en beskrivelse af denne banner gruppe</p>
+
+		<div class="banners">
+			<div id="banner1-1" class="first banner">banner 1</div>
+			<div id="banner1-2" class="banner">banner 2</div>
+			<div id="banner1-3">banner 3</div>
+			<div id="banner1-4">banner 4</div>
+		</div>
+		<div class="status">
+			<div id="banner1-1-status" class="first banner">banner 1</div>
+			<div id="banner1-2-status" class="banner">banner 2</div>
+			<div id="banner1-3-status" class="banner">banner 3</div>
+			<div id="banner1-4-status" class="banner">banner 4</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		if (isStandAlone) {
+			//alert('stand alone!');
+		} else {
+			window.parent.iframe.beforeLoad(window, document);
+		}
+		var scriptLoadCount = 0;
+
+		var resizeFired = false;
+		var onloadFired = false;
+		window.onresize = function () {
+			resizeFired = true;
+		};
+		window.onload = function () {
+			onloadFired = true;
+		};
+	</script>
+
+	<script type="text/javascript">
+		(function () {
+			var script = document.createElement("script");
+			script.type = "text/javascript";
+			script.async = false;
+			script.src = "/base/build/AdServ.js";
+			// hook for test only .. start
+			var callback = function () {
+					window.scriptLoadCount++;
+					if (!isStandAlone && window.scriptLoadCount == 1) {
+						window.parent.iframe.readyForTest(window, document);
+					}
+					if (window.scriptLoadCount > 1) {
+						throw "onload fired twice!";
+					} 
+			};
+			if (script.addEventListener) {
+				script.addEventListener("load", callback, false);
+			} else if (script.readyState) {
+				script.onreadystatechange = function () { 
+					if ( script.readyState == 'loaded') {
+						callback();
+					}
+				};
+			}
+			//  hook for test only .. end
+
+			var first = document.getElementsByTagName("script")[0];
+			first.parentNode.insertBefore(script, first);
+		})();
+	</script> 
+</body>
+</html> 
