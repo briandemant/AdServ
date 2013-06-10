@@ -81,14 +81,7 @@ var showCampaignX = function(campaign) {
 			script.async = false;
 			script.onload = script.onreadystatechange = (function(cmp, ctx2) {
 				return function() {
-					url = conf.baseUrl + '/api/v2/count/view?adspaceid=' + cmp.adspace
-						      + '&campaignid=' + urlencode(cmp.campaign)
-						      + '&bannerid=' + urlencode(cmp.banner)
-						      + '&keyword=' + urlencode(ctx2.keyword)
-						      + '&searchword=' + urlencode(ctx2.searchword);
-					get(url, function(err, data) {
-						//console.log(data);
-					})
+					// called several times
 				};
 			})(campaign, ctx);
 			script.src = conf.baseUrl + '/api/v1/get/js_banner'
@@ -100,14 +93,25 @@ var showCampaignX = function(campaign) {
 			var elem = document.getElementById(adspace.target);
 			elem.innerHTML = "";
 			elem.parentNode.insertBefore(script, elem);
+
+			url = conf.baseUrl + '/api/v2/count/view?adspaceid=' + cmp.adspace
+				      + '&campaignid=' + urlencode(cmp.campaign)
+				      + '&bannerid=' + urlencode(cmp.banner)
+				      + '&keyword=' + urlencode(ctx.keyword)
+				      + '&searchword=' + urlencode(ctx.searchword);
+			get(url, function(err, data) {
+				console.log(data);
+			})
 		} else {
 			console.error("already loaded " + id);
 			// emit_campaign.waiting--;
 		}
 	} else {
 		url = conf.baseUrl + '/api/v2/count/load?adspaceid=' + campaign.adspace
+			      + '&keyword=' + urlencode(ctx.keyword)
+			      + '&searchword=' + urlencode(ctx.searchword);
 		get(url, function(err, data) {
-			//console.log(data);
+			console.log(data);
 		})
 	}
 };
@@ -170,4 +174,4 @@ var loadAdspaces = AdServ.loadAdspaces = function() {
 	}
 
 	return conf;
-};git 
+};

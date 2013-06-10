@@ -1,6 +1,6 @@
 "use strict";
 /*!
- * AdServ 0.1.1 / 2013-06-10 10:13:27
+ * AdServ 0.1.1 / 2013-06-10 13:02:49
  * @author Brian Demant <brian.demantgmail.com> (2013)
  */
 (function (window, definition) { 
@@ -8,7 +8,7 @@
 })(window,  function (window, document) { 
 	var AdServ = window.AdServ || {};
 	AdServ.version = '0.1.1';
-	AdServ.released = '2013-06-10 10:13:27';
+	AdServ.released = '2013-06-10 13:02:49';
 	window.AdServ = AdServ; 
 	// header ----------------------------------------------------------------------
 
@@ -553,14 +553,7 @@
 				script.async = false;
 				script.onload = script.onreadystatechange = (function(cmp, ctx2) {
 					return function() {
-						url = conf.baseUrl + '/api/v2/count/view?adspaceid=' + cmp.adspace
-							      + '&campaignid=' + urlencode(cmp.campaign)
-							      + '&bannerid=' + urlencode(cmp.banner)
-							      + '&keyword=' + urlencode(ctx2.keyword)
-							      + '&searchword=' + urlencode(ctx2.searchword);
-						get(url, function(err, data) {
-							//console.log(data);
-						})
+						// called several times
 					};
 				})(campaign, ctx);
 				script.src = conf.baseUrl + '/api/v1/get/js_banner'
@@ -572,14 +565,25 @@
 				var elem = document.getElementById(adspace.target);
 				elem.innerHTML = "";
 				elem.parentNode.insertBefore(script, elem);
+
+				url = conf.baseUrl + '/api/v2/count/view?adspaceid=' + cmp.adspace
+					      + '&campaignid=' + urlencode(cmp.campaign)
+					      + '&bannerid=' + urlencode(cmp.banner)
+					      + '&keyword=' + urlencode(ctx.keyword)
+					      + '&searchword=' + urlencode(ctx.searchword);
+				get(url, function(err, data) {
+					console.log(data);
+				})
 			} else {
 				console.error("already loaded " + id);
 				// emit_campaign.waiting--;
 			}
 		} else {
 			url = conf.baseUrl + '/api/v2/count/load?adspaceid=' + campaign.adspace
+				      + '&keyword=' + urlencode(ctx.keyword)
+				      + '&searchword=' + urlencode(ctx.searchword);
 			get(url, function(err, data) {
-				//console.log(data);
+				console.log(data);
 			})
 		}
 	};
@@ -641,7 +645,7 @@
 		}
 
 		return conf;
-	};git 
+	};
 
 	// footer ----------------------------------------------------------------------
 	return AdServ; 
