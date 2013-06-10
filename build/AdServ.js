@@ -1,6 +1,6 @@
 "use strict";
 /*!
- * AdServ 0.1.1 / 2013-06-10 13:02:49
+ * AdServ 0.1.1 / 2013-06-10 13:07:42
  * @author Brian Demant <brian.demantgmail.com> (2013)
  */
 (function (window, definition) { 
@@ -8,7 +8,7 @@
 })(window,  function (window, document) { 
 	var AdServ = window.AdServ || {};
 	AdServ.version = '0.1.1';
-	AdServ.released = '2013-06-10 13:02:49';
+	AdServ.released = '2013-06-10 13:07:42';
 	window.AdServ = AdServ; 
 	// header ----------------------------------------------------------------------
 
@@ -566,9 +566,9 @@
 				elem.innerHTML = "";
 				elem.parentNode.insertBefore(script, elem);
 
-				url = conf.baseUrl + '/api/v2/count/view?adspaceid=' + cmp.adspace
-					      + '&campaignid=' + urlencode(cmp.campaign)
-					      + '&bannerid=' + urlencode(cmp.banner)
+				url = conf.baseUrl + '/api/v2/count/view?adspaceid=' + campaign.adspace
+					      + '&campaignid=' + urlencode(campaign.campaign)
+					      + '&bannerid=' + urlencode(campaign.banner)
 					      + '&keyword=' + urlencode(ctx.keyword)
 					      + '&searchword=' + urlencode(ctx.searchword);
 				get(url, function(err, data) {

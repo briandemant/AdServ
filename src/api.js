@@ -94,9 +94,9 @@ var showCampaignX = function(campaign) {
 			elem.innerHTML = "";
 			elem.parentNode.insertBefore(script, elem);
 
-			url = conf.baseUrl + '/api/v2/count/view?adspaceid=' + cmp.adspace
-				      + '&campaignid=' + urlencode(cmp.campaign)
-				      + '&bannerid=' + urlencode(cmp.banner)
+			url = conf.baseUrl + '/api/v2/count/view?adspaceid=' + campaign.adspace
+				      + '&campaignid=' + urlencode(campaign.campaign)
+				      + '&bannerid=' + urlencode(campaign.banner)
 				      + '&keyword=' + urlencode(ctx.keyword)
 				      + '&searchword=' + urlencode(ctx.searchword);
 			get(url, function(err, data) {
