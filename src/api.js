@@ -121,21 +121,36 @@ var checkVisibility = throttle(function() {
 	for (var index = 0; index < len(invisibleAdspaces); index++) {
 		var campaign = invisibleAdspaces[index];
 		if (isVisible('#' + campaign.target)) {
+			if (recheck) {
+				clearInterval(recheck);
+			}
 			showCampaignX(campaign);
 		} else {
 			notReady.push(campaign);
 		}
 	}
 	invisibleAdspaces = notReady;
-}, 1000);
+}, 200);
 
-AdServ.on('resize', checkVisibility);
+AdServ.on('resize', function() {
+	if (recheck) {
+		clearInterval(recheck);
+	}
+	checkVisibility();
+});
 
+var recheck = 0;
 
 var invisibleAdspaces = [];
 
-var loadAdspaces = AdServ.loadAdspaces = function() {
-	var conf = prepareContexts(arguments);
+var loadAdspaces = AdServ.loadAdspaces = function() { 
+	var conf = prepareContexts(arguments); 
+	
+	var anyWaiting = 0;
+	// count contexts
+	for (var x in conf.contexts) {
+		anyWaiting++;
+	}
 
 	for (var ctxName in conf.contexts) {
 		//noinspection JSUnfilteredForInLoop
@@ -159,16 +174,22 @@ var loadAdspaces = AdServ.loadAdspaces = function() {
 						invisibleAdspaces.push(campaign);
 					}
 				}
-				ready(function() {
-//					console.timeEnd("ready");
-					var recheck = setInterval(function() {
+				--anyWaiting;
+				if (!anyWaiting) {
+					ready(function() {
+////					console.timeEnd("ready");
+//						console.log("ready");
 						checkVisibility();
-						if (len(invisibleAdspaces) == 0) {
-							console.log('No more adspaces to load');
-							clearInterval(recheck);
-						}
-					}, 500);
-				});
+//						recheck = setInterval(function() {
+////							console.log("recheck");
+//							checkVisibility();
+//							if (len(invisibleAdspaces) == 0) {
+//								console.log('No more adspaces to load');
+//								clearInterval(recheck);
+//							}
+//						}, 1000);
+					});
+				}
 			};
 		})(ctx));
 	}

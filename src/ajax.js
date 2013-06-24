@@ -1,5 +1,13 @@
 "use strict";
 
+var tellTransport = function(trans) {
+	console.log("using " + trans);
+	tellTransport = noop; // but only once
+};
+var tellEvent= function(trans) {
+	console.log("using " + trans);
+	tellEvent = noop; // but only once
+};
 
 /**
  * basic AJAX get request .. aborts after 5 seconds (AdServ.conf.xhrTimeout = 5000)
@@ -19,11 +27,21 @@
  */
 var get = AdServ.get = function(url, cb) {
 	var requestTimeout, xhr;
-	try { xhr = new XMLHttpRequest(); } catch (e) {
-		try { xhr = new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) {
+	if (window.XDomainRequest) {
+		tellTransport("XDomainRequest");
+		xhr = new XDomainRequest();
+	} else if (window.XMLHttpRequest) {
+		tellTransport("XMLHttpRequest");
+		xhr = new XMLHttpRequest();
+	} else {
+		try {
+			xhr = new ActiveXObject("Msxml2.XMLHTTP");
+			tellTransport("XMLHTTP");
+		} catch (e) {
 			return null;
 		}
 	}
+
 	var abort = function() {
 		xhr.abort();
 		cb("aborted by a timeout", null, xhr);
@@ -31,12 +49,29 @@ var get = AdServ.get = function(url, cb) {
 
 	requestTimeout = setTimeout(abort, 5000);
 	xhr.onreadystatechange = function() {
-		if (xhr.readyState != 4) {
-			return;
+		if (xhr.readyState == 4) {
+			tellEvent('onreadystatechange');
+			xhr.onload = noop; // onload reset as it will re-issue the cb
+//			console.log('onreadystatechange ' + xhr.readyState);
+			clearTimeout(requestTimeout);
+			cb(xhr.status != 200 ? "err : " + xhr.status : null, xhr.responseText, xhr);
 		}
+	};
+	xhr.onload = function() {
+		tellEvent('onload');
+
 		clearTimeout(requestTimeout);
-		cb(xhr.status != 200 ? "err : " + xhr.status : null, xhr.responseText, xhr);
-	};  
+		if (xhr.status) {
+			// will this ever happen?
+			for (var i = 0; i < 10; i++) {
+				console.log('onload with status');
+			}
+			
+			cb(xhr.status != 200 ? "err : " + xhr.status : null, xhr.responseText, xhr);
+		} else {
+			cb(xhr.responseText ? null : "err : no response", xhr.responseText, xhr);
+		}
+	};
 	xhr.open("GET", url, true);
 	xhr.send();
 	return xhr;

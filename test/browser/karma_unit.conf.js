@@ -34,9 +34,7 @@ exclude = [
 
 ];
 
-proxies = {
-	'/creatives/' : 'http://jv.adservinginternational.com/creatives/'
-//	'/creatives/' : 'http://dr.op1.adservinginternational.com/creatives/'
+proxies = { 
 	//'/api' : 'http://127.0.0.1:9000'
 };
 
@@ -47,6 +45,10 @@ reporters = ['progress'];
 
 // web server port
 port = 9876;
+
+//Karma will report all the tests that are slower than given time limit (in ms)
+reportSlowerThan = 5000;
+
 
 
 // cli runner port

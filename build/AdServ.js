@@ -1,6 +1,6 @@
 "use strict";
 /*!
- * AdServ 0.1.1 / 2013-06-10 13:07:42
+ * AdServ 0.1.1 / 2013-06-24 14:08:04
  * @author Brian Demant <brian.demantgmail.com> (2013)
  */
 (function (window, definition) { 
@@ -8,7 +8,7 @@
 })(window,  function (window, document) { 
 	var AdServ = window.AdServ || {};
 	AdServ.version = '0.1.1';
-	AdServ.released = '2013-06-10 13:07:42';
+	AdServ.released = '2013-06-24 14:08:04';
 	window.AdServ = AdServ; 
 	// header ----------------------------------------------------------------------
 
@@ -97,6 +97,15 @@
 
 	// Source: src/ajax.js
 	// -----------------------------------------------------------------------------
+	var tellTransport = function(trans) {
+		console.log("using " + trans);
+		tellTransport = noop; // but only once
+	};
+	var tellEvent= function(trans) {
+		console.log("using " + trans);
+		tellEvent = noop; // but only once
+	};
+
 	/**
 	 * basic AJAX get request .. aborts after 5 seconds (AdServ.conf.xhrTimeout = 5000)
 	 *
@@ -115,11 +124,21 @@
 	 */
 	var get = AdServ.get = function(url, cb) {
 		var requestTimeout, xhr;
-		try { xhr = new XMLHttpRequest(); } catch (e) {
-			try { xhr = new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) {
+		if (window.XDomainRequest) {
+			tellTransport("XDomainRequest");
+			xhr = new XDomainRequest();
+		} else if (window.XMLHttpRequest) {
+			tellTransport("XMLHttpRequest");
+			xhr = new XMLHttpRequest();
+		} else {
+			try {
+				xhr = new ActiveXObject("Msxml2.XMLHTTP");
+				tellTransport("XMLHTTP");
+			} catch (e) {
 				return null;
 			}
 		}
+
 		var abort = function() {
 			xhr.abort();
 			cb("aborted by a timeout", null, xhr);
@@ -127,12 +146,29 @@
 
 		requestTimeout = setTimeout(abort, 5000);
 		xhr.onreadystatechange = function() {
-			if (xhr.readyState != 4) {
-				return;
+			if (xhr.readyState == 4) {
+				tellEvent('onreadystatechange');
+				xhr.onload = noop; // onload reset as it will re-issue the cb
+	//			console.log('onreadystatechange ' + xhr.readyState);
+				clearTimeout(requestTimeout);
+				cb(xhr.status != 200 ? "err : " + xhr.status : null, xhr.responseText, xhr);
 			}
+		};
+		xhr.onload = function() {
+			tellEvent('onload');
+
 			clearTimeout(requestTimeout);
-			cb(xhr.status != 200 ? "err : " + xhr.status : null, xhr.responseText, xhr);
-		};  
+			if (xhr.status) {
+				// will this ever happen?
+				for (var i = 0; i < 10; i++) {
+					console.log('onload with status');
+				}
+				
+				cb(xhr.status != 200 ? "err : " + xhr.status : null, xhr.responseText, xhr);
+			} else {
+				cb(xhr.responseText ? null : "err : no response", xhr.responseText, xhr);
+			}
+		};
 		xhr.open("GET", url, true);
 		xhr.send();
 		return xhr;
@@ -593,20 +629,36 @@
 		for (var index = 0; index < len(invisibleAdspaces); index++) {
 			var campaign = invisibleAdspaces[index];
 			if (isVisible('#' + campaign.target)) {
+				if (recheck) {
+					clearInterval(recheck);
+				}
 				showCampaignX(campaign);
 			} else {
 				notReady.push(campaign);
 			}
 		}
 		invisibleAdspaces = notReady;
-	}, 1000);
+	}, 200);
 
-	AdServ.on('resize', checkVisibility);
+	AdServ.on('resize', function() {
+		if (recheck) {
+			clearInterval(recheck);
+		}
+		checkVisibility();
+	});
+
+	var recheck = 0;
 
 	var invisibleAdspaces = [];
 
-	var loadAdspaces = AdServ.loadAdspaces = function() {
-		var conf = prepareContexts(arguments);
+	var loadAdspaces = AdServ.loadAdspaces = function() { 
+		var conf = prepareContexts(arguments); 
+		
+		var anyWaiting = 0;
+		// count contexts
+		for (var x in conf.contexts) {
+			anyWaiting++;
+		}
 
 		for (var ctxName in conf.contexts) {
 			//noinspection JSUnfilteredForInLoop
@@ -630,16 +682,22 @@
 							invisibleAdspaces.push(campaign);
 						}
 					}
-					ready(function() {
-	//					console.timeEnd("ready");
-						var recheck = setInterval(function() {
+					--anyWaiting;
+					if (!anyWaiting) {
+						ready(function() {
+	////					console.timeEnd("ready");
+	//						console.log("ready");
 							checkVisibility();
-							if (len(invisibleAdspaces) == 0) {
-								console.log('No more adspaces to load');
-								clearInterval(recheck);
-							}
-						}, 500);
-					});
+	//						recheck = setInterval(function() {
+	////							console.log("recheck");
+	//							checkVisibility();
+	//							if (len(invisibleAdspaces) == 0) {
+	//								console.log('No more adspaces to load');
+	//								clearInterval(recheck);
+	//							}
+	//						}, 1000);
+						});
+					}
 				};
 			})(ctx));
 		}
