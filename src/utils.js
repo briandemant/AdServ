@@ -5,6 +5,7 @@ var toString = Object.prototype.toString;
 var slice = Array.prototype.slice;
 var urlencode = encodeURIComponent; 
 var location = document.location;
+var activeX = window.ActiveXObject;
  
 var noop = function() {};
 
@@ -20,15 +21,19 @@ var isObject = function(obj) {
 var isArray = function(obj) {
 	return obj && typeof obj === "object" && toString.call(obj) === "[object Array]";
 };
+
 var isString = function(str) {
 	return str && typeof str === "string";
 };
+
 var isUndefined = function(obj) {
 	return obj && typeof obj === "undefined";
 };
+
 var isElement = function(value) {
 	return value ? value.nodeType === 1 : false;
 };
+
 var isNode = function(value) {
 	return value ? value.nodeType === 9 : false;
 };
@@ -42,7 +47,6 @@ var guid = AdServ.guid = function() {
 };
 
 var getRequestParameter = function(key) {
-
 	var qs = location.search || location.hash;
 	if (len(qs) > 1) {
 		var start = qs.indexOf(key + "=");

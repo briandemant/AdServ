@@ -65,7 +65,7 @@ var throttle = function(fn, ms) {
 	};
 };
 
-var showCampaignX = function(campaign) {
+var showCampaign = function(campaign) {
 	var ctx = campaign.ctx;
 	var conf = ctx.conf;
 	var url;
@@ -88,20 +88,21 @@ var showCampaignX = function(campaign) {
 				             + '?adspaceid=' + urlencode(adspace.id)
 				             + '&campaignid=' + urlencode(campaign.campaign)
 				             + '&bannerid=' + urlencode(campaign.banner)
+				             + '&keywords=' + urlencode(ctx.keyword)
 				             + '&appendTo=' + urlencode(adspace.target);
 
 			var elem = document.getElementById(adspace.target);
 			elem.innerHTML = "";
 			elem.parentNode.insertBefore(script, elem);
-
-			url = conf.baseUrl + '/api/v2/count/view?adspaceid=' + campaign.adspace
-				      + '&campaignid=' + urlencode(campaign.campaign)
-				      + '&bannerid=' + urlencode(campaign.banner)
-				      + '&keyword=' + urlencode(ctx.keyword)
-				      + '&searchword=' + urlencode(ctx.searchword);
-			get(url, function(err, data) {
-				console.log(data);
-			})
+//
+//			url = conf.baseUrl + '/api/v2/count/view?adspaceid=' + campaign.adspace
+//				      + '&campaignid=' + urlencode(campaign.campaign)
+//				      + '&bannerid=' + urlencode(campaign.banner)
+//				      + '&keyword=' + urlencode(ctx.keyword)
+//				      + '&searchword=' + urlencode(ctx.searchword);
+//			get(url, function(err, data) {
+//				console.log(data);
+//			})
 		} else {
 			console.error("already loaded " + id);
 			// emit_campaign.waiting--;
@@ -124,7 +125,7 @@ var checkVisibility = throttle(function() {
 			if (recheck) {
 				clearInterval(recheck);
 			}
-			showCampaignX(campaign);
+			showCampaign(campaign);
 		} else {
 			notReady.push(campaign);
 		}

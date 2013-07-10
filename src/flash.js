@@ -8,10 +8,8 @@
  *   legal reasons.
  */
 "use strict";
-
-var activeX = window.ActiveXObject;
-
-var playerVersion;
+ 
+var playerVersion = "0";
 
 if (activeX) {
 	try {
@@ -28,6 +26,8 @@ if (activeX) {
 		playerVersion = (plugin.description.match(/(\d+)\.(\d+)/)[0]);
 	}
 }
+
+playerVersion = parseFloat(playerVersion);
 
 var isFlashSupported = AdServ.flash = playerVersion >= 6 ? playerVersion : false;
 

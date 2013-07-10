@@ -19,7 +19,7 @@ files = [
 //	'test/browser/unit/scope.test.js', 
 	'test/browser/unit/*.test.js',
 
-	{pattern : 'build/AdServ.js', watched : true, included : false, served : true},
+	{pattern : 'build/AdServ.js', watched : true, included : false, served : false},
 
 	// test main require module last
 	{pattern : 'test/browser/fixtures/*.html', watched : true, included : false, served : true},
@@ -34,12 +34,18 @@ exclude = [
 
 ];
 
+preprocessors = {
+//	'build/AdServ.js' : 'coverage'
+};
+
 proxies = { 
+	'/api' : 'http://test.fmadsering.dk:9000'
 	//'/api' : 'http://127.0.0.1:9000'
 };
 
 // test results reporter to use
 // possible values: 'dots', 'progress', 'junit'
+reporters = ['progress', 'coverage'];
 reporters = ['progress'];
 
 

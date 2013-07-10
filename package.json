@@ -1,7 +1,7 @@
 {
   "name": "AdServ",
-  "version": "0.1.1",
-  "date": "2013-06-08 19:23:39 +00:00",
+  "version": "0.1.2",
+  "date": "2013-07-10 18:10:44 +00:00",
   "author": "Brian Demant <brian.demant@gmail.com>",
   "license": "Apache Licence 2.0",
   "description": "Adserving js frontend",
@@ -9,7 +9,10 @@
   "directories": {
     "test": "test"
   },
-  "dependencies": {},
+  "dependencies": {
+    "express": "~3.2.6",
+    "cors": "~1.0.1"
+  },
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-bumpup": "~0.2.0",

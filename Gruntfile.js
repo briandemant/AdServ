@@ -34,7 +34,7 @@ module.exports = function (grunt) {
 			dist   : {
 //				src : ['src/flash.js'],
 //				src : ['src/{legacy}.js'],
-				src : [ 'src/legacy.js', 'src/ready.js', 'src/{utils,dom,json,event,ajax,flash}.js', 'src/api.js'],
+				src : [ 'src/legacy.js', 'src/utils.js', 'src/ready.js', 'src/{dom,json,event,ajax,flash}.js', 'src/api.js'],
 //				src : ['src/*.js'],
 				dest: 'build/<%= pkg.name %>.js'
 			}

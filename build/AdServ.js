@@ -1,14 +1,14 @@
 "use strict";
 /*!
- * AdServ 0.1.1 / 2013-06-24 14:08:04
+ * AdServ 0.1.2 / 2013-07-10 20:11:10
  * @author Brian Demant <brian.demantgmail.com> (2013)
  */
 (function (window, definition) { 
 	window.AdServ = definition(window, window.document); 
 })(window,  function (window, document) { 
 	var AdServ = window.AdServ || {};
-	AdServ.version = '0.1.1';
-	AdServ.released = '2013-06-24 14:08:04';
+	AdServ.version = '0.1.2';
+	AdServ.released = '2013-07-10 20:11:10';
 	window.AdServ = AdServ; 
 	// header ----------------------------------------------------------------------
 
@@ -17,22 +17,96 @@
 	var console = window.console;
 
 	if (!console) {
-		AdServ.history = [];
 		console = {};
-		console.log = function() {
-			var msg = slice.call(arguments);
-			if (len(msg) == 1) {
-				msg = msg[0];
-			}
-			AdServ.history.push(msg);
-		};
-
-		console.error = function() {
-			console.log.apply(null, arguments);
-		};
+		console.log = console.error = function() {};
 	}
+	//console.log("using debug version");
 
 	window.adServingLoad = window.adServingLoad || '';
+
+
+
+	// Source: src/utils.js
+	// -----------------------------------------------------------------------------
+	// shortcuts 
+	var toString = Object.prototype.toString;
+	var slice = Array.prototype.slice;
+	var urlencode = encodeURIComponent; 
+	var location = document.location;
+	var activeX = window.ActiveXObject;
+	 
+	var noop = function() {};
+
+	// detectors
+	var isFunction = function(fn) {
+		return fn && typeof fn === "function";
+	};
+
+	var isObject = function(obj) {
+		return obj && typeof obj === "object" && toString.call(obj) === "[object Object]";
+	};
+
+	var isArray = function(obj) {
+		return obj && typeof obj === "object" && toString.call(obj) === "[object Array]";
+	};
+
+	var isString = function(str) {
+		return str && typeof str === "string";
+	};
+
+	var isUndefined = function(obj) {
+		return obj && typeof obj === "undefined";
+	};
+
+	var isElement = function(value) {
+		return value ? value.nodeType === 1 : false;
+	};
+
+	var isNode = function(value) {
+		return value ? value.nodeType === 9 : false;
+	};
+
+	//tools
+	var guid = AdServ.guid = function() {
+		var guidPart = function() {
+			return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+		};
+		return  'ad_' + guidPart() + "_" + guidPart() + "_" + guidPart() + "_" + guidPart();
+	};
+
+	var getRequestParameter = function(key) {
+		var qs = location.search || location.hash;
+		if (len(qs) > 1) {
+			var start = qs.indexOf(key + "=");
+			if (start > -1) {
+				var end = (qs.indexOf("&", start) > -1) ? qs.indexOf("&", start) : len(qs);
+				return qs.substring(qs.indexOf("=", start) + 1, end);
+			}
+		}
+		return "";
+	};
+
+	var len = function(item) {
+		return item.length;
+	};
+
+	var mix = function(defaults, source) {
+		var result = {};
+		var k;
+		for (k in defaults) {
+			if (defaults.hasOwnProperty(k)) {
+				result[k] = defaults[k];
+			}
+		}
+		for (k in source) {
+			if (source.hasOwnProperty(k)) {
+				result[k] = source[k];
+			}
+		}
+		return result;
+	};
+
+	
 
 
 
@@ -97,17 +171,8 @@
 
 	// Source: src/ajax.js
 	// -----------------------------------------------------------------------------
-	var tellTransport = function(trans) {
-		console.log("using " + trans);
-		tellTransport = noop; // but only once
-	};
-	var tellEvent= function(trans) {
-		console.log("using " + trans);
-		tellEvent = noop; // but only once
-	};
-
 	/**
-	 * basic AJAX get request .. aborts after 5 seconds (AdServ.conf.xhrTimeout = 5000)
+	 * basic AJAX get request .. aborts after 5 seconds 
 	 *
 	 * usage
 	 *
@@ -125,29 +190,25 @@
 	var get = AdServ.get = function(url, cb) {
 		var requestTimeout, xhr;
 		if (window.XDomainRequest) {
-			tellTransport("XDomainRequest");
 			xhr = new XDomainRequest();
+			xhr.onprogress = function() {}; // ie9 bug
 		} else if (window.XMLHttpRequest) {
-			tellTransport("XMLHttpRequest");
 			xhr = new XMLHttpRequest();
 		} else {
 			try {
-				xhr = new ActiveXObject("Msxml2.XMLHTTP");
-				tellTransport("XMLHTTP");
+				xhr = new activeX("Msxml2.XMLHTTP");
 			} catch (e) {
 				return null;
 			}
 		}
-
-		var abort = function() {
+	 
+		requestTimeout = setTimeout(function abort() {
 			xhr.abort();
 			cb("aborted by a timeout", null, xhr);
-		};
-
-		requestTimeout = setTimeout(abort, 5000);
+		}, 5000);
+		
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState == 4) {
-				tellEvent('onreadystatechange');
 				xhr.onload = noop; // onload reset as it will re-issue the cb
 	//			console.log('onreadystatechange ' + xhr.readyState);
 				clearTimeout(requestTimeout);
@@ -155,15 +216,13 @@
 			}
 		};
 		xhr.onload = function() {
-			tellEvent('onload');
-
 			clearTimeout(requestTimeout);
 			if (xhr.status) {
 				// will this ever happen?
 				for (var i = 0; i < 10; i++) {
 					console.log('onload with status');
 				}
-				
+
 				cb(xhr.status != 200 ? "err : " + xhr.status : null, xhr.responseText, xhr);
 			} else {
 				cb(xhr.responseText ? null : "err : no response", xhr.responseText, xhr);
@@ -322,9 +381,7 @@
 	 * **SWFObject is the SWF embed script formarly known as FlashObject. The name was changed for
 	 *   legal reasons.
 	 */
-	var activeX = window.ActiveXObject;
-
-	var playerVersion;
+	var playerVersion = "0";
 
 	if (activeX) {
 		try {
@@ -341,6 +398,8 @@
 			playerVersion = (plugin.description.match(/(\d+)\.(\d+)/)[0]);
 		}
 	}
+
+	playerVersion = parseFloat(playerVersion);
 
 	var isFlashSupported = AdServ.flash = playerVersion >= 6 ? playerVersion : false;
 
@@ -427,86 +486,6 @@
 
 
 
-	// Source: src/utils.js
-	// -----------------------------------------------------------------------------
-	// shortcuts 
-	var toString = Object.prototype.toString;
-	var slice = Array.prototype.slice;
-	var urlencode = encodeURIComponent; 
-	var location = document.location;
-	 
-	var noop = function() {};
-
-	// detectors
-	var isFunction = function(fn) {
-		return fn && typeof fn === "function";
-	};
-
-	var isObject = function(obj) {
-		return obj && typeof obj === "object" && toString.call(obj) === "[object Object]";
-	};
-
-	var isArray = function(obj) {
-		return obj && typeof obj === "object" && toString.call(obj) === "[object Array]";
-	};
-	var isString = function(str) {
-		return str && typeof str === "string";
-	};
-	var isUndefined = function(obj) {
-		return obj && typeof obj === "undefined";
-	};
-	var isElement = function(value) {
-		return value ? value.nodeType === 1 : false;
-	};
-	var isNode = function(value) {
-		return value ? value.nodeType === 9 : false;
-	};
-
-	//tools
-	var guid = AdServ.guid = function() {
-		var guidPart = function() {
-			return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-		};
-		return  'ad_' + guidPart() + "_" + guidPart() + "_" + guidPart() + "_" + guidPart();
-	};
-
-	var getRequestParameter = function(key) {
-
-		var qs = location.search || location.hash;
-		if (len(qs) > 1) {
-			var start = qs.indexOf(key + "=");
-			if (start > -1) {
-				var end = (qs.indexOf("&", start) > -1) ? qs.indexOf("&", start) : len(qs);
-				return qs.substring(qs.indexOf("=", start) + 1, end);
-			}
-		}
-		return "";
-	};
-
-	var len = function(item) {
-		return item.length;
-	};
-
-	var mix = function(defaults, source) {
-		var result = {};
-		var k;
-		for (k in defaults) {
-			if (defaults.hasOwnProperty(k)) {
-				result[k] = defaults[k];
-			}
-		}
-		for (k in source) {
-			if (source.hasOwnProperty(k)) {
-				result[k] = source[k];
-			}
-		}
-		return result;
-	};
-
-	
-
-
-
 	// Source: src/api.js
 	// -----------------------------------------------------------------------------
 	var prepareContexts = function(args) {
@@ -573,7 +552,7 @@
 		};
 	};
 
-	var showCampaignX = function(campaign) {
+	var showCampaign = function(campaign) {
 		var ctx = campaign.ctx;
 		var conf = ctx.conf;
 		var url;
@@ -596,20 +575,21 @@
 					             + '?adspaceid=' + urlencode(adspace.id)
 					             + '&campaignid=' + urlencode(campaign.campaign)
 					             + '&bannerid=' + urlencode(campaign.banner)
+					             + '&keywords=' + urlencode(ctx.keyword)
 					             + '&appendTo=' + urlencode(adspace.target);
 
 				var elem = document.getElementById(adspace.target);
 				elem.innerHTML = "";
 				elem.parentNode.insertBefore(script, elem);
-
-				url = conf.baseUrl + '/api/v2/count/view?adspaceid=' + campaign.adspace
-					      + '&campaignid=' + urlencode(campaign.campaign)
-					      + '&bannerid=' + urlencode(campaign.banner)
-					      + '&keyword=' + urlencode(ctx.keyword)
-					      + '&searchword=' + urlencode(ctx.searchword);
-				get(url, function(err, data) {
-					console.log(data);
-				})
+	//
+	//			url = conf.baseUrl + '/api/v2/count/view?adspaceid=' + campaign.adspace
+	//				      + '&campaignid=' + urlencode(campaign.campaign)
+	//				      + '&bannerid=' + urlencode(campaign.banner)
+	//				      + '&keyword=' + urlencode(ctx.keyword)
+	//				      + '&searchword=' + urlencode(ctx.searchword);
+	//			get(url, function(err, data) {
+	//				console.log(data);
+	//			})
 			} else {
 				console.error("already loaded " + id);
 				// emit_campaign.waiting--;
@@ -632,7 +612,7 @@
 				if (recheck) {
 					clearInterval(recheck);
 				}
-				showCampaignX(campaign);
+				showCampaign(campaign);
 			} else {
 				notReady.push(campaign);
 			}

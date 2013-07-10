@@ -5,7 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
 	<title>Plain</title>
 	<script type="text/javascript">
-		isIE  = isIE8 = isIE9 = isIE10 = false;
+		isIE = isIE8 = isIE9 = isIE10 = false;
 		isStandAlone = (window.parent === window.top);
 		template = 'plain';
 		//		if (typeof console === 'undefined') {
@@ -13,7 +13,7 @@
 		//		} 
 	</script>
 	<!--[if lt IE 8]>
-	<script type="text/javascript">alert('this browser is not supported')</script><![endif]--> 
+	<script type="text/javascript">alert('this browser is not supported')</script><![endif]-->
 	<!--[if IE 8]>
 	<script type="text/javascript">isIE = isIE8 = true;</script><![endif]-->
 	<!--[if IE 9]>
@@ -120,6 +120,11 @@
 		</div>
 	</div>
 	<script type="text/javascript">
+		var adspaces = []
+		adspaces.push({ id : '9', target : 'banner1-1' });
+		adspaces.push({ id : '1', target : 'banner1-2' });
+	</script>
+	<script type="text/javascript">
 		if (isStandAlone) {
 			//alert('stand alone!');
 		} else {
@@ -129,35 +134,42 @@
 
 		var resizeFired = false;
 		var onloadFired = false;
-		window.onresize = function () {
+		window.onresize = function() {
 			resizeFired = true;
 		};
-		window.onload = function () {
+		window.onload = function() {
 			onloadFired = true;
 		};
 	</script>
 
 	<script type="text/javascript">
-		(function () {
+		(function() {
+			var url = "http://" + document.location.hostname + ":9877";
 			var script = document.createElement("script");
 			script.type = "text/javascript";
 			script.async = false;
-			script.src = "/base/build/AdServ.js";
+			// server on a diff port
+//			script.src = "http://jv.adservinginternational.com/api/v2/js/adserv.js";
+//			script.src = "http://test.fmadserving.dk/api/v2/js/adserv.js";
+			script.src = url + "/api/v2/js/adserv.js";
 			// hook for test only .. start
-			var callback = function () {
-					window.scriptLoadCount++;
-					if (!isStandAlone && window.scriptLoadCount == 1) {
-						window.parent.iframe.readyForTest(window, document);
-					}
-					if (window.scriptLoadCount > 1) {
-						throw "onload fired twice!";
-					} 
+			var callback = function() {
+				window.scriptLoadCount++;
+				if (!isStandAlone && window.scriptLoadCount == 1) {
+					window.parent.iframe.readyForTest(window, document);
+				}
+				if (window.scriptLoadCount > 1) {
+					throw "onload fired twice!";
+				}
+				AdServ.baseUrl = url;
+//				AdServ.baseUrl = "http://test.fmadserving.dk";
+				AdServ.loadAdspaces(adspaces);
 			};
 			if (script.addEventListener) {
 				script.addEventListener("load", callback, false);
 			} else if (script.readyState) {
-				script.onreadystatechange = function () { 
-					if ( script.readyState == 'loaded') {
+				script.onreadystatechange = function() {
+					if (script.readyState == 'loaded') {
 						callback();
 					}
 				};
@@ -167,6 +179,6 @@
 			var first = document.getElementsByTagName("script")[0];
 			first.parentNode.insertBefore(script, first);
 		})();
-	</script> 
+	</script>
 </body>
 </html> 
