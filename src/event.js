@@ -2,34 +2,43 @@
 
 var eventHandlers = {};
 
-/**
- *
- * @param event eventname
- * @param fn callback
- * @param context scope to bind to .. defaults to window
- */
-var on = AdServ.on = function (event, fn, context) {
-	// initialze if first
+// Register a listener on an event
+//
+// **params:** 
+//
+//  * **event** eventname
+//  * **fn** callback
+//  * **context** *optional* scope to bind to .. defaults to window
+var on = AdServ.on = function(event, fn, context) {
+	// Initialze if first listener for this event
 	eventHandlers[event] = (typeof eventHandlers[event] === 'undefined') ? [] : eventHandlers[event];
 
-	eventHandlers[event].push(function (args) {
+	eventHandlers[event].push(function(args) {
 		return fn.apply(context || window, args);
 	});
 };
 
-
-var once = AdServ.once = function (event, fn, context) {
-	on(event, function () {
+// Register a listener on an event (but only first time) 
+//
+// **params:** 
+//
+//  * **event** eventname
+//  * **fn** callback
+//  * **context** *optional* scope to bind to .. defaults to window
+var once = AdServ.once = function(event, fn, context) {
+	on(event, function() {
 		fn();
 		fn = noop;
 	}, context);
 };
 
-
-/**
- * @param event name of event
- */
-var emit = AdServ.emit = function (event) {
+// Emit (trigger) an event
+//
+// **params:** 
+//
+//  * **event** eventname 
+//  * **arguments** *optional* all other arguments are passed on to the callback
+var emit = AdServ.emit = function(event) {
 	if (typeof eventHandlers[event] !== 'undefined') {
 		var args = slice.call(arguments, 1);
 		for (var i = 0; i < len(eventHandlers[event]); i++) {
@@ -38,16 +47,18 @@ var emit = AdServ.emit = function (event) {
 	}
 };
 
-// 
+// Save original `onresize`
 var originalResize = window['onresize'] || noop;
-window.onresize = function () {
+
+// Register new wrapping `onresize`
+window.onresize = function() {
 	try {
 		originalResize();
-	} catch (e) {}
-	//console.log('Adserv.emit : resize'); 
+	} catch (e) {} 
 	emit('resize');
 };
 
-ready(function () {
+// Emit load event when dom is loaded
+ready(function() {
 	emit('load');
 }); 

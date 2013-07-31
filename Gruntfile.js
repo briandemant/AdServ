@@ -1,60 +1,119 @@
-module.exports = function (grunt) {
+module.exports = function(grunt) {
 	var config = {
-		pkg     : grunt.file.readJSON('package.json'),
+		pkg : grunt.file.readJSON('package.json'),
 		// -------------------------------------------------------------------------------------
-		uglify  : {
-			options: {
-				banner: '/*! <%= pkg.name %>  <%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %> */\n',
-//				beautify : true,
-//				compress : false,
+		uglify : {
+			max : {
+				options : {
+					banner : '/*! <%= pkg.name %>  <%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %> */\n',
+//				beautify : true, 
 //				mangle : false,
-				report: 'gzip',
+					report : 'gzip',
+					// https://github.com/mishoo/UglifyJS2#readme
+					compress : {
+						sequences : true,  // join consecutive statemets with the “comma operator”
+						properties : true,  // optimize property access: a["foo"] → a.foo
+						dead_code : true,  // discard unreachable code
+						drop_debugger : true,  // discard “debugger” statements
+						unsafe : true, // some unsafe optimizations (see below)
+						conditionals : true,  // optimize if-s and conditional expressions
+						comparisons : true,  // optimize comparisons
+						evaluate : true,  // evaluate constant expressions
+						booleans : true,  // optimize boolean expressions
+						loops : true,  // optimize loops
+						unused : true,  // drop unused variables/functions
+						hoist_funs : true,  // hoist function declarations
+						hoist_vars : false, // hoist variable declarations
+						if_return : true,  // optimize if-s followed by return/continue
+						join_vars : true,  // join var declarations
+						cascade : true,  // try to cascade `right` into `left` in sequences
+						side_effects : true  // drop side-effect-free statements
+					}
 //				preserveComments : 'some',
 //				sourceMap : 'AdServ.map.js',
 //				sourceMappingURL : 'http://adserving.com/src/AdServ.map.json',
+				},
+				files : {
+					'build/AdServ.min.js' : [ 'build/AdServ.js']
+				}
 			},
-			build  : {
-				src : 'build/<%= pkg.name %>.js',
-				dest: 'build/<%= pkg.name %>.min.js'
-			}
+//			docs : {
+//				options : {
+// 					beautify : true,
+//					mangle : false,
+//					// https://github.com/mishoo/UglifyJS2#readme
+//					compress : {
+//						sequences : false,  // join consecutive statemets with the “comma operator”
+//						properties : false,  // optimize property access: a["foo"] → a.foo
+//						dead_code : true,  // discard unreachable code
+//						drop_debugger : false,  // discard “debugger” statements
+//						unsafe : true, // some unsafe optimizations (see below)
+//						conditionals : false,  // optimize if-s and conditional expressions
+//						comparisons : false,  // optimize comparisons
+//						evaluate : false,  // evaluate constant expressions
+//						booleans : false,  // optimize boolean expressions
+//						loops : false,  // optimize loops
+//						unused : true,  // drop unused variables/functions
+//						hoist_funs : false,  // hoist function declarations
+//						hoist_vars : false, // hoist variable declarations
+//						if_return : false,  // optimize if-s followed by return/continue
+//						join_vars : false,  // join var declarations
+//						cascade : false,  // try to cascade `right` into `left` in sequences
+//						side_effects : true  // drop side-effect-free statements
+//					},
+//					preserveComments : 'all'
+//				},
+//				files : {
+//					'build/<%= pkg.name %>.js' : [ 'build/<%= pkg.name %>.js']
+//				}
+//			}
 		},
 
 		// -------------------------------------------------------------------------------------
-		concat  : {
-			options: {
+		concat : {
+			options : {
 				banner : grunt.file.read('src/header.js.tmpl')
-						.replace(/VERSION/g, '<%= pkg.version %>')
-						.replace(/DATE/g, '<%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %>'),
+					.replace(/VERSION/g, '<%= pkg.version %>')
+					.replace(/DATE/g, '<%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %>'),
 				footer : grunt.file.read('src/footer.js.tmpl'),
-				process: function (src, filepath) {
-					return '\n\n\t// Source: ' + filepath + '\n\t// -----------------------------------------------------------------------------\n' +
+				process : function(src, filepath) {
+					return '\n\n\t// ## ' + filepath + '\n\t/* ------------------------------------------------------------ */\n\n' +
 					       src.replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1').replace(/(^|\n)/g, '$1\t').replace(/(\n\t){2,}/g, '\n\n\t') + '\n';
 				}
 			},
-			dist   : {
+			dist : {
 //				src : ['src/flash.js'],
 //				src : ['src/{legacy}.js'],
 				src : [ 'src/legacy.js', 'src/utils.js', 'src/ready.js', 'src/{dom,json,event,ajax,flash}.js', 'src/api.js'],
 //				src : ['src/*.js'],
-				dest: 'build/<%= pkg.name %>.js'
+				dest : 'build/<%= pkg.name %>.js'
 			}
 		},
 
 
 		// -------------------------------------------------------------------------------------
-		watch   : {
-			normal   : {
-				files  : ['src/*.js', 'src/*.js.tmpl'],
-				tasks  : ['concat', 'uglify'],
-				options: {
+		watch : {
+			normal : {
+				files : ['src/*.js', 'src/*.js.tmpl'],
+				tasks : ['concat', 'uglify:max'],
+				options : {
 //					nospawn: true,
 //					forever: true
 				}
 			},
-			operation: {
-				files  : ['src/*.js', 'src/*.js.tmpl'],
-				tasks  : ['concat', 'uglify', 'copy:to_operation'],
-				options: {
+			operation : {
+				files : ['src/*.js', 'src/*.js.tmpl'],
+				tasks : ['concat', 'uglify:max', 'copy:to_operation'],
+				options : {
+//					nospawn: true,
+//					forever: true
+				}
+			},
+			docs : {
+				files : ['src/*.js', 'src/*.js.tmpl'],
+//				tasks : ['concat', 'uglify:docs', 'docco'],
+				tasks : ['concat', 'docco'],
+				options : {
 //					nospawn: true,
 //					forever: true
 				}
@@ -69,28 +128,28 @@ module.exports = function (grunt) {
 		},
 
 		// -------------------------------------------------------------------------------------
-		karma   : {
-			unit: {
-				configFile: 'test/karma.conf.js',
-				background: true
+		karma : {
+			unit : {
+				configFile : 'test/karma.conf.js',
+				background : true
 			}
 		},
 
 		// -------------------------------------------------------------------------------------
-		nodeunit: ['test/server/*_test.js'],
+		nodeunit : ['test/server/*_test.js'],
 
 		// -------------------------------------------------------------------------------------
-		notify  : {
-			watch: {
-				options: {
-					title  : 'Tests ran',  // optional
-					message: 'no errors found' //required
+		notify : {
+			watch : {
+				options : {
+					title : 'Tests ran',  // optional
+					message : 'no errors found' //required
 				}
 			}
 		},
 
 		// -------------------------------------------------------------------------------------
-		bumpup  : ['package.json' ],
+		bumpup : ['package.json' ],
 
 		// -------------------------------------------------------------------------------------
 //		html2js : {
@@ -99,11 +158,20 @@ module.exports = function (grunt) {
 //				dest: 'test/browser/fixtures.js'
 //			}
 //		}
+		// -------------------------------------------------------------------------------------
+		docco : {
+			docs : {
+				src : ['src/*.js', 'build/AdServ.js'],
+				options : {
+					output : 'build/docs/'
+				}
+			}
+		},
 
-		copy: {
-			to_operation: {
-				files: [
-					{expand: true, cwd: 'build/', src: ['*.js'], dest: '../operation/api/v2/js/', filter: 'isFile'}
+		copy : {
+			to_operation : {
+				files : [
+					{expand : true, cwd : 'build/', src : ['*.js'], dest : '../operation/api/v2/js/', filter : 'isFile'}
 				]
 			}
 		}
@@ -117,18 +185,19 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-karma');
+	grunt.loadNpmTasks('grunt-docco');
 //	grunt.loadNpmTasks('grunt-notify');
 
 
 	// https://github.com/Darsain/grunt-bumpup
 	grunt.loadNpmTasks('grunt-bumpup');
-	grunt.registerTask('updatePkg', function () {
+	grunt.registerTask('updatePkg', function() {
 		grunt.config.set('pkg', grunt.file.readJSON('package.json'));
 	});
-	grunt.registerTask('release', function (type) {
+	grunt.registerTask('release', function(type) {
 		type = type ? type : 'patch';     // Set the release type 
 		grunt.task.run('bumpup:' + type); // Bump up the version 
-		grunt.task.run('updatePkg');          // build
+		grunt.task.run('updatePkg');      // update package.json
 		grunt.task.run('build');          // build
 	});
 
@@ -173,8 +242,10 @@ module.exports = function (grunt) {
 
 	// Default task(s).
 	grunt.registerTask('default', ['build']);
-	grunt.registerTask('build', ['concat', 'uglify']);
+	grunt.registerTask('build', ['concat', 'uglify', 'docco']);
 	grunt.registerTask('dev', ['concat', 'uglify', 'watch:normal']);
+//	grunt.registerTask('doc', ['concat', 'uglify:docs', 'docco', 'watch:docs']);
+	grunt.registerTask('doc', ['concat', 'docco', 'watch:docs']);
 	grunt.registerTask('devop', ['concat', 'uglify', 'copy:to_operation', 'watch:operation']);
 
 };

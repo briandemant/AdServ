@@ -1,43 +1,49 @@
 "use strict";
-/*!
- * AdServ 0.1.2 / 2013-07-10 20:11:10
+// ## AdServ responsive js library:
+// Version  : **0.1.2**  
+// Released : **2013-07-31 12:13:36**
+/*! AdServ 0.1.2 / 2013-07-31 12:13:36
  * @author Brian Demant <brian.demantgmail.com> (2013)
  */
+
+// Module pattern for scope and more effective minification
 (function (window, definition) { 
 	window.AdServ = definition(window, window.document); 
 })(window,  function (window, document) { 
 	var AdServ = window.AdServ || {};
 	AdServ.version = '0.1.2';
-	AdServ.released = '2013-07-10 20:11:10';
+	AdServ.released = '2013-07-31 12:13:36';
 	window.AdServ = AdServ; 
-	// header ----------------------------------------------------------------------
+	
 
-	// Source: src/legacy.js
-	// -----------------------------------------------------------------------------
+	// ## src/legacy.js
+	/* ------------------------------------------------------------ */
+
+	// Protect against missing console.log
 	var console = window.console;
 
 	if (!console) {
 		console = {};
 		console.log = console.error = function() {};
-	}
-	//console.log("using debug version");
+	} 
 
+	// Protect against missing globals
 	window.adServingLoad = window.adServingLoad || '';
 
 
 
-	// Source: src/utils.js
-	// -----------------------------------------------------------------------------
-	// shortcuts 
+	// ## src/utils.js
+	/* ------------------------------------------------------------ */
+
+	// Shortcuts to maximize minification 
 	var toString = Object.prototype.toString;
 	var slice = Array.prototype.slice;
-	var urlencode = encodeURIComponent; 
-	var location = document.location;
+	var urlencode = encodeURIComponent;  
 	var activeX = window.ActiveXObject;
 	 
 	var noop = function() {};
 
-	// detectors
+	// Detectors
 	var isFunction = function(fn) {
 		return fn && typeof fn === "function";
 	};
@@ -66,7 +72,7 @@
 		return value ? value.nodeType === 9 : false;
 	};
 
-	//tools
+	// Create a `GUID`
 	var guid = AdServ.guid = function() {
 		var guidPart = function() {
 			return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
@@ -74,6 +80,8 @@
 		return  'ad_' + guidPart() + "_" + guidPart() + "_" + guidPart() + "_" + guidPart();
 	};
 
+	// Parse query string and get the value for the key  
+	// **UNTESTET!**
 	var getRequestParameter = function(key) {
 		var qs = location.search || location.hash;
 		if (len(qs) > 1) {
@@ -86,10 +94,12 @@
 		return "";
 	};
 
+	// Shortcut to optimiz minification
 	var len = function(item) {
 		return item.length;
 	};
 
+	// For mixing default options with provided
 	var mix = function(defaults, source) {
 		var result = {};
 		var k;
@@ -110,16 +120,12 @@
 
 
 
-	// Source: src/ready.js
-	// -----------------------------------------------------------------------------
-	/**
-	 * basic onload wrapper
-	 *
-	 * https://github.com/ded/domready
-	 * domready (c) Dustin Diaz 2012 - License MIT
-	 *
-	 * @param callback
-	 */ 
+	// ## src/ready.js
+	/* ------------------------------------------------------------ */
+
+	// A basic onload wrapper
+	// based on [domready](https://github.com/ded/domready)  
+	// (c) Dustin Diaz 2012 - License MIT
 	var ready = AdServ.ready = (function (ready) {
 		var fns = [], fn, f = false 
 				, testEl = document.documentElement
@@ -169,29 +175,26 @@
 
 
 
-	// Source: src/ajax.js
-	// -----------------------------------------------------------------------------
-	/**
-	 * basic AJAX get request .. aborts after 5 seconds 
-	 *
-	 * usage
-	 *
-	 * AdServ.get('http://something', function (err,data,xhr) {
-		 * if (err)
-		 *   alert(err)
-		 * else
-		 *    process(data);
-		 * });
-	 *
-	 * @param url
-	 * @param cb callback
-	 * @returns XMLHttpRequest
-	 */
+	// ## src/ajax.js
+	/* ------------------------------------------------------------ */
+
+	// Basic AJAX get request .. aborts after 5 seconds 
+	//
+	// *Usage:*
+	// 
+	//		AdServ.get('http://something', function (err,data,xhr) {
+	//		  if (err)
+	//		    alert(err)
+	//		  else
+	//		    process(data);
+	//		});  
+
 	var get = AdServ.get = function(url, cb) {
 		var requestTimeout, xhr;
 		if (window.XDomainRequest) {
 			xhr = new XDomainRequest();
-			xhr.onprogress = function() {}; // ie9 bug
+			xhr.onprogress = function() {};
+			/* ie9 bugfix*/
 		} else if (window.XMLHttpRequest) {
 			xhr = new XMLHttpRequest();
 		} else {
@@ -201,41 +204,48 @@
 				return null;
 			}
 		}
-	 
+
+		// Abort after 5 seconds 
 		requestTimeout = setTimeout(function abort() {
 			xhr.abort();
 			cb("aborted by a timeout", null, xhr);
 		}, 5000);
-		
+
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState == 4) {
-				xhr.onload = noop; // onload reset as it will re-issue the cb
-	//			console.log('onreadystatechange ' + xhr.readyState);
-				clearTimeout(requestTimeout);
+				// `onload` reset as it will re-issue the cb 
+				xhr.onload = noop;
+
+				cancelAbort();
+
 				cb(xhr.status != 200 ? "err : " + xhr.status : null, xhr.responseText, xhr);
 			}
 		};
-		xhr.onload = function() {
+
+		// Remove abort trigger
+		function cancelAbort() {
 			clearTimeout(requestTimeout);
+		}
+
+		xhr.onload = function() {
+			cancelAbort();
 			if (xhr.status) {
-				// will this ever happen?
-				for (var i = 0; i < 10; i++) {
-					console.log('onload with status');
-				}
+				// Will this ever happen? 
+				console.error('onload with status!!!');
 
 				cb(xhr.status != 200 ? "err : " + xhr.status : null, xhr.responseText, xhr);
 			} else {
 				cb(xhr.responseText ? null : "err : no response", xhr.responseText, xhr);
 			}
 		};
+
+		// Go go go!
 		xhr.open("GET", url, true);
 		xhr.send();
 		return xhr;
 	};
 
-	/**
-	 * same as AdServ.get but data is passed as parsed json
-	 */
+	// Same as AdServ.get but data is passed as json 
 	var getJSON = AdServ.getJSON = function(url, cb) {
 		return get(url, function(err, value, xhr) {
 			var json = value;
@@ -249,21 +259,31 @@
 
 
 
-	// Source: src/dom.js
-	// -----------------------------------------------------------------------------
-	var $ = AdServ.$ = function(selector, el) {
+	// ## src/dom.js
+	/* ------------------------------------------------------------ */
+
+	// Shortcut for querySelector  
+	var $ = AdServ.$ = function(selector, parent) {
+		// Returns elem directly if selector is an element 
 		if (isElement(selector)) {
 			return selector;
 		}
-		if (!el) {el = document;}
-		return el.querySelector(selector);
+
+		// Defaults to search from document if parent is not provided
+		if (!parent) {parent = document;}
+		
+		return parent.querySelector(selector);
 	};
 
-	var $$ = AdServ.$$ = function(selector, el) {
-		if (!el) {el = document;}
-		return slice.call(el.querySelectorAll(selector));
+	// Shortcut for querySelectorAll
+	var $$ = AdServ.$$ = function(selector, parent) {
+		// Defaults to search from document if parent is not provided
+		if (!parent) {parent = document;}
+		
+		return slice.call(parent.querySelectorAll(selector));
 	};
 
+	// Shim for getComputedStyle used by `AdServ.css`
 	var getComputedStyle;
 	if (!window.getComputedStyle) {
 		getComputedStyle = function(el, pseudo) {
@@ -286,29 +306,40 @@
 		getComputedStyle = window.getComputedStyle;
 	}
 
-	var css = AdServ.css = function(elem, name) {
-		elem = $(elem);
+	// get css property for an element
+	var css = AdServ.css = function(elemOrSelector, name) {
+		// Ensure element is an element and not a selector
+		var elem = $(elemOrSelector);
 		return getComputedStyle($(elem)).getPropertyValue(name);
 	};
 
-	var isVisible = AdServ.isVisible = function(elem) {
-		elem = $(elem);
+	// Test if an element is *visible* (searches up the tree until BODY is reached)
+	var isVisible = AdServ.isVisible = function(elemOrSelector) {
+		var elem = $(elemOrSelector);
 		if (!elem) {
 			return false;
 		}
+		// Body must be visible (anything else would be silly)
 		if (elem.nodeName === 'BODY') {
 			return true;
 		}
+		
+		// Is it hidden from sight?
 		if (css(elem, 'visibility') == 'hidden') {
 			return false;
 		}
 
+		// Is it displayed?
 		if (css(elem, 'display') == 'none') {
 			return false;
 		}
+		
+		// Is it transparent?
 		if (css(elem, 'opacity') == '0') {
 			return false;
 		}
+		
+		// Look up the tree
 		return isVisible(elem.parentNode);
 	};
 	 
@@ -316,36 +347,48 @@
 
 
 
-	// Source: src/event.js
-	// -----------------------------------------------------------------------------
+	// ## src/event.js
+	/* ------------------------------------------------------------ */
+
 	var eventHandlers = {};
 
-	/**
-	 *
-	 * @param event eventname
-	 * @param fn callback
-	 * @param context scope to bind to .. defaults to window
-	 */
-	var on = AdServ.on = function (event, fn, context) {
-		// initialze if first
+	// Register a listener on an event
+	//
+	// **params:** 
+	//
+	//  * **event** eventname
+	//  * **fn** callback
+	//  * **context** *optional* scope to bind to .. defaults to window
+	var on = AdServ.on = function(event, fn, context) {
+		// Initialze if first listener for this event
 		eventHandlers[event] = (typeof eventHandlers[event] === 'undefined') ? [] : eventHandlers[event];
 
-		eventHandlers[event].push(function (args) {
+		eventHandlers[event].push(function(args) {
 			return fn.apply(context || window, args);
 		});
 	};
 
-	var once = AdServ.once = function (event, fn, context) {
-		on(event, function () {
+	// Register a listener on an event (but only first time) 
+	//
+	// **params:** 
+	//
+	//  * **event** eventname
+	//  * **fn** callback
+	//  * **context** *optional* scope to bind to .. defaults to window
+	var once = AdServ.once = function(event, fn, context) {
+		on(event, function() {
 			fn();
 			fn = noop;
 		}, context);
 	};
 
-	/**
-	 * @param event name of event
-	 */
-	var emit = AdServ.emit = function (event) {
+	// Emit (trigger) an event
+	//
+	// **params:** 
+	//
+	//  * **event** eventname 
+	//  * **arguments** *optional* all other arguments are passed on to the callback
+	var emit = AdServ.emit = function(event) {
 		if (typeof eventHandlers[event] !== 'undefined') {
 			var args = slice.call(arguments, 1);
 			for (var i = 0; i < len(eventHandlers[event]); i++) {
@@ -354,24 +397,27 @@
 		}
 	};
 
-	// 
+	// Save original `onresize`
 	var originalResize = window['onresize'] || noop;
-	window.onresize = function () {
+
+	// Register new wrapping `onresize`
+	window.onresize = function() {
 		try {
 			originalResize();
-		} catch (e) {}
-		//console.log('Adserv.emit : resize'); 
+		} catch (e) {} 
 		emit('resize');
 	};
 
-	ready(function () {
+	// Emit load event when dom is loaded
+	ready(function() {
 		emit('load');
 	}); 
 
 
 
-	// Source: src/flash.js
-	// -----------------------------------------------------------------------------
+	// ## src/flash.js
+	/* ------------------------------------------------------------ */
+
 	/**
 	 * SWFObject v1.4: Flash Player detection and embed - http://blog.deconcept.com/swfobject/
 	 *
@@ -478,16 +524,20 @@
 
 
 
-	// Source: src/json.js
-	// -----------------------------------------------------------------------------
-	// IE7 was the last not to have JSON.parse so we can remove the backup (loog in git if you need it)
+	// ## src/json.js
+	/* ------------------------------------------------------------ */
+
+	// Shortcut to `JSON.parse`  
+	//  
+	// IE7 was the last not to have JSON.parse so we can remove the backup (look in git if you need it)
 	var parseJSON = AdServ.parseJSON = JSON.parse;
 	 
 
 
 
-	// Source: src/api.js
-	// -----------------------------------------------------------------------------
+	// ## src/api.js
+	/* ------------------------------------------------------------ */
+
 	var prepareContexts = function(args) {
 		AdServ.baseUrl = AdServ.baseUrl || '';
 		var conf = { baseUrl : AdServ.baseUrl, xhrTimeout : 5000 };

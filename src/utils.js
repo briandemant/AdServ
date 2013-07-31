@@ -1,15 +1,14 @@
 "use strict";
 
-// shortcuts 
+// Shortcuts to maximize minification 
 var toString = Object.prototype.toString;
 var slice = Array.prototype.slice;
-var urlencode = encodeURIComponent; 
-var location = document.location;
+var urlencode = encodeURIComponent;  
 var activeX = window.ActiveXObject;
  
 var noop = function() {};
 
-// detectors
+// Detectors
 var isFunction = function(fn) {
 	return fn && typeof fn === "function";
 };
@@ -38,7 +37,7 @@ var isNode = function(value) {
 	return value ? value.nodeType === 9 : false;
 };
 
-//tools
+// Create a `GUID`
 var guid = AdServ.guid = function() {
 	var guidPart = function() {
 		return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
@@ -46,6 +45,8 @@ var guid = AdServ.guid = function() {
 	return  'ad_' + guidPart() + "_" + guidPart() + "_" + guidPart() + "_" + guidPart();
 };
 
+// Parse query string and get the value for the key  
+// **UNTESTET!**
 var getRequestParameter = function(key) {
 	var qs = location.search || location.hash;
 	if (len(qs) > 1) {
@@ -58,12 +59,12 @@ var getRequestParameter = function(key) {
 	return "";
 };
 
-
+// Shortcut to optimiz minification
 var len = function(item) {
 	return item.length;
 };
 
-
+// For mixing default options with provided
 var mix = function(defaults, source) {
 	var result = {};
 	var k;

@@ -1,19 +1,28 @@
 "use strict";
 
-var $ = AdServ.$ = function(selector, el) {
+// Shortcut for querySelector  
+var $ = AdServ.$ = function(selector, parent) {
+	// Returns elem directly if selector is an element 
 	if (isElement(selector)) {
 		return selector;
 	}
-	if (!el) {el = document;}
-	return el.querySelector(selector);
+
+	// Defaults to search from document if parent is not provided
+	if (!parent) {parent = document;}
+	
+	return parent.querySelector(selector);
 };
 
-var $$ = AdServ.$$ = function(selector, el) {
-	if (!el) {el = document;}
-	return slice.call(el.querySelectorAll(selector));
+// Shortcut for querySelectorAll
+var $$ = AdServ.$$ = function(selector, parent) {
+	// Defaults to search from document if parent is not provided
+	if (!parent) {parent = document;}
+	
+	return slice.call(parent.querySelectorAll(selector));
 };
 
 
+// Shim for getComputedStyle used by `AdServ.css`
 var getComputedStyle;
 if (!window.getComputedStyle) {
 	getComputedStyle = function(el, pseudo) {
@@ -36,29 +45,40 @@ if (!window.getComputedStyle) {
 	getComputedStyle = window.getComputedStyle;
 }
 
-var css = AdServ.css = function(elem, name) {
-	elem = $(elem);
+// get css property for an element
+var css = AdServ.css = function(elemOrSelector, name) {
+	// Ensure element is an element and not a selector
+	var elem = $(elemOrSelector);
 	return getComputedStyle($(elem)).getPropertyValue(name);
 };
 
-var isVisible = AdServ.isVisible = function(elem) {
-	elem = $(elem);
+// Test if an element is *visible* (searches up the tree until BODY is reached)
+var isVisible = AdServ.isVisible = function(elemOrSelector) {
+	var elem = $(elemOrSelector);
 	if (!elem) {
 		return false;
 	}
+	// Body must be visible (anything else would be silly)
 	if (elem.nodeName === 'BODY') {
 		return true;
 	}
+	
+	// Is it hidden from sight?
 	if (css(elem, 'visibility') == 'hidden') {
 		return false;
 	}
 
+	// Is it displayed?
 	if (css(elem, 'display') == 'none') {
 		return false;
 	}
+	
+	// Is it transparent?
 	if (css(elem, 'opacity') == '0') {
 		return false;
 	}
+	
+	// Look up the tree
 	return isVisible(elem.parentNode);
 };
  
