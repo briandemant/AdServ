@@ -1,8 +1,14 @@
 "use strict";
- 
-// A basic onload wrapper
-// based on [domready](https://github.com/ded/domready)  
+// ### AdServ.ready 
+// A basic onload wrapper.  
+//
+// Based on [domready](https://github.com/ded/domready)  
 // (c) Dustin Diaz 2012 - License MIT
+//
+// **params:** 
+//
+//  * **callback** callback to call when doc is ready 
+
 var ready = AdServ.ready = (function (ready) {
 	var fns = [], fn, f = false 
 			, testEl = document.documentElement

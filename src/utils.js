@@ -36,28 +36,7 @@ var isElement = function(value) {
 var isNode = function(value) {
 	return value ? value.nodeType === 9 : false;
 };
-
-// Create a `GUID`
-var guid = AdServ.guid = function() {
-	var guidPart = function() {
-		return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-	};
-	return  'ad_' + guidPart() + "_" + guidPart() + "_" + guidPart() + "_" + guidPart();
-};
-
-// Parse query string and get the value for the key  
-// **UNTESTET!**
-var getRequestParameter = function(key) {
-	var qs = location.search || location.hash;
-	if (len(qs) > 1) {
-		var start = qs.indexOf(key + "=");
-		if (start > -1) {
-			var end = (qs.indexOf("&", start) > -1) ? qs.indexOf("&", start) : len(qs);
-			return qs.substring(qs.indexOf("=", start) + 1, end);
-		}
-	}
-	return "";
-};
+ 
 
 // Shortcut to optimiz minification
 var len = function(item) {
@@ -82,4 +61,37 @@ var mix = function(defaults, source) {
 };
 
 
+// ### AdServ.guid
+// Create a `GUID` 
+//
+// **returns:** something like `ad_FF40_47A1_0102_F034`
+//
+var guid = AdServ.guid = function() {
+	var guidPart = function() {
+		return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+	};
+	return  'ad_' + guidPart() + "_" + guidPart() + "_" + guidPart() + "_" + guidPart();
+};
+
+// ### getRequestParameter
+// **UNTESTET!**
+// Parse query string or hash and get the value for the key
+//
+// **params:** 
+//
+//  * **key** key in query or hash
+//
+// **returns:** value from query or hash
+//
+var getRequestParameter = function(key) {
+	var qs = location.search || location.hash;
+	if (len(qs) > 1) {
+		var start = qs.indexOf(key + "=");
+		if (start > -1) {
+			var end = (qs.indexOf("&", start) > -1) ? qs.indexOf("&", start) : len(qs);
+			return qs.substring(qs.indexOf("=", start) + 1, end);
+		}
+	}
+	return "";
+};
 

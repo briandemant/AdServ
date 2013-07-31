@@ -1,8 +1,8 @@
 "use strict";
 // ## AdServ responsive js library:
 // Version  : **0.1.3**  
-// Released : **2013-07-31 12:23:19**
-/*! AdServ 0.1.3 / 2013-07-31 12:23:19
+// Released : **2013-07-31 13:28:01**
+/*! AdServ 0.1.3 / 2013-07-31 13:28:01
  * @author Brian Demant <brian.demantgmail.com> (2013)
  */
 
@@ -12,7 +12,7 @@
 })(window,  function (window, document) { 
 	var AdServ = window.AdServ || {};
 	AdServ.version = '0.1.3';
-	AdServ.released = '2013-07-31 12:23:19';
+	AdServ.released = '2013-07-31 13:28:01';
 	window.AdServ = AdServ; 
 	
 
@@ -71,28 +71,7 @@
 	var isNode = function(value) {
 		return value ? value.nodeType === 9 : false;
 	};
-
-	// Create a `GUID`
-	var guid = AdServ.guid = function() {
-		var guidPart = function() {
-			return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-		};
-		return  'ad_' + guidPart() + "_" + guidPart() + "_" + guidPart() + "_" + guidPart();
-	};
-
-	// Parse query string and get the value for the key  
-	// **UNTESTET!**
-	var getRequestParameter = function(key) {
-		var qs = location.search || location.hash;
-		if (len(qs) > 1) {
-			var start = qs.indexOf(key + "=");
-			if (start > -1) {
-				var end = (qs.indexOf("&", start) > -1) ? qs.indexOf("&", start) : len(qs);
-				return qs.substring(qs.indexOf("=", start) + 1, end);
-			}
-		}
-		return "";
-	};
+	 
 
 	// Shortcut to optimiz minification
 	var len = function(item) {
@@ -116,6 +95,40 @@
 		return result;
 	};
 
+	// ### AdServ.guid
+	// Create a `GUID` 
+	//
+	// **returns:** something like `ad_FF40_47A1_0102_F034`
+	//
+	var guid = AdServ.guid = function() {
+		var guidPart = function() {
+			return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+		};
+		return  'ad_' + guidPart() + "_" + guidPart() + "_" + guidPart() + "_" + guidPart();
+	};
+
+	// ### getRequestParameter
+	// **UNTESTET!**
+	// Parse query string or hash and get the value for the key
+	//
+	// **params:** 
+	//
+	//  * **key** key in query or hash
+	//
+	// **returns:** value from query or hash
+	//
+	var getRequestParameter = function(key) {
+		var qs = location.search || location.hash;
+		if (len(qs) > 1) {
+			var start = qs.indexOf(key + "=");
+			if (start > -1) {
+				var end = (qs.indexOf("&", start) > -1) ? qs.indexOf("&", start) : len(qs);
+				return qs.substring(qs.indexOf("=", start) + 1, end);
+			}
+		}
+		return "";
+	};
+
 	
 
 
@@ -123,9 +136,16 @@
 	// ## src/ready.js
 	/* ------------------------------------------------------------ */
 
-	// A basic onload wrapper
-	// based on [domready](https://github.com/ded/domready)  
+	// ### AdServ.ready 
+	// A basic onload wrapper.  
+	//
+	// Based on [domready](https://github.com/ded/domready)  
 	// (c) Dustin Diaz 2012 - License MIT
+	//
+	// **params:** 
+	//
+	//  * **callback** callback to call when doc is ready 
+
 	var ready = AdServ.ready = (function (ready) {
 		var fns = [], fn, f = false 
 				, testEl = document.documentElement
@@ -178,6 +198,8 @@
 	// ## src/ajax.js
 	/* ------------------------------------------------------------ */
 
+	// ### AdServ.get
+	//
 	// Basic AJAX get request .. aborts after 5 seconds 
 	//
 	// *Usage:*
@@ -188,7 +210,13 @@
 	//		  else
 	//		    process(data);
 	//		});  
-
+	//
+	// **params:** 
+	//
+	//  * **url** url to call
+	//  * **cb** callback to call when the request is done or failed
+	//
+	// **returns:** XDomainRequest or XMLHttpRequest
 	var get = AdServ.get = function(url, cb) {
 		var requestTimeout, xhr;
 		if (window.XDomainRequest) {
@@ -205,7 +233,6 @@
 			}
 		}
 
-		// Abort after 5 seconds 
 		requestTimeout = setTimeout(function abort() {
 			xhr.abort();
 			cb("aborted by a timeout", null, xhr);
@@ -213,7 +240,7 @@
 
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState == 4) {
-				// `onload` reset as it will re-issue the cb 
+				/* `onload` reset as it will re-issue the cb */
 				xhr.onload = noop;
 
 				cancelAbort();
@@ -222,7 +249,6 @@
 			}
 		};
 
-		// Remove abort trigger
 		function cancelAbort() {
 			clearTimeout(requestTimeout);
 		}
@@ -239,13 +265,22 @@
 			}
 		};
 
-		// Go go go!
 		xhr.open("GET", url, true);
 		xhr.send();
 		return xhr;
 	};
 
-	// Same as AdServ.get but data is passed as json 
+	// ### AdServ.getJSON
+	//
+	// Same as AdServ.get but data is passed as json  
+	//
+	// **params:** 
+	//
+	//  * **url** url to call
+	//  * **cb** callback to call when the request is done or failed
+	//
+	// **returns:** XDomainRequest or XMLHttpRequest 
+	//  
 	var getJSON = AdServ.getJSON = function(url, cb) {
 		return get(url, function(err, value, xhr) {
 			var json = value;
@@ -351,7 +386,8 @@
 	/* ------------------------------------------------------------ */
 
 	var eventHandlers = {};
-
+	 
+	// ### AdServ.on
 	// Register a listener on an event
 	//
 	// **params:** 
@@ -359,15 +395,15 @@
 	//  * **event** eventname
 	//  * **fn** callback
 	//  * **context** *optional* scope to bind to .. defaults to window
-	var on = AdServ.on = function(event, fn, context) {
-		// Initialze if first listener for this event
+	var on = AdServ.on = function(event, fn, context) { 
 		eventHandlers[event] = (typeof eventHandlers[event] === 'undefined') ? [] : eventHandlers[event];
 
 		eventHandlers[event].push(function(args) {
 			return fn.apply(context || window, args);
 		});
 	};
-
+	 
+	// ### AdServ.once
 	// Register a listener on an event (but only first time) 
 	//
 	// **params:** 
@@ -382,6 +418,7 @@
 		}, context);
 	};
 
+	// ## AdServ.emit
 	// Emit (trigger) an event
 	//
 	// **params:** 
@@ -396,6 +433,8 @@
 			}
 		}
 	};
+
+	// ----
 
 	// Save original `onresize`
 	var originalResize = window['onresize'] || noop;
@@ -418,37 +457,46 @@
 	// ## src/flash.js
 	/* ------------------------------------------------------------ */
 
-	/**
-	 * SWFObject v1.4: Flash Player detection and embed - http://blog.deconcept.com/swfobject/
-	 *
-	 * SWFObject is (c) 2006 Geoff Stearns and is released under the MIT License:
-	 * http://www.opensource.org/licenses/mit-license.php
-	 *
-	 * **SWFObject is the SWF embed script formarly known as FlashObject. The name was changed for
-	 *   legal reasons.
-	 */
-	var playerVersion = "0";
-
-	if (activeX) {
-		try {
-			var atx = new activeX('ShockwaveFlash.ShockwaveFlash');
-			if (atx) {
-				var version = atx.GetVariable('$version').substring(4);
-				playerVersion = (version.replace(',', '.'));
+	// This part is based on **SWFObject v1.4** 
+	//
+	//  Flash Player detection and embed - http://blog.deconcept.com/swfobject/
+	// 
+	//  SWFObject is (c) 2006 Geoff Stearns and is released under the MIT License:
+	//  http://www.opensource.org/licenses/mit-license.php
+	// 
+	//  SWFObject is the SWF embed script formarly known as FlashObject. The name was changed for legal reasons.
+	var playerVersion;
+	// ### getPlayerVersion 
+	//
+	// **returns:** installed version of  flash
+	//
+	function getPlayerVersion() {
+		if (activeX) {
+			try {
+				var atx = new activeX('ShockwaveFlash.ShockwaveFlash');
+				if (atx) {
+					var version = atx.GetVariable('$version').substring(4);
+					return parseFloat(version.replace(',', '.'));
+				}
+			} catch (e) {
 			}
-		} catch (e) {
+		} else {
+			var plugin = window.navigator.plugins["Shockwave Flash"];
+			if (plugin && plugin.description) {
+				return parseFloat(plugin.description.match(/(\d+)\.(\d+)/)[0]);
+			}
 		}
-	} else {
-		var plugin = window.navigator.plugins["Shockwave Flash"];
-		if (plugin && plugin.description) {
-			playerVersion = (plugin.description.match(/(\d+)\.(\d+)/)[0]);
-		}
+		return "0";
 	}
 
-	playerVersion = parseFloat(playerVersion);
+	playerVersion = getPlayerVersion();
 
 	var isFlashSupported = AdServ.flash = playerVersion >= 6 ? playerVersion : false;
 
+	// ### _Constructor:_ Flash 
+	//
+	// **creates:** an Object used to embed flash
+	//
 	var Flash = function(url, id, width, height) {
 		this.params = {quality : 'best'};
 		this.vars = {quality : 'best'};
@@ -461,21 +509,43 @@
 	};
 
 	Flash.prototype = {
+		// ### _flash_.addParam
+		//
+		// add a parameter to the embeded html 
+		//
 		addParam : function(key, value) {
 			this.params[key] = value;
 		},
+
+		// ### _flash_.addVariable
+		//
+		// add a variable to the query string
+		//
 		addVariable : function(key, value) {
 			this.vars[key] = value;
 		},
+
+		// ### _flash_.getVars
+		//
+		// generates a query string from provided values
+		//
+		// **returns:** query string
+		//
 		getVars : function() {
 			var queryString = [];
 			var key;
-			for (key in this.vars) {
-				//noinspection JSUnfilteredForInLoop
+			for (key in this.vars) { 
 				queryString.push(key + "=" + this.vars[key]);
 			}
 			return queryString;
 		},
+
+		// ### _flash_.getSWFHTML
+		//
+		// generates html embed code for all browsers
+		//
+		// **returns:** html code
+		//
 		getSWFHTML : function() {
 			var html;
 			var params = this.params;
@@ -487,8 +557,7 @@
 				html = '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"' + common
 					       + '><param name="movie" value="' + attrs["swf"] + '" />';
 
-				for (key in params) {
-					//noinspection JSUnfilteredForInLoop
+				for (key in params) { 
 					html += '<param name="' + key + '" value="' + params[key] + '" />';
 				}
 
@@ -498,8 +567,7 @@
 				html += '</object>';
 			} else {
 				html = '<embed type="application/x-shockwave-flash" src="' + attrs["swf"] + '"' + common;
-				for (var key in params) {
-					//noinspection JSUnfilteredForInLoop
+				for (var key in params) { 
 					html += key + '="' + params[key] + '" ';
 				}
 
@@ -507,6 +575,17 @@
 			}
 			return html;
 		},
+
+		// ### _flash_.write
+		//
+		// Writes the embed html into the provided target
+		//
+		// **params:** 
+		//
+		//  * **target** id of the element to embed the flash file
+		//
+		// **returns:** true if flash is supported and the code was embedded
+		//
 		write : function(target) {
 			if (isFlashSupported) {
 				var elem = $("#" + target);
@@ -528,7 +607,7 @@
 	/* ------------------------------------------------------------ */
 
 	// Shortcut to `JSON.parse`  
-	//  
+	//
 	// IE7 was the last not to have JSON.parse so we can remove the backup (look in git if you need it)
 	var parseJSON = AdServ.parseJSON = JSON.parse;
 	 

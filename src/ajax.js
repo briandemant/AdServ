@@ -1,5 +1,6 @@
 "use strict";
-
+// ### AdServ.get
+//
 // Basic AJAX get request .. aborts after 5 seconds 
 //
 // *Usage:*
@@ -10,7 +11,13 @@
 //		  else
 //		    process(data);
 //		});  
-
+//
+// **params:** 
+//
+//  * **url** url to call
+//  * **cb** callback to call when the request is done or failed
+//
+// **returns:** XDomainRequest or XMLHttpRequest
 var get = AdServ.get = function(url, cb) {
 	var requestTimeout, xhr;
 	if (window.XDomainRequest) {
@@ -27,7 +34,6 @@ var get = AdServ.get = function(url, cb) {
 		}
 	}
 
-	// Abort after 5 seconds 
 	requestTimeout = setTimeout(function abort() {
 		xhr.abort();
 		cb("aborted by a timeout", null, xhr);
@@ -35,7 +41,7 @@ var get = AdServ.get = function(url, cb) {
 
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState == 4) {
-			// `onload` reset as it will re-issue the cb 
+			/* `onload` reset as it will re-issue the cb */
 			xhr.onload = noop;
 
 			cancelAbort();
@@ -44,7 +50,6 @@ var get = AdServ.get = function(url, cb) {
 		}
 	};
 
-	// Remove abort trigger
 	function cancelAbort() {
 		clearTimeout(requestTimeout);
 	}
@@ -61,13 +66,22 @@ var get = AdServ.get = function(url, cb) {
 		}
 	};
 
-	// Go go go!
 	xhr.open("GET", url, true);
 	xhr.send();
 	return xhr;
 };
 
-// Same as AdServ.get but data is passed as json 
+// ### AdServ.getJSON
+//
+// Same as AdServ.get but data is passed as json  
+//
+// **params:** 
+//
+//  * **url** url to call
+//  * **cb** callback to call when the request is done or failed
+//
+// **returns:** XDomainRequest or XMLHttpRequest 
+//  
 var getJSON = AdServ.getJSON = function(url, cb) {
 	return get(url, function(err, value, xhr) {
 		var json = value;
