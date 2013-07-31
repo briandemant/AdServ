@@ -1,8 +1,8 @@
 "use strict";
 // ## AdServ responsive js library:
-// Version  : **0.1.2**  
-// Released : **2013-07-31 12:13:36**
-/*! AdServ 0.1.2 / 2013-07-31 12:13:36
+// Version  : **0.1.3**  
+// Released : **2013-07-31 12:23:19**
+/*! AdServ 0.1.3 / 2013-07-31 12:23:19
  * @author Brian Demant <brian.demantgmail.com> (2013)
  */
 
@@ -11,8 +11,8 @@
 	window.AdServ = definition(window, window.document); 
 })(window,  function (window, document) { 
 	var AdServ = window.AdServ || {};
-	AdServ.version = '0.1.2';
-	AdServ.released = '2013-07-31 12:13:36';
+	AdServ.version = '0.1.3';
+	AdServ.released = '2013-07-31 12:23:19';
 	window.AdServ = AdServ; 
 	
 
