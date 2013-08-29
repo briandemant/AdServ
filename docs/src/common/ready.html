@@ -1,0 +1,52 @@
+<!DOCTYPE html><html lang="en"><head><title>src/common/ready</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../"><meta name="groc-document-path" content="src/common/ready"><meta name="groc-project-path" content="src/common/ready.js"><link rel="stylesheet" type="text/css" media="all" href="../../assets/style.css"><script type="text/javascript" src="../../assets/behavior.js"></script><body><div id="meta"><div class="file-path">src/common/ready.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="s2">&quot;use strict&quot;</span><span class="p">;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h3 id="adservready">AdServ.ready</h3>
+
+<p>A basic onload wrapper. <br />
+Based on <a href="https://github.com/ded/domready">domready</a> <br />
+(c) Dustin Diaz 2012 - License MIT
+<strong>params:</strong> 
+ * <strong>callback</strong> callback to call when doc is ready </p></div></div><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">ready</span> <span class="o">=</span> <span class="nx">AdServ</span><span class="p">.</span><span class="nx">ready</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">ready</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">fns</span> <span class="o">=</span> <span class="p">[],</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">f</span> <span class="o">=</span> <span class="kc">false</span> 
+      <span class="p">,</span> <span class="nx">testEl</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span>
+      <span class="p">,</span> <span class="nx">hack</span> <span class="o">=</span> <span class="nx">testEl</span><span class="p">.</span><span class="nx">doScroll</span>
+      <span class="p">,</span> <span class="nx">domContentLoaded</span> <span class="o">=</span> <span class="s1">&#39;DOMContentLoaded&#39;</span>
+      <span class="p">,</span> <span class="nx">addEventListener</span> <span class="o">=</span> <span class="s1">&#39;addEventListener&#39;</span>
+      <span class="p">,</span> <span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="s1">&#39;onreadystatechange&#39;</span>
+      <span class="p">,</span> <span class="nx">readyState</span> <span class="o">=</span> <span class="s1">&#39;readyState&#39;</span>
+      <span class="p">,</span> <span class="nx">loaded</span> <span class="o">=</span> <span class="sr">/^loade|c/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nb">document</span><span class="p">[</span><span class="nx">readyState</span><span class="p">]);</span>
+
+  <span class="kd">function</span> <span class="nx">flush</span><span class="p">(</span><span class="nx">f</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">loaded</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nx">f</span> <span class="o">=</span> <span class="nx">fns</span><span class="p">.</span><span class="nx">shift</span><span class="p">())</span> <span class="p">{</span>
+      <span class="nx">f</span><span class="p">()</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="nb">document</span><span class="p">[</span><span class="nx">addEventListener</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nb">document</span><span class="p">[</span><span class="nx">addEventListener</span><span class="p">](</span><span class="nx">domContentLoaded</span><span class="p">,</span> <span class="nx">fn</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">removeEventListener</span><span class="p">(</span><span class="nx">domContentLoaded</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">f</span><span class="p">)</span>
+    <span class="nx">flush</span><span class="p">();</span>
+  <span class="p">},</span> <span class="nx">f</span><span class="p">);</span>
+ 
+  <span class="nx">hack</span> <span class="o">&amp;&amp;</span> <span class="nb">document</span><span class="p">.</span><span class="nx">attachEvent</span><span class="p">(</span><span class="nx">onreadystatechange</span><span class="p">,</span> <span class="nx">fn</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="sr">/^c/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nb">document</span><span class="p">[</span><span class="nx">readyState</span><span class="p">]))</span> <span class="p">{</span>
+      <span class="nb">document</span><span class="p">.</span><span class="nx">detachEvent</span><span class="p">(</span><span class="nx">onreadystatechange</span><span class="p">,</span> <span class="nx">fn</span><span class="p">);</span>
+      <span class="nx">flush</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+
+  <span class="k">return</span> <span class="p">(</span><span class="nx">ready</span> <span class="o">=</span> <span class="nx">hack</span> <span class="o">?</span>
+                  <span class="kd">function</span> <span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">self</span> <span class="o">!=</span> <span class="nx">top</span> <span class="o">?</span>
+                    <span class="nx">loaded</span> <span class="o">?</span> <span class="nx">fn</span><span class="p">()</span> <span class="o">:</span> <span class="nx">fns</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="o">:</span>
+                    <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                      <span class="k">try</span> <span class="p">{</span>
+                        <span class="nx">testEl</span><span class="p">.</span><span class="nx">doScroll</span><span class="p">(</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+                      <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">return</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> <span class="nx">ready</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">},</span> <span class="mi">50</span><span class="p">)</span>
+                      <span class="p">}</span>
+                      <span class="nx">fn</span><span class="p">()</span>
+                    <span class="p">}()</span>
+                  <span class="p">}</span> <span class="o">:</span>
+                  <span class="kd">function</span> <span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">loaded</span> <span class="o">?</span> <span class="nx">fn</span><span class="p">()</span> <span class="o">:</span> <span class="nx">fns</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span>
+                  <span class="p">})</span>
+<span class="p">})();</span></div></div></div></div></body></html>

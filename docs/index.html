@@ -1,0 +1,68 @@
+<!DOCTYPE html><html lang="en"><head><title>index</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content=""><meta name="groc-document-path" content="index"><meta name="groc-project-path" content="Usage.md"><link rel="stylesheet" type="text/css" media="all" href="assets/style.css"><script type="text/javascript" src="assets/behavior.js"></script><body><div id="meta"><div class="file-path">Usage.md</div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><h1 id="adserving-on-your-site">Adserving on your site</h1>
+
+<p>There are currently 2 ways to implement adserving on your site </p>
+
+<h2 id="using-responsive-method">Using 'responsive' method</h2>
+
+<h2 id="using-append-method">Using 'append' method</h2>
+
+<p>The installation we use here is <code>education</code>, please replace all instances of <code>education</code> with your installation. <br />
+Also <code>adspace id's</code> used here are taken from <code>education</code>, so replace them with <code>adspace id's</code> from your installation.</p>
+
+<p><code>Target's</code> are the <code>css id</code>'s which content are replaces with ads</p>
+
+<p><code>keyword</code> is one of the registered keywords on the adspaces. Adspaces without this keyword will ignore it. <code>searchword</code> is the search term(s) used on the page. <code>keyword</code> and <code>searchword</code> can be left out if they are irrelevant.</p>
+
+<h3 id="usage">Usage:</h3>
+
+<p>include the following at the buttom of the page</p>
+
+<pre><code class="html ">&lt;script type="text/javascript" 
+         src="http://education.adservinginternational.com/api/v2/js/appendto.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript"&gt;
+  AdServ.load({
+     keyword : '',
+       searchword : '',
+       adspaces : [
+          { id : 784, target : 'target_1' },
+          { id : 787, target : 'other_target' }
+       ]
+    });
+&lt;/script&gt;
+</code></pre>
+
+<h3 id="dynamically">Dynamically:</h3>
+
+<p>If your site includes the adspaces dynamically, it can be done by collecting adspaces in an javascript array, like this:</p>
+
+<pre><code class="html">&lt;!--this is the first adspace--&gt;
+&lt;div id="target_1"&gt;&lt;/div&gt;
+&lt;script type="text/javascript"&gt;
+    var myAdspaces = myAdspaces || [];
+    myAdspaces.push({id : 784, target : 'target_1'});
+&lt;/script&gt;
+&lt;h1&gt;Lorem Ipsum&lt;/h1&gt;
+
+&lt;!--Some content--&gt;
+&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis, molestias, non! Consequatur delectus in
+   iure minus neque obcaecati praesentium provident quaerat repudiandae ut.&lt;/p&gt;
+
+&lt;!--this is the second adspace--&gt;
+&lt;div id="other_target"&gt;&lt;/div&gt;
+&lt;script type="text/javascript"&gt;
+    var myAdspaces = myAdspaces || [];
+    myAdspaces.push({id : 787, target : 'other_target' });
+&lt;/script&gt;
+</code></pre>
+
+<p>and then include the following in the page footer</p>
+
+<pre><code class="html  ">&lt;script type="text/javascript" 
+         src="http://education.adservinginternational.com/api/v2/js/appendto.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript"&gt;
+  AdServ.load({
+       keyword : 'sport',
+       adspaces : myadspaces
+    });
+&lt;/script&gt;
+</code></pre></div></div></div></div></body></html>

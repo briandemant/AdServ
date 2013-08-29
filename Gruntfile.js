@@ -34,59 +34,37 @@ module.exports = function(grunt) {
 //				sourceMappingURL : 'http://adserving.com/src/AdServ.map.json',
 				},
 				files : {
-					'build/AdServ.min.js' : [ 'build/AdServ.js']
+					'build/responsive.min.js' : [ 'build/responsive.js'],
+					'build/appendto.min.js' : [ 'build/appendto.js']
 				}
-			},
-//			docs : {
-//				options : {
-// 					beautify : true,
-//					mangle : false,
-//					// https://github.com/mishoo/UglifyJS2#readme
-//					compress : {
-//						sequences : false,  // join consecutive statemets with the “comma operator”
-//						properties : false,  // optimize property access: a["foo"] → a.foo
-//						dead_code : true,  // discard unreachable code
-//						drop_debugger : false,  // discard “debugger” statements
-//						unsafe : true, // some unsafe optimizations (see below)
-//						conditionals : false,  // optimize if-s and conditional expressions
-//						comparisons : false,  // optimize comparisons
-//						evaluate : false,  // evaluate constant expressions
-//						booleans : false,  // optimize boolean expressions
-//						loops : false,  // optimize loops
-//						unused : true,  // drop unused variables/functions
-//						hoist_funs : false,  // hoist function declarations
-//						hoist_vars : false, // hoist variable declarations
-//						if_return : false,  // optimize if-s followed by return/continue
-//						join_vars : false,  // join var declarations
-//						cascade : false,  // try to cascade `right` into `left` in sequences
-//						side_effects : true  // drop side-effect-free statements
-//					},
-//					preserveComments : 'all'
-//				},
-//				files : {
-//					'build/<%= pkg.name %>.js' : [ 'build/<%= pkg.name %>.js']
-//				}
-//			}
+			}
 		},
 
 		// -------------------------------------------------------------------------------------
 		concat : {
 			options : {
-				banner : grunt.file.read('src/header.js.tmpl')
+				banner : grunt.file.read('src/templates/header.js.tmpl')
 					.replace(/VERSION/g, '<%= pkg.version %>')
 					.replace(/DATE/g, '<%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %>'),
-				footer : grunt.file.read('src/footer.js.tmpl'),
+				footer : grunt.file.read('src/templates/footer.js.tmpl'),
 				process : function(src, filepath) {
-					return '\n\n\t// ## ' + filepath + '\n\t/* ------------------------------------------------------------ */\n\n' +
+					return '\n\n\t/**\n  *  **' + filepath + '**\n  */\n\n // ----\n' +
 					       src.replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1').replace(/(^|\n)/g, '$1\t').replace(/(\n\t){2,}/g, '\n\n\t') + '\n';
 				}
 			},
-			dist : {
+			responsive : {
 //				src : ['src/flash.js'],
 //				src : ['src/{legacy}.js'],
-				src : [ 'src/legacy.js', 'src/utils.js', 'src/ready.js', 'src/{dom,json,event,ajax,flash}.js', 'src/api.js'],
+				src : [ 'src/common/legacy.js', 'src/common/utils.js', 'src/common/ready.js', 'src/common/{dom,json,event,ajax,flash}.js', 'src/api/responsive.js'],
 //				src : ['src/*.js'],
-				dest : 'build/<%= pkg.name %>.js'
+				dest : 'build/responsive.js'
+			},
+			appendto : {
+//				src : ['src/flash.js'],
+//				src : ['src/{legacy}.js'],
+				src : [ 'src/common/legacy.js', 'src/common/utils.js', 'src/common/dom.js', 'src/api/appendto.js'],
+//				src : ['src/*.js'],
+				dest : 'build/appendto.js'
 			}
 		},
 
@@ -94,7 +72,7 @@ module.exports = function(grunt) {
 		// -------------------------------------------------------------------------------------
 		watch : {
 			normal : {
-				files : ['src/*.js', 'src/*.js.tmpl'],
+				files : ['src/*.js', 'src/common/*.js', 'src/templates/*.js.tmpl'],
 				tasks : ['concat', 'uglify:max'],
 				options : {
 //					nospawn: true,
@@ -102,7 +80,7 @@ module.exports = function(grunt) {
 				}
 			},
 			operation : {
-				files : ['src/*.js', 'src/*.js.tmpl'],
+				files : ['src/*.js', 'src/common/*.js', 'src/templates/*.js.tmpl'],
 				tasks : ['concat', 'uglify:max', 'copy:to_operation'],
 				options : {
 //					nospawn: true,
@@ -110,9 +88,8 @@ module.exports = function(grunt) {
 				}
 			},
 			docs : {
-				files : ['src/*.js', 'src/*.js.tmpl'],
-//				tasks : ['concat', 'uglify:docs', 'docco'],
-				tasks : ['concat', 'docco'],
+				files : ['src/*.js', 'src/common/*.js', 'src/templates/*.js.tmpl', 'Usage.md'],
+				tasks : ['concat', 'groc'],
 				options : {
 //					nospawn: true,
 //					forever: true
@@ -159,12 +136,10 @@ module.exports = function(grunt) {
 //			}
 //		}
 		// -------------------------------------------------------------------------------------
-		docco : {
-			docs : {
-				src : ['src/*.js', 'build/AdServ.js'],
-				options : {
-					output : 'build/docs/'
-				}
+		groc : {
+			javascript : ['Usage.md', 'src/*.js', 'build/appendto.js', 'build/responsive.js'],
+			options : {
+				out : 'build/docs/'
 			}
 		},
 
@@ -185,8 +160,6 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-karma');
-	grunt.loadNpmTasks('grunt-docco');
-//	grunt.loadNpmTasks('grunt-notify');
 
 
 	// https://github.com/Darsain/grunt-bumpup
@@ -194,6 +167,11 @@ module.exports = function(grunt) {
 	grunt.registerTask('updatePkg', function() {
 		grunt.config.set('pkg', grunt.file.readJSON('package.json'));
 	});
+
+	// usage:
+	// grunt release         <- patch release
+	// grunt release:minor   <- minor release
+	// grunt release:mmajor  <- major release
 	grunt.registerTask('release', function(type) {
 		type = type ? type : 'patch';     // Set the release type 
 		grunt.task.run('bumpup:' + type); // Bump up the version 
@@ -202,50 +180,36 @@ module.exports = function(grunt) {
 	});
 
 
-//	grunt.registerMultiTask('html2js', function () {
-//		function filenameToKey(filename) {
-//			return (filename.split('/').pop()).split('.').shift();
-//		}
-//
-//		// Merge task-specific and/or target-specific options with these defaults.
-//		var options = this.options({ name: this.target, header: '/* generated <%= grunt.template.today("yyyy-mm-dd H:M:s") %> */\n' });
-//
-//
-//		// Process header  
-//		var header = grunt.template.process(options.header);
-//
-//		// Iterate over all src-dest file pairs.
-//		this.files.forEach(function (f) {
-//			// Concat banner + specified files + footer.
-//			var map = {};
-//
-//			f.src.filter(function (filepath) {
-//				// Warn on and remove invalid source files (if nonull was set).
-//				if (!grunt.file.exists(filepath)) {
-//					grunt.log.warn('Source file "' + filepath + '" not found.');
-//					return false;
-//				} else {
-//					return true;
-//				}
-//			}).forEach(function (filepath) {
-//				           // Read file source. 
-//				           map[filenameToKey(filepath)] = grunt.file.read(filepath);
-//			           });
-//
-//			// Write the destination file.
-//			grunt.file.write(f.dest, header + '\nvar ' + options.name + ' = ' + JSON.stringify(map, null, true) + ';');
-//
-//			// Print a success message.
-//			grunt.log.writeln('File "' + f.dest + '" created.');
-//		});
-//	});
+	grunt.registerTask('groc', 'Generate documentation', function() {
+		var done = this.async();
+		grunt.log.write('Generating Documentation...');
+		var args = ['-o', 'docs',
+		            '-i', 'Usage.md',
+		            '-t', 'build',
+		            'Usage.md',
+		            'src/api/*.js',
+		            'src/common/*.js',
+		            'build/responsive.js',
+		            'build/appendto.js'
+		];
+		require('child_process').spawn('./node_modules/groc/bin/groc',
+		                               args).on('exit', function(err) {
+			                                        if (err) {
+				                                        throw "Could not generate docs\n ./node_modules/groc/bin/groc " + args.join(" ");
+			                                        }
+
+			                                        grunt.log.writeln('...done!');
+			                                        done();
+		                                        })
+	});
+
 
 	// Default task(s).
 	grunt.registerTask('default', ['build']);
 	grunt.registerTask('build', ['concat', 'uglify', 'docco']);
 	grunt.registerTask('dev', ['concat', 'uglify', 'watch:normal']);
 //	grunt.registerTask('doc', ['concat', 'uglify:docs', 'docco', 'watch:docs']);
-	grunt.registerTask('doc', ['concat', 'docco', 'watch:docs']);
+	grunt.registerTask('doc', ['concat', 'groc', 'watch:docs']);
 	grunt.registerTask('devop', ['concat', 'uglify', 'copy:to_operation', 'watch:operation']);
 
 };
