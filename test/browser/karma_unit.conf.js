@@ -13,19 +13,21 @@ files = [
 	'node_modules/es5-shim/es5-shim.js',
 	'node_modules/lodash/dist/lodash.min.js',
 	'node_modules/expect.js/expect.js',
-	'test/browser/unit/test-main.js',
+	'test/browser/helpers/test-main.js',
 
-	'test/browser/unit/test_setup.js',
+	'test/browser/helpers/test-test.js',
 //	'test/browser/unit/scope.test.js', 
 	'test/browser/unit/*.test.js',
 
-	{pattern : 'build/AdServ.js', watched : true, included : false, served : false},
+	{pattern : 'build/adserv.js', watched : true, included : false, served : false},
+	{pattern : 'build/responsive.js', watched : true, included : false, served : false},
 
 	// test main require module last
 	{pattern : 'test/browser/fixtures/*.html', watched : true, included : false, served : true},
+	{pattern : 'test/browser/fixtures/*.css', watched : true, included : false, served : true},
 	{pattern : 'test/browser/manual/*.html', watched : false, included : false, served : true},
 
-	'test/browser/unit/test-execute-now.js'
+	'test/browser/helpers/test-execute-now.js'
 ];
 
 
@@ -39,14 +41,14 @@ preprocessors = {
 };
 
 proxies = { 
-	'/api' : 'http://test.fmadsering.dk:9000'
+//	'/api' : 'http://test.fmadserving.dk/api'
 	//'/api' : 'http://127.0.0.1:9000'
 };
 
 // test results reporter to use
 // possible values: 'dots', 'progress', 'junit'
-reporters = ['progress', 'coverage'];
-reporters = ['progress'];
+//reporters = ['progress', 'coverage'];
+reporters = ['progress', 'junit'];
 
 
 // web server port
@@ -54,9 +56,7 @@ port = 9876;
 
 //Karma will report all the tests that are slower than given time limit (in ms)
 reportSlowerThan = 5000;
-
-
-
+ 
 // cli runner port
 runnerPort = 9100;
 

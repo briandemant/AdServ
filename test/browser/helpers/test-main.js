@@ -6,6 +6,16 @@ var nextTick = function(cb) {
 	setTimeout(cb, 100);
 };
 
+function printTestname(ctx) {
+	var msg = ctx._runnable.title;
+	var parent = ctx.test.parent;
+	while (parent && !parent.root) {
+		msg = parent.title + " " + msg;
+		parent = parent.parent
+	}
+	console.log(msg);
+}
+
 var waitFor = function(check, done, interval) {
 	if (check()) {
 		return done();

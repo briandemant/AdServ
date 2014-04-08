@@ -1,5 +1,12 @@
 "use strict";
 
+var $ID = AdServ.$ID = function(target) {
+	if (isElement(target)) {
+		return target;
+	}
+	return document.getElementById(target);
+}
+ 
 // Shortcut for querySelector  
 var $ = AdServ.$ = function(selector, parent) {
 	// Returns elem directly if selector is an element 
@@ -19,8 +26,7 @@ var $$ = AdServ.$$ = function(selector, parent) {
 	if (!parent) {parent = document;}
 
 	return slice.call(parent.querySelectorAll(selector));
-};
-
+}; 
 
 // Shim for getComputedStyle used by `AdServ.css`
 var getComputedStyle;
@@ -49,7 +55,7 @@ if (!window.getComputedStyle) {
 // get css property for an element
 var css = AdServ.css = function(elemOrSelector, name) {
 	// Ensure element is an element and not a selector
-	var elem = $(elemOrSelector);
+	var elem = $ID(elemOrSelector);
 	if (!elem) {
 		return null;
 	}
@@ -58,7 +64,7 @@ var css = AdServ.css = function(elemOrSelector, name) {
 
 // Test if an element is *visible* (searches up the tree until BODY is reached)
 var isVisible = AdServ.isVisible = function(elemOrSelector) {
-	var elem = $(elemOrSelector);
+	var elem = $ID(elemOrSelector);
 	if (!elem) {
 		return false;
 	}

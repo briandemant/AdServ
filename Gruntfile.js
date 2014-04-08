@@ -35,7 +35,7 @@ module.exports = function(grunt) {
 				},
 				files : {
 					'build/responsive.min.js' : [ 'build/responsive.js'],
-					'build/appendto.min.js' : [ 'build/appendto.js']
+					'build/adserv.min.js' : [ 'build/adserv.js']
 				}
 			}
 		},
@@ -55,16 +55,16 @@ module.exports = function(grunt) {
 			responsive : {
 //				src : ['src/flash.js'],
 //				src : ['src/{legacy}.js'],
-				src : [ 'src/common/legacy.js', 'src/common/utils.js', 'src/common/ready.js', 'src/common/{dom,json,event,ajax,flash}.js', 'src/api/responsive.js'],
+				src : [ 'src/common/constants.js', 'src/common/legacy.js', 'src/common/utils.js', 'src/common/ready.js', 'src/common/{dom,json,event,ajax,flash}.js', 'src/api/responsive.js'],
 //				src : ['src/*.js'],
 				dest : 'build/responsive.js'
 			},
-			appendto : {
+			adserv : {
 //				src : ['src/flash.js'],
 //				src : ['src/{legacy}.js'],
-				src : [ 'src/common/legacy.js', 'src/common/utils.js', 'src/common/dom.js', 'src/api/appendto.js'],
+				src : [ 'src/common/constants.js', 'src/common/legacy.js', 'src/common/utils.js', 'src/common/ready.js', 'src/common/{dom,json,event,ajax,flash}.js', 'src/api/adserv.js'],
 //				src : ['src/*.js'],
-				dest : 'build/appendto.js'
+				dest : 'build/adserv.js'
 			}
 		},
 
@@ -72,7 +72,7 @@ module.exports = function(grunt) {
 		// -------------------------------------------------------------------------------------
 		watch : {
 			normal : {
-				files : ['src/*.js', 'src/common/*.js', 'src/templates/*.js.tmpl'],
+				files : ['src/*.js', 'src/api/*.js', 'src/common/*.js', 'src/templates/*.js.tmpl'],
 				tasks : ['concat', 'uglify:max'],
 				options : {
 //					nospawn: true,
@@ -80,7 +80,7 @@ module.exports = function(grunt) {
 				}
 			},
 			operation : {
-				files : ['src/*.js', 'src/common/*.js', 'src/templates/*.js.tmpl'],
+				files : ['src/*.js', 'src/api/*.js', 'src/common/*.js', 'src/templates/*.js.tmpl'],
 				tasks : ['concat', 'uglify:max', 'copy:to_operation'],
 				options : {
 //					nospawn: true,
@@ -137,7 +137,7 @@ module.exports = function(grunt) {
 //		}
 		// -------------------------------------------------------------------------------------
 		groc : {
-			javascript : ['Usage.md', 'src/*.js', 'build/appendto.js', 'build/responsive.js'],
+			javascript : ['Usage.md', 'src/*.js', 'build/adserv.js', 'build/responsive.js'],
 			options : {
 				out : 'build/docs/'
 			}
@@ -190,7 +190,7 @@ module.exports = function(grunt) {
 		            'src/api/*.js',
 		            'src/common/*.js',
 		            'build/responsive.js',
-		            'build/appendto.js'
+		            'build/adserv.js'
 		];
 		require('child_process').spawn('./node_modules/groc/bin/groc',
 		                               args).on('exit', function(err) {

@@ -24,10 +24,15 @@ app.get('/favicon.ico', function(req, res) {
 
 
 app.get('/api/v2/js/adserv.js', function(req, res) {
-	fs.createReadStream(root + '/build/AdServ.js').pipe(res);
+	res.writeHead(200, {'Content-Type' : 'application/javascript'});
+	fs.createReadStream(root + '/build/adserv.js').pipe(res);
+});
+app.get('/api/v2/js/adserv.min.js', function(req, res) {
+	res.writeHead(200, {'Content-Type' : 'application/javascript'});
+	fs.createReadStream(root + '/build/adserv.min.js').pipe(res);
 });
 
-app.get('/api/v2/get/campaigns.json', function(req, res) { res
+app.get('/api/v2/get/campaigns.json', function(req, res) { res 
 	res.send({
 		         "meta" : {
 			         "timestamp" : 1372081828,
@@ -42,14 +47,14 @@ app.get('/api/v2/get/campaigns.json', function(req, res) { res
 		         },
 		         "campaigns" : [
 			         {
-				         "adspace" : 9, "campaign" : 490, "banner" : 171, "banner_type" : "html",
+				         "adspace" : 1, "campaign" : 490, "banner" : 171, "banner_type" : "html",
 				         "click" : "\/\/test.fmadserving.dk\/api\/v2\/count\/click\/490\/171",
-				         "html" : "<code id='ba_adspaceid'>[ba_adspaceid]<\/code><br>\n<code id='ba_bannerid'>[ba_bannerid]<\/code><br>\n<code id='ba_flashurl'>[ba_flashurl]<\/code><br>\n<code id='ba_clicktag_type'>[ba_clicktag_type]<\/code><br>\n<code id='ba_width'>[ba_width]<\/code><br>\n<code id='ba_height'>[ba_height]<\/code><br>\n<code id='ba_campaign'>[ba_campaign]<\/code><br>\n<code id='ba_clickpath'>[ba_clickpath]<\/code><br>\n<code id='timestamp'>[timestamp]<\/code><br>\n<code id='random'>[random]<\/code><br>\n<code id='ba_destination'>[ba_destination]<\/code><br>\n<code id='ba_search'>[ba_search]<\/code><br>\n<code id='ba_keyword'>[ba_keyword]<\/code><br>\n<code id='ba_referer'>[ba_referer]<\/code><br> ",
+				         "html" : "the html!",
 				         "width" : 300,
 				         "height" : 250
 			         },
 			         {
-				         "adspace" : 1
+				         "adspace" : 2
 			         }
 		         ]
 	         });

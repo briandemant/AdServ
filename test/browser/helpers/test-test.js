@@ -4,15 +4,24 @@
 //console.log("a");
 describe('TestSetup:', function () {
 	before(function (done) {
-		loadFixture('test_setup', done);
+		printTestname(this);
+		loadFixture('test_setup', done);  
 	});
 
 
 	it('unaffected by shim', function () {
+		printTestname(this);
 		expect(win.isShimApplied).to.be(false);
+	});
+	
+	it('browser detected', function () {
+		printTestname(this);
+//		console.log(window.browser);
+		expect(window.browser).to.be.an('object');
 	});
 
 	it('expect cheatsheet', function () {
+		printTestname(this);
 		expect(typeof Array.isArray).to.be('function');
 		expect(win.isShimApplied).to.be(false);
 
@@ -98,14 +107,15 @@ describe('TestSetup:', function () {
 	});
 
 
-	it('the content should be finished loading and script executed', function (done) {  
+	it('the content should be finished loading and script executed', function (done) {
+		printTestname(this);
 		waitFor(function () {
-			return doc.getElementById('dynamic').innerHTML ==  'changed';
+			return doc.getElementById('dynamic').innerHTML ==  'Dynamic content';
 		}, done);
 	});
 
 	it('the content update on resize', function (done) {
-//		console.log("e"); 
+		printTestname(this);  
 		expect(doc.body.clientWidth).to.be.within(1000, 1024);
 		iframe.width = 400;
 		expect(doc.body.clientWidth).to.within(350, 400);
@@ -117,6 +127,7 @@ describe('TestSetup:', function () {
 	});
 
 	it('win should point to iframe window', function () {
+		printTestname(this);
 		expect(typeof win).to.be('object');
 		expect(typeof win.top).to.be('object');
 		expect(typeof win.location).to.be('object');
@@ -125,6 +136,7 @@ describe('TestSetup:', function () {
 	});
 
 	it('doc should point to iframe document', function () {
+		printTestname(this);
 		expect(doc.nodeName).to.be('#document');
 		expect(typeof doc).to.be('object');
 		expect(doc.nodeType).to.be(9); // Node.DOCUMENT_NODE 

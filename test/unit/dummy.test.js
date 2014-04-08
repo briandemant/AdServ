@@ -39,7 +39,7 @@ describe('helpers.js', function() {
 		});
 
 		it('should add default globals', function() {
-			helpers.run("./src/utils.js", assert, function() {
+			helpers.run("./src/common/utils.js", assert, function() {
 				assert.deepEqual(Object.keys(AdServ), []);
 			}, function() {
 				assert.ok(Object.keys(AdServ).length > 0);

@@ -55,41 +55,41 @@ var showCampaign = function(campaign) {
 	var conf = ctx.conf;
 	var url;
 	console.log("loading adspace " + campaign.adspace + " into " + campaign.target);
-	if (campaign.campaign && campaign.banner && campaign.adspace) {
-		var adspace = ctx.adspaces[campaign.adspace];
-		var id = 'script_' + adspace.target + "_" + adspace.id + "_" + conf.guid; // adspace id is just for easier debug
-		var script = $ID(id);
-		if (!script) {
-			script = document.createElement('script');
-			script.id = id;
-			script.type = 'text/javascript';
-			script.async = false;
-			script.onload = script.onreadystatechange = (function(cmp, ctx2) {
-				return function() {
-					// called several times
-				};
-			})(campaign, ctx);
-			script.src = conf.baseUrl + '/api/v1/get/js_banner'
-			             + '?adspaceid=' + urlencode(adspace.id)
-			             + '&campaignid=' + urlencode(campaign.campaign)
-			             + '&bannerid=' + urlencode(campaign.banner)
-			             + '&keywords=' + urlencode(ctx.keyword)
-			             + '&appendTo=' + urlencode(adspace.target);
-
-			var elem = $ID(adspace.target);
-			elem.innerHTML = "";
-			elem.parentNode.insertBefore(script, elem);
-		} else {
-			console.error("already loaded " + id);
-		}
-	} else {
-		url = conf.baseUrl + '/api/v2/count/load?adspaceid=' + campaign.adspace
-		      + '&keyword=' + urlencode(ctx.keyword)
-		      + '&searchword=' + urlencode(ctx.searchword);
-		get(url, function(err, data) {
-			console.log(data);
-		})
-	}
+//	if (campaign.campaign && campaign.banner && campaign.adspace) {
+//		var adspace = ctx.adspaces[campaign.adspace];
+//		var id = 'script_' + adspace.target + "_" + adspace.id + "_" + conf.guid; // adspace id is just for easier debug
+//		var script = $ID(id);
+//		if (!script) {
+//			script = document.createElement('script');
+//			script.id = id;
+//			script.type = 'text/javascript';
+//			script.async = false;
+//			script.onload = script.onreadystatechange = (function(cmp, ctx2) {
+//				return function() {
+//					// called several times
+//				};
+//			})(campaign, ctx);
+//			script.src = conf.baseUrl + '/api/v1/get/js_banner'
+//			             + '?adspaceid=' + urlencode(adspace.id)
+//			             + '&campaignid=' + urlencode(campaign.campaign)
+//			             + '&bannerid=' + urlencode(campaign.banner)
+//			             + '&keywords=' + urlencode(ctx.keyword)
+//			             + '&appendTo=' + urlencode(adspace.target);
+//
+//			var elem = $ID(adspace.target);
+//			elem.innerHTML = "";
+//			elem.parentNode.insertBefore(script, elem);
+//		} else {
+//			console.error("already loaded " + id);
+//		}
+//	} else {
+//		url = conf.baseUrl + '/api/v2/count/load?adspaceid=' + campaign.adspace
+//		      + '&keyword=' + urlencode(ctx.keyword)
+//		      + '&searchword=' + urlencode(ctx.searchword);
+//		get(url, function(err, data) {
+//			console.log(data);
+//		})
+//	}
 };
 
 var checkVisibility = throttle(function() {
@@ -152,15 +152,7 @@ AdServ.loadAdspaces = AdServ.load = function() {
 				--anyWaiting;
 				if (!anyWaiting) {
 					ready(function() {
-						checkVisibility();
-						/*						recheck = setInterval(function() {
-						 console.log("recheck");
-						 checkVisibility();
-						 if (len(invisibleAdspaces) == 0) {
-						 console.log('No more adspaces to load');
-						 clearInterval(recheck);
-						 }
-						 }, 1000);*/
+						checkVisibility(); 
 					});
 				}
 			};

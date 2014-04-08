@@ -1,6 +1,6 @@
 "use strict";
 
- 
+
 // Shortcuts to maximize minification 
 var toString = Object.prototype.toString;
 var slice = Array.prototype.slice;
@@ -19,18 +19,27 @@ function noop() {}
 /**
  * Create a `GUID` to use when an unique id is needed
  *
+ *
  * @method    guid
  * @private
  *
- * @return    {String}                     something like `ad_FF40_47A1_0102_F034` 
+ * @return    {String}                     something like `ad_FF40_47A1_0102_F034`
  */
 function guid() {
-	function fourHex() {
-		return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1).toUpperCase();
+	function p(l) {
+		return ((1 + Math.random()) * 0x100000000).toString(16).substr(1, l);
 	}
 
-	return  'ad_' + fourHex() + "_" + fourHex() + "_" + fourHex() + "_" + fourHex();
+	// 1128117600000 == +new Date("2005-10-01 00:00")
+	if (!guid.date) {
+		guid.date = ((Date.now() - 1128117600000) / 1000 | 0).toString(16);
+		setTimeout(function() {
+			guid.date = false;
+		}, 1000);
+	}
+	return [ 'ad' , guid.date, p(4), p(8)].join("_");
 }
+
 
 /**
  * detects if item is a function
@@ -225,7 +234,7 @@ function mix(defaults, overrides) {
  * @example
  *   getRequestParameter('foo');
  */
-function getRequestParameter(getRequestParameter) {
+function getRequestParameter(key) {
 	var qs = location.search + "&" + location.hash;
 	if (len(qs) > 1) {
 		var start = qs.indexOf(key + "=");
@@ -236,3 +245,11 @@ function getRequestParameter(getRequestParameter) {
 	}
 }
 
+function isSupportedBrowser() {
+	return   ( ('addEventListener' in window || 'attachEvent' in window)
+	           && ('querySelector' in document && 'querySelectorAll' in document)
+	           && ('JSON' in window && 'stringify' in JSON && 'parse' in JSON)
+				  && ('postMessage' in window)
+	);
+}
+AdServ.isSupportedBrowser = isSupportedBrowser;

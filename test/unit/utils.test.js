@@ -5,40 +5,66 @@ describe('utils.js', function() {
 
 	describe('shortcuts', function() {
 		it('should provide', function() {
-			helpers.run("./src/utils.js", assert, function() {
+			helpers.run("./src/common/utils.js", assert, function() {
 			}, function() {
-				assert.ok(AdServ.guid);
+				assert.ok(AdServ.isSupportedBrowser);
 			});
 		});
 	});
 
 	describe('guid', function() {
 		it('should be added to AdServ public api', function() {
-			helpers.run("./src/utils.js", assert, function() {
-			}, function() {
-				assert.ok(AdServ.guid);
+			helpers.run("./src/common/utils.js", assert, function() {
+			}, function() { 
+				assert.ok(guid());
 			});
 		});
 
 		it('should return a random string', function() {
-			helpers.run("./src/utils.js", assert, function() {
+			helpers.run("./src/common/utils.js", assert, function () {
 				// fixing random to be the predictable  
 				var next = 0.98;
+				var time = 1396875596000;
 				var Math = {
 					random : function() {
 						next = next * next;
 						return  next;
 					}
 				}
+				var Date = {
+					now : function() {
+						return  time;
+					}
+				}
 			}, function() {
-				assert.equal(AdServ.guid(), "ad_F5DC_EC20_D9CB_B94A");
+				assert.equal(guid(), "ad_1004ebec_f5dc_ec2051da");
+				assert.equal(guid(), "ad_1004ebec_d9cb_b94aceb2");
+			});
+			helpers.run("./src/common/utils.js", assert, function () {
+				// fixing random to be the predictable  
+				var next = 0.98;
+				var time = 1396875597000;
+				var Math = {
+					random : function() {
+						next = next * next;
+						return  next;
+					}
+				}
+				var Date = {
+					now : function() {
+						return  time;
+					}
+				}
+			}, function() {
+				assert.equal(guid(), "ad_1004ebed_f5dc_ec2051da");
+				assert.equal(guid(), "ad_1004ebed_d9cb_b94aceb2");
 			});
 		});
 	});
 	
 	describe('getRequestParameter', function() {
 		it('location.search is searched', function() {
-			helpers.run("./src/utils.js", assert, function() {
+			helpers.run("./src/common/utils.js", assert, function() {
 				var location = {search : 'a=1&b=2&b=3&c=&d'};
 			}, function() {
 				assert.equal(getRequestParameter("a"), 1);
@@ -49,7 +75,7 @@ describe('utils.js', function() {
 			});
 		});
 		it('location.hash is searched', function() {
-			helpers.run("./src/utils.js", assert, function() {
+			helpers.run("./src/common/utils.js", assert, function() {
 				var location = {hash : 'a=1&b=2&b=3&c=&d'};
 			}, function() {
 				assert.equal(getRequestParameter("a"), 1);
@@ -60,7 +86,7 @@ describe('utils.js', function() {
 			});
 		});
 		it('searched is searched before hash', function() {
-			helpers.run("./src/utils.js", assert, function() {
+			helpers.run("./src/common/utils.js", assert, function() {
 				var location = {hash : 'a=1&b=2&b=3&c=&d=8', search : 'a=4&b=5&c=7&d'};
 			}, function() {
 				assert.equal(getRequestParameter("a"), 4);

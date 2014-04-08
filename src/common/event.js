@@ -1,7 +1,7 @@
 "use strict";
 
 var eventHandlers = {};
- 
+
 // ### AdServ.on
 // Register a listener on an event
 //
@@ -10,14 +10,17 @@ var eventHandlers = {};
 //  * **event** eventname
 //  * **fn** callback
 //  * **context** *optional* scope to bind to .. defaults to window
-var on = AdServ.on = function(event, fn, context) { 
-	eventHandlers[event] = (typeof eventHandlers[event] === 'undefined') ? [] : eventHandlers[event];
+var on = AdServ.on = function(event, fn, context) {
+	if (event && fn) {
+		eventHandlers[event] = (typeof eventHandlers[event] === 'undefined') ? [] : eventHandlers[event];
 
-	eventHandlers[event].push(function(args) {
-		return fn.apply(context || window, args);
-	});
+		eventHandlers[event].push(function(args) {
+
+			return  fn.apply(context || window, args);
+		});
+	}
 };
- 
+
 // ### AdServ.once
 // Register a listener on an event (but only first time) 
 //
@@ -50,6 +53,22 @@ var emit = AdServ.emit = function(event) {
 };
 
 
+var bind = AdServ.bind = function(elem, type, handler) {
+	if (elem[addEventListener]) {
+		elem[addEventListener](type, handler, false);
+	} else {
+		// can't use elem[attachEvent]("on" + type, handler);
+		elem.attachEvent("on" + type, handler);
+	}
+};
+var unbind = AdServ.unbind = function(elem, type, handler) {
+	if (elem[addEventListener]) {
+		elem.removeEventListener(type, handler, false);
+	} else {
+		elem.detachEvent(type, handler);
+	}
+};
+
 // ----
 
 // Save original `onresize`
@@ -59,7 +78,7 @@ var originalResize = window['onresize'] || noop;
 window.onresize = function() {
 	try {
 		originalResize();
-	} catch (e) {} 
+	} catch (e) {}
 	emit('resize');
 };
 

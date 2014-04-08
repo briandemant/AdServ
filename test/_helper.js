@@ -1,4 +1,4 @@
-var makeAdServ = require('../build/AdServ.js');
+var makeAdServ = require('../build/adserv.js'); 
 
 module.exports = {
 	makeAdServ: makeAdServ,

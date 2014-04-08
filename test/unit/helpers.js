@@ -1,5 +1,6 @@
 var fs = require('fs');
 var chai = require('chai');
+var path = require('path');
 require('colors');
 var helpers = exports;
 var toString = Object.prototype.toString;
@@ -70,6 +71,9 @@ helpers.createElement = function(name, parent, style) {
 		querySelector : function(key) {
 			return this.elems[key];
 		},
+		getElementById : function(key) {
+			return this.elems["#"+key];
+		},
 		querySelectorAll : function(key) {
 			var result = [];
 			var rx = new RegExp(key);
@@ -95,9 +99,8 @@ helpers.createElement = function(name, parent, style) {
 	}
 };
 
-helpers.run = function(file, globals, beforeFn, afterFn) {
-
-	var source = fs.readFileSync(file, "utf8");
+helpers.run = function(file, globals, beforeFn, afterFn) { 
+	var source = fs.readFileSync(path.join(__dirname , "../../" , file), "utf8");
 	var before = "";
 	var after = "";
 	if (afterFn != void 0) {
@@ -107,7 +110,9 @@ helpers.run = function(file, globals, beforeFn, afterFn) {
 		before += beforeFn.toString().replace(/^[^\{]*\{/, "").replace(/\}[^\}]*$/, "");
 	}
 
-	var prepared = prepareGlobals(globals);
-	return (new Function(prepared.names, before + source + after)).apply({}, prepared.values);
+	var prepared = prepareGlobals(globals); 
+	
+	var value = (new Function(prepared.names, before + source + after)).apply({}, prepared.values); 
+	return  value;
 };
  

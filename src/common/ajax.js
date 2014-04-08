@@ -96,6 +96,8 @@ AdServ.getJSON = getJSON;
 
 /**
  * Call and execute a js script
+ * 
+ *  http://www.html5rocks.com/en/tutorials/speed/script-loading/
  *
  * @method    AdServ.loadScript
  * @public
@@ -114,8 +116,9 @@ AdServ.getJSON = getJSON;
 function loadScript(url, onload) {
 	onload = onload || noop;
 	var script = document.createElement("script");
-	var head = $("head");
-	script.src = url + '&rnd=' + Math.random();
+	// document.body is for ie6 support
+	var head = document.head || document.body;
+	script.src = (url.indexOf("?") > 0 ? url + "&" : url + "?") + 'rnd=' + Math.random();
 
 	script.onload = script.onreadystatechange = function() {
 		if (!script[readyState] || script[readyState] == "loaded" || script[readyState] == "complete") {

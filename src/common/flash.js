@@ -130,7 +130,7 @@ Flash.prototype = {
 	//
 	write : function(target) {
 		if (isFlashSupported) {
-			var elem = $("#" + target);
+			var elem = $ID(target);
 			if (elem) {
 				elem.innerHTML = this.getSWFHTML();
 				return true;

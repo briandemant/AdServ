@@ -19,7 +19,7 @@ include the following at the buttom of the page
 
 ```html 
 <script type="text/javascript" 
-         src="http://education.adservinginternational.com/api/v2/js/appendto.js"></script>
+         src="http://education.adservinginternational.com/api/v2/js/adserv.js"></script>
 <script type="text/javascript">
   AdServ.load({
      keyword : '',
@@ -62,7 +62,7 @@ and then include the following in the page footer
 
 ```html  
 <script type="text/javascript" 
-         src="http://education.adservinginternational.com/api/v2/js/appendto.js"></script>
+         src="http://education.adservinginternational.com/api/v2/js/adserv.js"></script>
 <script type="text/javascript">
   AdServ.load({
 	   keyword : 'sport',

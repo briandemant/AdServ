@@ -13,10 +13,10 @@ var ready = AdServ.ready = (function (ready) {
 	var fns = [], fn, f = false 
 			, testEl = document.documentElement
 			, hack = testEl.doScroll
-			, domContentLoaded = 'DOMContentLoaded'
-			, addEventListener = 'addEventListener'
-			, onreadystatechange = 'onreadystatechange'
-			, readyState = 'readyState'
+//			, domContentLoaded = 'DOMContentLoaded'
+//			, addEventListener = 'addEventListener'
+//			, onreadystatechange = 'onreadystatechange'
+//			, readyState = 'readyState'
 			, loaded = /^loade|c/.test(document[readyState]);
 
 	function flush(f) {
