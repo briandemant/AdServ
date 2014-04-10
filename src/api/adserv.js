@@ -2,6 +2,8 @@
 
 var prepareContexts = function(args) {
 	AdServ.baseUrl = AdServ.baseUrl || '';
+	AdServ.keyword = AdServ.keyword || '';
+	AdServ.searchword = AdServ.searchword || '';
 	var conf = { baseUrl : AdServ.baseUrl, xhrTimeout : 5000, guid : guid() };
 	for (var index = 0; index < len(args); index++) {
 		var arg = args[index];
@@ -36,8 +38,8 @@ var prepareContexts = function(args) {
 				name : ctxName,
 				ids : [],
 				adspaces : {},
-				keyword : adspace.keyword || '',
-				searchword : adspace.searchword || '',
+				keyword : adspace.keyword || AdServ.keyword,
+				searchword : adspace.searchword || AdServ.searchword,
 				adServingLoad : ''
 			};
 			contexts[ctxName].ids.push(adspace.id);
@@ -55,9 +57,10 @@ var showCampaign = function(campaign) {
 	var conf = ctx.conf;
 	var url;
 	console.log("loading adspace " + campaign.adspace + " into " + campaign.target);
-//	if (campaign.campaign && campaign.banner && campaign.adspace) {
-//		var adspace = ctx.adspaces[campaign.adspace];
-//		var id = 'script_' + adspace.target + "_" + adspace.id + "_" + conf.guid; // adspace id is just for easier debug
+
+
+	render(campaign);
+
 //		var script = $ID(id);
 //		if (!script) {
 //			script = document.createElement('script');
@@ -88,15 +91,14 @@ var showCampaign = function(campaign) {
 //		      + '&searchword=' + urlencode(ctx.searchword);
 //		get(url, function(err, data) {
 //			console.log(data);
-//		})
-//	}
+//		}) 
 };
 
 var checkVisibility = throttle(function() {
 	var notReady = [];
 	for (var index = 0; index < len(invisibleAdspaces); index++) {
 		var campaign = invisibleAdspaces[index];
-		if (isVisible(campaign.target)) {
+		if (isVisible(campaign.elem)) {
 			if (recheck) {
 				clearInterval(recheck);
 			}
@@ -134,6 +136,7 @@ AdServ.loadAdspaces = AdServ.load = function() {
 		          + '&adServingLoad=' + urlencode(ctx.adServingLoad)
 		          + '&keyword=' + urlencode(ctx.keyword)
 		          + '&searchword=' + urlencode(ctx.searchword);
+		          + '&uid=' + conf.guid;
 		getJSON(url, (function(ctx) {
 
 			ctx.conf = conf;
@@ -146,13 +149,24 @@ AdServ.loadAdspaces = AdServ.load = function() {
 						var campaign = campaigns[index];
 						campaign.ctx = ctx;
 						campaign.target = ctx.adspaces[campaign.adspace].target;
-						invisibleAdspaces.push(campaign);
+						if (campaign.campaign && campaign.banner && campaign.adspace) {
+							var elem = $ID(ctx.adspaces[campaign.adspace].target);
+							if (elem) {
+								campaign.elem = elem;
+								invisibleAdspaces.push(campaign);
+							} else {
+								console.error("target for adspace not found : " + campaign.target, campaign);
+							}
+						} else {
+							console.log("adspace was empty: " + campaign.adspace, campaign);
+							get(campaign.count + "&uid=" + conf.guid);
+						}
 					}
 				}
 				--anyWaiting;
 				if (!anyWaiting) {
 					ready(function() {
-						checkVisibility(); 
+						checkVisibility();
 					});
 				}
 			};

@@ -55,14 +55,14 @@ module.exports = function(grunt) {
 			responsive : {
 //				src : ['src/flash.js'],
 //				src : ['src/{legacy}.js'],
-				src : [ 'src/common/constants.js', 'src/common/legacy.js', 'src/common/utils.js', 'src/common/ready.js', 'src/common/{dom,json,event,ajax,flash}.js', 'src/api/responsive.js'],
+				src : [ 'src/common/constants.js', 'src/common/legacy.js', 'src/common/utils.js', 'src/common/ready.js', 'src/common/{dom,json,event,ajax,flash,render}.js', 'src/api/responsive.js'],
 //				src : ['src/*.js'],
 				dest : 'build/responsive.js'
 			},
 			adserv : {
 //				src : ['src/flash.js'],
 //				src : ['src/{legacy}.js'],
-				src : [ 'src/common/constants.js', 'src/common/legacy.js', 'src/common/utils.js', 'src/common/ready.js', 'src/common/{dom,json,event,ajax,flash}.js', 'src/api/adserv.js'],
+				src : [ 'src/common/constants.js', 'src/common/legacy.js', 'src/common/utils.js', 'src/common/ready.js', 'src/common/{dom,json,event,ajax,flash,render}.js', 'src/api/adserv.js'],
 //				src : ['src/*.js'],
 				dest : 'build/adserv.js'
 			}

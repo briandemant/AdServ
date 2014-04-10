@@ -87,7 +87,12 @@ function getJSON(url, cb) {
 	return get(url, function(err, value, xhr) {
 		var json = value;
 		if (!err) {
-			json = parseJSON(value);
+			try {
+				json = parseJSON(value);
+			} catch (e) {
+				console.log("malformed json", url, e);
+				return cb("malformed json : " + e.message);
+			}
 		}
 		cb(err, json, xhr);
 	})
@@ -96,7 +101,7 @@ AdServ.getJSON = getJSON;
 
 /**
  * Call and execute a js script
- * 
+ *
  *  http://www.html5rocks.com/en/tutorials/speed/script-loading/
  *
  * @method    AdServ.loadScript

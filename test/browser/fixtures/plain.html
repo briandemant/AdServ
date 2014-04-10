@@ -245,8 +245,10 @@
 	</div>
 	<script type="text/javascript">
 		var adspaces = []
-		adspaces.push({ id : '2', target : 'banner1-1' });
-		adspaces.push({ id : '1', target : 'banner1-2' });
+		adspaces.push({ id : '2', target : 'banner1-2' });
+		adspaces.push({ id : '1', target : 'banner1-1' });
+		adspaces.push({ id : '3', target : 'banner1-3' });
+		adspaces.push({ id : '4', target : 'banner1-4' });
 	</script>
 	<script type="text/javascript"> 
 		var scriptLoadCount = 0;
@@ -282,6 +284,7 @@
 				if (window.scriptLoadCount > 1) {
 					throw "onload fired twice!";
 				}
+				AdServ.keyword = AdServ.keyword || template;
 				AdServ.baseUrl = url;
 				AdServ.load(adspaces);
 			};
