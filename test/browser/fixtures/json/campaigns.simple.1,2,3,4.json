@@ -1,0 +1,76 @@
+{"meta" : {
+	"timestamp" : 1396950820,
+	"timestamp_human" : "Tue, 08 Apr 2014 11:53:40 +0200",
+	"keyword" : "simple",
+	"path" : "//10.10.10.1:9877/",
+	"geo" : {
+		"country_code" : "DK",
+		"city" : "Rynkeby",
+		"region" : "21",
+		"postal_code" : null,
+		"source" : "proxy"
+	},
+	"ua" : {
+		"uaOriginal" : "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1929.0 Safari/537.36",
+		"browser" : {
+			"family" : "Chrome",
+			"name" : "Chrome",
+			"fullname" : "Chrome 36.0",
+			"version" : "36.0"
+		},
+		"os" : {
+			"family" : "OS X",
+			"name" : "OS X  10.9"
+		},
+		"is" : {
+			"desktop" : true,
+			"mobile" : false,
+			"tablet" : false,
+			"spider" : false,
+			"unknown" : false
+		},
+		"time" : 0.00683617591858
+	},
+	"adServingLoad" : ",n245,n422,n245"
+}, "campaigns" : [
+	{
+		"adspace" : 2,
+		"campaign" : 22,
+		"banner" : 222,
+		"banner_type" : "image",
+		"click" : "//10.10.10.1:9877/api/v2/count/click/2/22/222",
+		"count" : "//10.10.10.1:9877/api/v2/count/click/2/22/222?keyword=plain",
+		"iframe" : true,
+		"image" : "http://media01.adservinghost.com/bold/creatives/ordre/183/1000x200_takeover_top.gif",
+		"width" : 300,
+		"height" : 250
+	},
+	{
+		"adspace" : 1,
+		"campaign" : 11,
+		"banner" : 111,
+		"banner_type" : "html",
+		"click" : "//10.10.10.1:9877/api/v2/count/click/1/11/111",
+		"count" : "//10.10.10.1:9877/api/v2/count/view/1/11/111?keyword=plain",
+		"iframe" : false,
+		"html" : "some <b>bold</b> text<script>document.write('evil script!')</script><script>console.log('IT WORKS!')</script>",
+		"width" : 300,
+		"height" : 250
+	},
+	{
+		"adspace" : 3,
+		"campaign" : 33,
+		"banner" : 333,
+		"banner_type" : "txt",
+		"click" : "//10.10.10.1:9877/api/v2/count/click/3/33/333",
+		"count" : "//10.10.10.1:9877/api/v2/count/view/3/33/333?keyword=plain",
+		"iframe" : true,
+		"txt" : "text banner",
+		"width" : 300,
+		"height" : 250
+	},
+	{
+		"adspace" : 4,
+		"count" : "//10.10.10.1:9877/api/v2/count/view/4?keyword=plain"
+	}
+]}

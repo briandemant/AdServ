@@ -3,15 +3,20 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
-	<title>Simple</title>
+	<title>Reject</title>
 	<link rel="stylesheet" href="test.css"/>
+
 	<!--[if gt IE 9]>
 	<script>document.write('<script src="//' + document.location.hostname + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
 	<![endif]-->
 </head>
 <body>
-	<!--<script src="console.js">-->
-	<h1>Simple</h1>
+	<script src="console.js">
+
+		
+	</script>
+	 
+	<h1>Reject</h1>
 	<script type="text/javascript">
 
 		if (!window.ba_adspaces) {
@@ -54,18 +59,27 @@
 		</div>
 	</div>
 	<script type="text/javascript">
+		window.onload = function() {
+			//console.log("second : %O", AdServ);
+		}
+	</script>
+	<script type="text/javascript">
 		(function() {
 			var script = document.createElement("script");
 			var baseUrl = "//" + document.location.hostname + ":9877";
 			script.type = "text/javascript";
 			script.async = true;
 			script.src = baseUrl + "/api/v2/js/adserv.js";
-
+		
+//			console.log(script.src);
+		
 			var callback = function() {
+				console.log("callback ok");
 				AdServ.baseUrl = baseUrl;
-				AdServ.keyword = "simple";
+				AdServ.keyword = "reject";
+				
 				var conf = AdServ.load();
-//				var conf = AdServ.load(window.ba_adspaces);
+				//				var conf = AdServ.load(window.ba_adspaces);
 //				console.log('conf', conf);
 //				console.log('adspaces', conf.adspaces);
 //				console.log('contexts', conf.contexts);

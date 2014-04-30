@@ -4,43 +4,7 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
 	<title>Responsive</title>
-	<script type="text/javascript">
-		isIE = isIE8 = isIE9 = isIE10 = false;
-		isStandAlone = (window.parent === window.top);
-		template = 'plain';
-		//		if (typeof console === 'undefined') {
-		//			console = {log: function (msg) {alert(msg)}};
-		//		} 
-	</script>
-	<!--[if lt IE 8]>
-	<script type="text/javascript">alert('this browser is not supported')</script><![endif]-->
-	<!--[if IE 8]>
-	<script type="text/javascript">isIE = isIE8 = true;</script><![endif]-->
-	<!--[if IE 9]>
-	<script type="text/javascript">isIE = isIE9 = true;</script><![endif]-->
-	<!--[if gt IE 9]>
-	<script type="text/javascript">isIE = isIE10 = true;</script><![endif]-->
-	<style type="text/css">
-		.opaque {
-			opacity: 0;
-		}
-
-		.hidden {
-			visibility: hidden;
-		}
-
-		.not-displayed {
-			display: none;
-		}
-		
-		.button {
-			display: inline-block;
-			border: 1px solid black;
-		}
-		.banner {
-			zoom: 0.5;
-		}
-	</style>
+	<link rel="stylesheet" href="test.css"/>
 </head>
 <body>
 	<h1>Responsive</h1>
@@ -67,10 +31,7 @@
 	</script>
  
 
-	<script type="text/javascript">
-		console.time("inline");
-		console.time("script");
-		console.time("ready");
+	<script type="text/javascript"> 
 		window.onload = function() {
 			console.timeEnd("inline"); 
 		}

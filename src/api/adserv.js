@@ -19,13 +19,27 @@ var prepareContexts = function(args) {
 	}
 	if (!isArray(conf['adspaces'])) {
 		var global = window['ba_adspaces'];
-		if (!global || len(global) === 0 || global.loaded) {
-//			console.error('adspaces empty');
-			return false;
+		if (!global || len(global) === 0 || global.added) {
+			conf['adspaces'] = []
+//			console.warn('adspaces empty');
 		} else {
-			global.loaded = true;
+			global.added = true;
 			conf['adspaces'] = global;
 		}
+	}
+
+	if (!conf['wallpaper']) {
+		var global = window['ba_wallpaper'];
+		if (!global || len(global) === 0 || global.added) {
+//			console.warn('no wallpaper');
+		} else {
+			global.added = true;
+			conf['adspaces'].unshift(global);
+		}
+	}
+	
+	if (conf['adspaces'].length ==0) {
+		console.error('no adspaces or wallpaper provided');
 	}
 
 	var contexts = conf.contexts = {};
@@ -42,10 +56,13 @@ var prepareContexts = function(args) {
 				searchword : adspace.searchword || AdServ.searchword,
 				adServingLoad : ''
 			};
+			if (!AdServ.keyword) {
+				AdServ.keyword = adspace.keyword;
+			}
 			contexts[ctxName].ids.push(adspace.id);
 			contexts[ctxName].adspaces[adspace.id] = adspace;
 		} else {
-			console.error('no id', adspace);
+			// console.error('no id', adspace);
 		}
 	}
 
@@ -53,45 +70,7 @@ var prepareContexts = function(args) {
 };
 
 var showCampaign = function(campaign) {
-	var ctx = campaign.ctx;
-	var conf = ctx.conf;
-	var url;
-	console.log("loading adspace " + campaign.adspace + " into " + campaign.target);
-
-
 	render(campaign);
-
-//		var script = $ID(id);
-//		if (!script) {
-//			script = document.createElement('script');
-//			script.id = id;
-//			script.type = 'text/javascript';
-//			script.async = false;
-//			script.onload = script.onreadystatechange = (function(cmp, ctx2) {
-//				return function() {
-//					// called several times
-//				};
-//			})(campaign, ctx);
-//			script.src = conf.baseUrl + '/api/v1/get/js_banner'
-//			             + '?adspaceid=' + urlencode(adspace.id)
-//			             + '&campaignid=' + urlencode(campaign.campaign)
-//			             + '&bannerid=' + urlencode(campaign.banner)
-//			             + '&keywords=' + urlencode(ctx.keyword)
-//			             + '&appendTo=' + urlencode(adspace.target);
-//
-//			var elem = $ID(adspace.target);
-//			elem.innerHTML = "";
-//			elem.parentNode.insertBefore(script, elem);
-//		} else {
-//			console.error("already loaded " + id);
-//		}
-//	} else {
-//		url = conf.baseUrl + '/api/v2/count/load?adspaceid=' + campaign.adspace
-//		      + '&keyword=' + urlencode(ctx.keyword)
-//		      + '&searchword=' + urlencode(ctx.searchword);
-//		get(url, function(err, data) {
-//			console.log(data);
-//		}) 
 };
 
 var checkVisibility = throttle(function() {
@@ -120,9 +99,8 @@ AdServ.on('resize', function() {
 
 var recheck = 0;
 var invisibleAdspaces = [];
-AdServ.loadAdspaces = AdServ.load = function() {
+AdServ.loadAdspaces = AdServ.load = function load() {
 	var conf = prepareContexts(arguments);
-
 	var anyWaiting = 0;
 	// count contexts
 	for (var x in conf.contexts) {
@@ -132,25 +110,31 @@ AdServ.loadAdspaces = AdServ.load = function() {
 	for (var ctxName in conf.contexts) {
 		//noinspection JSUnfilteredForInLoop
 		var ctx = conf.contexts[ctxName];
-		var url = conf.baseUrl + '/api/v2/get/campaigns.json?adspaces=' + ctx.ids.join(',')
+		var url = conf.baseUrl + '/api/v2/get/campaigns.json?count&adspaces=' + ctx.ids.join(',')
 		          + '&adServingLoad=' + urlencode(ctx.adServingLoad)
 		          + '&keyword=' + urlencode(ctx.keyword)
-		          + '&searchword=' + urlencode(ctx.searchword);
+		          + '&searchword=' + urlencode(ctx.searchword)
 		          + '&uid=' + conf.guid;
 		getJSON(url, (function(ctx) {
 
 			ctx.conf = conf;
 			return function(err, data) {
 				if (err) {
-					console.error(err);
+					// console.error(err);
 				} else {
 					var campaigns = data.campaigns;
 					for (var index = 0; index < len(campaigns); index++) {
 						var campaign = campaigns[index];
+
 						campaign.ctx = ctx;
-						campaign.target = ctx.adspaces[campaign.adspace].target;
+						campaign.target = ctx.adspaces[campaign.adspace].target || ctx.adspaces[campaign.adspace].wallpaperTarget;
+
+						console.log("banner:" + campaign.banner);
+						console.log("keyword:" + campaign.ctx.keyword);
 						if (campaign.campaign && campaign.banner && campaign.adspace) {
-							var elem = $ID(ctx.adspaces[campaign.adspace].target);
+							var elem = $ID(campaign.target);
+							console.log(elem);
+
 							if (elem) {
 								campaign.elem = elem;
 								invisibleAdspaces.push(campaign);
@@ -158,7 +142,7 @@ AdServ.loadAdspaces = AdServ.load = function() {
 								console.error("target for adspace not found : " + campaign.target, campaign);
 							}
 						} else {
-							console.log("adspace was empty: " + campaign.adspace, campaign);
+							console.log("Adspace was empty: " + campaign.adspace, campaign);
 							get(campaign.count + "&uid=" + conf.guid);
 						}
 					}
@@ -175,3 +159,5 @@ AdServ.loadAdspaces = AdServ.load = function() {
 
 	return conf;
 };
+
+console.debug("AdServ.released : " + AdServ.released);

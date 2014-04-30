@@ -44,7 +44,7 @@ var Flash = function(url, id, width, height) {
 	this.vars = {quality : 'best'};
 	this.attrs = {
 		swf : url,
-		id : guid(),
+		id : id,
 		w : width,
 		h : height
 	};
@@ -76,7 +76,7 @@ Flash.prototype = {
 	getVars : function() {
 		var queryString = [];
 		var key;
-		for (key in this.vars) { 
+		for (key in this.vars) {
 			queryString.push(key + "=" + this.vars[key]);
 		}
 		return queryString;
@@ -93,13 +93,13 @@ Flash.prototype = {
 		var params = this.params;
 		var attrs = this.attrs;
 		var vars = this.getVars().join("&");
-		var common = ' width="' + attrs["w"] + '" height="' + attrs["h"] + '" id="' + attrs["id"] + '" name="flashfile"';
+		var common = ' width="' + attrs["w"] + '" height="' + attrs["h"] + '" id="' + attrs["id"] + '" name="' + attrs["id"] + '"';
 
 		if (activeX) {
 			html = '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"' + common
-				       + '><param name="movie" value="' + attrs["swf"] + '" />';
+			       + '><param name="movie" value="' + attrs["swf"] + '" />';
 
-			for (key in params) { 
+			for (key in params) {
 				html += '<param name="' + key + '" value="' + params[key] + '" />';
 			}
 
@@ -109,7 +109,7 @@ Flash.prototype = {
 			html += '</object>';
 		} else {
 			html = '<embed type="application/x-shockwave-flash" src="' + attrs["swf"] + '"' + common;
-			for (var key in params) { 
+			for (var key in params) {
 				html += key + '="' + params[key] + '" ';
 			}
 

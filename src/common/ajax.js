@@ -19,6 +19,7 @@
 //
 // **returns:** XDomainRequest or XMLHttpRequest
 function get(url, cb) {
+	cb = cb || noop;
 	var requestTimeout, xhr;
 	if (window.XDomainRequest) {
 		xhr = new XDomainRequest();
@@ -58,7 +59,7 @@ function get(url, cb) {
 		cancelAbort();
 		if (xhr.status) {
 			// Will this ever happen? 
-			console.error('onload with status!!!');
+			//console.error('onload with status!!!');
 
 			cb(xhr.status != 200 ? "err : " + xhr.status : null, xhr.responseText, xhr);
 		} else {
@@ -90,7 +91,7 @@ function getJSON(url, cb) {
 			try {
 				json = parseJSON(value);
 			} catch (e) {
-				console.log("malformed json", url, e);
+				//console.log("malformed json", url, e);
 				return cb("malformed json : " + e.message);
 			}
 		}

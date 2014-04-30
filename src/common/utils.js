@@ -209,8 +209,8 @@ function mix(defaults, overrides) {
 			result[k] = defaults[k];
 		}
 	}
-	for (k in source) {
-		if (source.hasOwnProperty(k)) {
+	for (k in overrides) {
+		if (overrides.hasOwnProperty(k)) {
 			result[k] = overrides[k];
 		}
 	}
