@@ -40,8 +40,8 @@ var isFlashSupported = AdServ.flash = playerVersion >= 6 ? playerVersion : false
 // **creates:** an Object used to embed flash
 //
 var Flash = function(url, id, width, height) {
-	this.params = {quality : 'best'};
-	this.vars = {quality : 'best'};
+	this.params = {quality : 'best', allowscriptaccess : 'always', wmode : 'opaque'};
+	this.vars = { };
 	this.attrs = {
 		swf : url,
 		id : id,
@@ -92,8 +92,8 @@ Flash.prototype = {
 		var html;
 		var params = this.params;
 		var attrs = this.attrs;
-		var vars = this.getVars().join("&");
-		var common = ' width="' + attrs["w"] + '" height="' + attrs["h"] + '" id="' + attrs["id"] + '" name="' + attrs["id"] + '"';
+		var vars = this.getVars().join("&"); 
+		var common = ' width="' + attrs["w"] + '" height="' + attrs["h"] + '" id="' + attrs["id"] + '" name="' + attrs["id"] + '" ';
 
 		if (activeX) {
 			html = '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"' + common
@@ -112,8 +112,10 @@ Flash.prototype = {
 			for (var key in params) {
 				html += key + '="' + params[key] + '" ';
 			}
-
-			html += 'flashvars="' + vars + '"/>';
+			if (len(vars) > 0) {
+				html += ' flashvars="' + vars + '"';
+			}
+			html += '>';
 		}
 		return html;
 	},
@@ -131,8 +133,8 @@ Flash.prototype = {
 	write : function(target) {
 		if (isFlashSupported) {
 			var elem = $ID(target);
-			if (elem) {
-				elem.innerHTML = this.getSWFHTML();
+			if (elem) { 
+				elem.innerHTML = this.getSWFHTML(); 
 				return true;
 			}
 		}

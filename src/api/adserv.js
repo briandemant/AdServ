@@ -143,7 +143,7 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 							}
 						} else {
 							console.log("Adspace was empty: " + campaign.adspace, campaign);
-							get(campaign.count + "&uid=" + conf.guid);
+							//get(campaign.count + "&uid=" + conf.guid);
 						}
 					}
 				}

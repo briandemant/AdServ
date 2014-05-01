@@ -217,7 +217,8 @@ function render(campaign) {
 				var ifrm = createIframe("wrap_" + campaign.ctx.conf.guid, campaign.width, campaign.height);
 				console.log(campaign);
 				
-				ifrm.src = "http://education.adservinginternational.com/api/v2/get/html/" + campaign.banner;
+//				ifrm.src = AdServ.baseUrl+"/api/v2/get/html/" + campaign.banner;
+				ifrm.src = AdServ.baseUrl + "/show_campaign.php?nocount=1&adspaceid=" + campaign.adspace + "&campaignid=" + campaign.campaign + "&bannerid=" + campaign.banner 
 				AdServ.bind(window, "message", passbackHandlerMaker(targetElem, campaign)(ifrm));
 				targetElem.appendChild(ifrm);
 				return;
