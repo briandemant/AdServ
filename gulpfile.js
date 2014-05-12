@@ -70,5 +70,18 @@ gulp.task('watch', function() {
 });
 
 
+gulp.task('dedebug', function() {
+	var jsfmt = require('jsfmt');
+	var fs = require('fs');
+
+	var js = fs.readFileSync('build/adserv.js');
+
+	
+	js = jsfmt.rewrite(js, "console.log -> noop").toString();
+	console.log(js);
+	fs.writeFileSync('build/adserv.pure.js',js);
+
+});
+
 gulp.task('servers', ['manual_server', 'ad_server']);
 gulp.task('default', ['js', 'watch', 'servers']);

@@ -40,6 +40,10 @@ function get(url, cb) {
 		cb("aborted by a timeout", null, xhr);
 	}, 5000);
 
+	function cancelAbort() {
+		clearTimeout(requestTimeout);
+	}
+
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState == 4) {
 			/* `onload` reset as it will re-issue the cb */
@@ -50,11 +54,7 @@ function get(url, cb) {
 			cb(xhr.status != 200 ? "err : " + xhr.status : null, xhr.responseText, xhr);
 		}
 	};
-
-	function cancelAbort() {
-		clearTimeout(requestTimeout);
-	}
-
+ 
 	xhr.onload = function() {
 		cancelAbort();
 		if (xhr.status) {

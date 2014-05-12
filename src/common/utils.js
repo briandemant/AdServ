@@ -15,6 +15,13 @@ var activeX = window.ActiveXObject;
  */
 function noop() {}
 
+function randhex(length) {
+	return ((1 + Math.random()) * 0x100000000).toString(16).substr(1, length);
+}
+
+function count() {
+	return guid.count.toString(16).substr(1, 4);
+}
 
 /**
  * Create a `GUID` to use when an unique id is needed
@@ -26,20 +33,28 @@ function noop() {}
  * @return    {String}                     something like `ad_FF40_47A1_0102_F034`
  */
 function guid() {
-	function p(l) {
-		return ((1 + Math.random()) * 0x100000000).toString(16).substr(1, l);
-	}
 
-	// 1128117600000 == +new Date("2005-10-01 00:00")
+
+	guid.count++;
 	if (!guid.date) {
+		// 1128117600000 == +new Date("2005-10-01 00:00")
 		guid.date = ((Date.now() - 1128117600000) / 1000 | 0).toString(16);
+		guid.count = 0x10001;
 		setTimeout(function() {
 			guid.date = false;
 		}, 1000);
 	}
-	return [ 'ad' , guid.date, p(4), p(8)].join("_");
+	var result = toArray(arguments);
+	result.push(guid.date);
+	result.push(count());
+	result.push(randhex(8));
+	return result.join("_");
 }
+AdServ.guid = guid;
 
+function toArray(list) {
+	return slice.call(list, 0);
+}
 
 /**
  * detects if item is a function
@@ -249,7 +264,7 @@ function isSupportedBrowser() {
 	return   ( ('addEventListener' in window || 'attachEvent' in window)
 	           && ('querySelector' in document && 'querySelectorAll' in document)
 	           && ('JSON' in window && 'stringify' in JSON && 'parse' in JSON)
-				  && ('postMessage' in window)
+	           && ('postMessage' in window)
 	);
 }
 AdServ.isSupportedBrowser = isSupportedBrowser;
