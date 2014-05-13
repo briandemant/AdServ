@@ -10,8 +10,8 @@ function getContext(adspace, contexts) {
 		searchword : adspace.searchword || AdServ.searchword,
 		adServingLoad : ''
 	};
-	if (adspace.adServingLoad) { 
-		adspace.context.adServingLoad += adspace.adServingLoad ;
+	if (adspace.adServingLoad) {
+		adspace.context.adServingLoad += adspace.adServingLoad;
 	}
 	if (!AdServ.keyword) {
 		AdServ.keyword = adspace.keyword;
@@ -19,7 +19,7 @@ function getContext(adspace, contexts) {
 }
 
 var prepareContexts = function(args) {
-	AdServ.baseUrl = AdServ.baseUrl || '';
+	AdServ.baseUrl = (isObject(args[0]) && args[0].baseUrl) || AdServ.baseUrl || '';
 	AdServ.keyword = AdServ.keyword || '';
 	AdServ.searchword = AdServ.searchword || '';
 	var conf = { baseUrl : AdServ.baseUrl, xhrTimeout : 5000, guid : guid("ad") };
@@ -190,20 +190,23 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 						campaign.type = (campaign.wallpaper ? "wallpaper:" : "") + (campaign.floating ? "floating:" : "") + campaign.banner_type;
 						campaign.elem = $ID(campaign.target);
 						if (campaign.elem) {
-							console.log("group:" + campaign.group);
+							console.log(campaign.elem);
+
+							if ($ID(ctx.adspaces[campaign.adspace].target)) {
+								campaign.elem.innerHTML = '<!-- Adspace ' + campaign.adspace + ' here -->';
+							}
+							
 							console.log("adspace:" + campaign.adspace);
-							console.log("campaign:" + campaign.campaign);
-							console.log("banner:" + campaign.banner);
-//							console.log("keyword:" + campaign.ctx.keyword); 
+							
 							if (campaign.campaign && campaign.banner && campaign.adspace) {
+								console.log("group:" + campaign.group);
+//								console.log("campaign:" + campaign.campaign);
+//								console.log("banner:" + campaign.banner);
+//								console.log("keyword:" + campaign.ctx.keyword);
 								campaign.target !== document.body && console.log(campaign.banner_type, campaign.elem);
 								invisibleAdspaces.push(campaign);
 							} else {
 								console.warn("Adspace was empty: " + campaign.adspace, campaign);
-								if (campaign.elem) {
-//									campaign.elem.setAttribute("campaign", "not found")
-								}
-								//get(campaign.count + "&uid=" + conf.guid);
 							}
 
 						} else {

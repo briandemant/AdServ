@@ -24,9 +24,11 @@ function passbackHandlerMaker(elem, campaign) {
 				elem.innerHTML = ""; // would rather just hide iframe .. but deep tunnel make this harder
 				campaign.nesting = (campaign.nesting | 0) + 1;
 				if (campaign.nesting < 10) {
-					AdServ.load({ adspaces : [
-						{id : payload.next, target : elem, adServingLoad : campaign.ctx.adServingLoad}
-					]})
+					//setTimeout(function() {
+						AdServ.load({ adspaces : [
+							{id : payload.next, target : elem, adServingLoad : campaign.ctx.adServingLoad}
+						]})
+					//},0)
 				} else {
 					console.error("too deep")
 				}
@@ -47,7 +49,7 @@ function makeA(elem, campaign) {
 
 function makeImg(campaign) {
 	var img = document.createElement('img');
-	img.id = guid("img", campaign.adspace, campaign.campaign)
+	img.id = guid("img", campaign.adspace, campaign.campaign); 
 	img.border = 0;
 	img.src = campaign.image;
 	return img;
@@ -121,7 +123,7 @@ engines["html"] = function renderHtml(elem, campaign) {
 	
 	var script, original;
 
-	function safeScriptContent(js) {
+	function safeScriptContent(js) { 
 		// remove document.write to avoid accidential dom rewrite
 //		return js.replace('document.write(', 'console.log("WARNING : document.write -> "+');
 		return js.replace('document.write(', 'console.warn("WARNING : banner: ' + campaign.banner + ' uses document.write");document.write(');
@@ -134,6 +136,8 @@ engines["html"] = function renderHtml(elem, campaign) {
 	//console.debug("using direct access"); 
 	elem.innerHTML = campaign.html;
 //	elem.src = "javascript:" + campaign.html_as_js;
+ 
+		
 	var scripts = elem.getElementsByTagName("script");
 //	console.log(scripts.length);
 //	console.log(elem.innerHTML);
@@ -144,8 +148,7 @@ engines["html"] = function renderHtml(elem, campaign) {
 		AdServ.bind(window, "message", passbackHandlerMaker(elem, campaign)(iframes[0]));
 	}
 
-	var original;
-
+	var original; 
 	var length = scripts.length;
 	var uid = guid("js", campaign.adspace, campaign.campaign);
 	for (var i = 0; i < length; i++) {
@@ -156,8 +159,12 @@ engines["html"] = function renderHtml(elem, campaign) {
 			console.log("original.src");
 			script = document.createElement("script");
 			script.id = uid + "_" + i;
-			script.src = original.src;
-			elem.appendChild(script);
+			script.src = original.src; 
+//			setTimeout((function(script, elem) {
+//				return function() {
+					elem.appendChild(script);
+//				}
+//			})(script, elem), 0);
 		}
 
 		if (original.innerText) {
@@ -168,16 +175,23 @@ engines["html"] = function renderHtml(elem, campaign) {
 			script.innerText = safeScriptContent(original.innerText);
 //			setTimeout((function (script,elem) {
 //				return function() {
-			elem.appendChild(script);
+					elem.appendChild(script);
 //				}
-//			})(script,elem),0)
+//			})(script,elem),0);
 ////			break;
 		} else if (original.innerHTML) {
 //			alert("using script.innerHTML");
 			console.log("original.html", original);
-			eval(safeScriptContent(original.innerHTML));
+//			eval(safeScriptContent(original.innerHTML));
+			setTimeout((function(src) {
+				return function() {
+					console.log("eval", src); 
+					eval(safeScriptContent(src));
+				}
+			})(original.innerHTML), 1000);
 		}
 	}
+ 
 }
 
 function createIframe(campaign) {
@@ -191,12 +205,12 @@ function createIframe(campaign) {
 	ifrm.scrolling = "no";
 	return ifrm;
 }
-function wrapIframe(target, campaign, handleMaker) {
+function wrapIframe(target, campaign) {
 	var ifrm = createIframe(campaign);
 	target.appendChild(ifrm);
 	ifrm.contentDocument.write('<!doctype html><body style="margin:0px;padding:0px;width:100%;height:100%;"></body>');
 
-	AdServ.bind(window, "message", handleMaker(ifrm))
+	AdServ.bind(window, "message", passbackHandlerMaker(target, campaign)(ifrm))
 
 	return ifrm;
 }
@@ -287,14 +301,14 @@ function makeFloat(campaign) {
 function render(campaign) {
 	var ifrm;
 	var targetElem;
-	if (campaign.elem) {
+	if (campaign.elem) { 
 		targetElem = campaign.elem;
 		if (campaign.floating) {
 			targetElem = makeFloat(campaign);
 		}
 		if (campaign.iframe && campaign.banner_type !== 'iframe' && campaign.banner_type !== 'wallpaper') {
 			if (campaign.banner_type !== 'html') {
-				ifrm = wrapIframe(targetElem, campaign, passbackHandlerMaker(targetElem, campaign));
+				ifrm = wrapIframe(targetElem, campaign);
 				targetElem = ifrm.contentDocument.body;
 			} else {
 				ifrm = createIframe(campaign);
@@ -317,4 +331,5 @@ function render(campaign) {
 		console.error('no element for banner yet : ' + campaign.banner_type, campaign);
 	}
 };
-AdServ.render = render; 
+AdServ.render = render;
+  

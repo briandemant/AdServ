@@ -1,4 +1,4 @@
-var gulp = require('gulp'); 
+var gulp = require('gulp');
 var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 var notify = require('gulp-notify');
@@ -32,7 +32,34 @@ gulp.task('js', function() {
 		.pipe(gulp.dest('./build'))
 		.pipe(size())
 		.pipe(notify({ message : "Javascript is compiled!"}))
-		.pipe(uglify())
+		.pipe(uglify({
+			             preserveComments : 'some',
+			             compress : {
+				             sequences : true,  // join consecutive statemets with the “comma operator”
+				             properties : true,  // optimize property access: a["foo"] → a.foo
+				             dead_code : true,  // discard unreachable code
+				             drop_debugger : true,  // discard “debugger” statements
+				             unsafe : true, // some unsafe optimizations (see below)
+				             conditionals : true,  // optimize if-s and conditional expressions
+				             comparisons : true,  // optimize comparisons
+				             evaluate : true,  // evaluate constant expressions
+				             booleans : true,  // optimize boolean expressions
+				             loops : true,  // optimize loops
+				             unused : true,  // drop unused variables/functions
+				             hoist_funs : true,  // hoist function declarations
+				             hoist_vars : false, // hoist variable declarations
+				             if_return : true,  // optimize if-s followed by return/continue
+				             join_vars : true,  // join var declarations
+				             cascade : true,  // try to cascade `right` into `left` in sequences
+				             side_effects : true,  // drop side-effect-free statements
+				             global_defs : {
+					             DEBUG : false
+				             }
+			             }, 
+			             output : {
+				             beautify : true
+			             }
+		             }))
 		.pipe(concat('adserv.min.js'))
 		.pipe(gulp.dest('./build/'))
 		.pipe(size())
@@ -70,16 +97,43 @@ gulp.task('watch', function() {
 });
 
 
-gulp.task('dedebug', function() {
-	var jsfmt = require('jsfmt');
-	var fs = require('fs');
-
-	var js = fs.readFileSync('build/adserv.js');
-
-	
-	js = jsfmt.rewrite(js, "console.log -> noop").toString();
-	console.log(js);
-	fs.writeFileSync('build/adserv.pure.js',js);
+gulp.task('qwe', function() { 
+	gulp.src(['qwe.js']) 
+		.pipe(gulp.dest('./build'))
+		.pipe(size())
+		.pipe(notify({ message : "Javascript is compiled!"}))
+		.pipe(uglify({
+			             preserveComments : 'some',
+			             compress : {
+				             sequences : true,  // join consecutive statemets with the “comma operator”
+				             properties : true,  // optimize property access: a["foo"] → a.foo
+				             dead_code : true,  // discard unreachable code
+				             drop_debugger : true,  // discard “debugger” statements
+				             unsafe : true, // some unsafe optimizations (see below)
+				             conditionals : true,  // optimize if-s and conditional expressions
+				             comparisons : true,  // optimize comparisons
+				             evaluate : true,  // evaluate constant expressions
+				             booleans : true,  // optimize boolean expressions
+				             loops : true,  // optimize loops
+				             unused : true,  // drop unused variables/functions
+				             hoist_funs : true,  // hoist function declarations
+				             hoist_vars : false, // hoist variable declarations
+				             if_return : true,  // optimize if-s followed by return/continue
+				             join_vars : true,  // join var declarations
+				             cascade : true,  // try to cascade `right` into `left` in sequences
+				             side_effects : true,  // drop side-effect-free statements
+				             global_defs : {
+					             DEBUG : false
+				             }
+			             },
+			             output : {
+				             beautify : true
+			             }
+		             }))
+		.pipe(concat('qwe.min.js'))
+		.pipe(gulp.dest('./build/'))
+		.pipe(size())
+		.pipe(notify({ message : "Javascript is now ugly!"}));
 
 });
 
