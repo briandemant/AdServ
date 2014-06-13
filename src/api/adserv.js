@@ -10,19 +10,26 @@ function getContext(adspace, contexts) {
 		searchword : adspace.searchword || AdServ.searchword,
 		adServingLoad : ''
 	};
+	
 	if (adspace.adServingLoad) {
 		adspace.context.adServingLoad += adspace.adServingLoad;
 	}
+	
 	if (!AdServ.keyword) {
 		AdServ.keyword = adspace.keyword;
 	}
 }
 
+function set(name,def,args) {
+	AdServ[name] = (isObject(args[0]) && args[0][name]) || AdServ[name] || def;
+}
 var prepareContexts = function(args) {
-	AdServ.baseUrl = (isObject(args[0]) && args[0].baseUrl) || AdServ.baseUrl || '';
-	AdServ.keyword = AdServ.keyword || '';
-	AdServ.searchword = AdServ.searchword || '';
+	set('baseUrl','',args);
+	set('keyword','',args);
+	set('searchword','',args);
+
 	var conf = { baseUrl : AdServ.baseUrl, xhrTimeout : 5000, guid : guid("ad") };
+
 	for (var index = 0; index < len(args); index++) {
 		var arg = args[index];
 		if (isFunction(arg)) {
@@ -31,10 +38,9 @@ var prepareContexts = function(args) {
 			conf = mix(conf, arg);
 		} else if (isArray(arg)) {
 			conf['adspaces'] = arg;
-		} else if (isString(arg)) {
-			AdServ.baseUrl = conf['baseUrl'] = arg;
 		}
 	}
+
 	if (!isArray(conf['adspaces'])) {
 		var global = window['ba_adspaces'];
 		if (!global || len(global) === 0 || global.added) {

@@ -115,7 +115,7 @@ engines["wallpaper"] = function renderwallpaper(elem, campaign) {
 	elem.onclick = adserving_bgclick;
 
 	var classes = document.body.getAttribute('class');
-	document.body.setAttribute('class', (classes || '') + 'adserving_wallpaper_loaded');
+	document.body.setAttribute('class', (classes || '') + ' adserving_wallpaper_loaded');
 	emit('wallpaper_loaded', campaign);
 }
 
