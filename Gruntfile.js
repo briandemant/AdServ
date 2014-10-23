@@ -34,8 +34,8 @@ module.exports = function(grunt) {
 //				sourceMappingURL : 'http://adserving.com/src/AdServ.map.json',
 				},
 				files : {
-					'build/responsive.min.js' : [ 'build/responsive.js'],
-					'build/adserv.min.js' : [ 'build/adserv.js']
+					'build/responsive.min.js' : ['build/responsive.js'],
+					'build/adserv.min.js' : ['build/adserv.js']
 				}
 			}
 		},
@@ -55,14 +55,14 @@ module.exports = function(grunt) {
 			responsive : {
 //				src : ['src/flash.js'],
 //				src : ['src/{legacy}.js'],
-				src : [ 'src/common/constants.js', 'src/common/legacy.js', 'src/common/utils.js', 'src/common/ready.js', 'src/common/{dom,json,event,ajax,flash,render}.js', 'src/api/responsive.js'],
+				src : ['src/common/constants.js', 'src/common/legacy.js', 'src/common/utils.js', 'src/common/ready.js', 'src/common/{dom,json,event,ajax,flash,render}.js', 'src/api/responsive.js'],
 //				src : ['src/*.js'],
 				dest : 'build/responsive.js'
 			},
 			adserv : {
 //				src : ['src/flash.js'],
 //				src : ['src/{legacy}.js'],
-				src : [ 'src/common/constants.js', 'src/common/legacy.js', 'src/common/utils.js', 'src/common/ready.js', 'src/common/{dom,json,event,ajax,flash,render}.js', 'src/api/adserv.js'],
+				src : ['src/common/constants.js', 'src/common/legacy.js', 'src/common/utils.js', 'src/common/ready.js', 'src/common/{dom,json,event,ajax,flash,render}.js', 'src/api/adserv.js'],
 //				src : ['src/*.js'],
 				dest : 'build/adserv.js'
 			}
@@ -126,7 +126,7 @@ module.exports = function(grunt) {
 		},
 
 		// -------------------------------------------------------------------------------------
-		bumpup : ['package.json' ],
+		bumpup : ['package.json'],
 
 		// -------------------------------------------------------------------------------------
 //		html2js : {
@@ -143,8 +143,25 @@ module.exports = function(grunt) {
 			}
 		},
 
+		// -------------------------------------------------------------------------------------
+		comments : {
+			plain : {
+				// Target-specific file lists and/or options go here.
+				options : {
+					singleline : true,
+					multiline : true
+				},
+				src : ['build/*.js'] // files to remove comments from
+			}
+		},
+		// -------------------------------------------------------------------------------------
 		copy : {
 			to_operation : {
+				files : [
+					{expand : true, cwd : 'build/', src : ['*.js'], dest : '../operation/api/v2/js/', filter : 'isFile'}
+				]
+			},
+			to_deployed : {
 				files : [
 					{expand : true, cwd : 'build/', src : ['*.js'], dest : '../operation/api/v2/js/', filter : 'isFile'}
 				]
@@ -159,7 +176,8 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-watch');
-	grunt.loadNpmTasks('grunt-karma');
+	grunt.loadNpmTasks('grunt-stripcomments');
+	//grunt.loadNpmTasks('grunt-karma');
 
 
 	// https://github.com/Darsain/grunt-bumpup
@@ -177,6 +195,7 @@ module.exports = function(grunt) {
 		grunt.task.run('bumpup:' + type); // Bump up the version 
 		grunt.task.run('updatePkg');      // update package.json
 		grunt.task.run('build');          // build
+		grunt.task.run('copy');           // copy to deployed and operation dir
 	});
 
 
@@ -206,10 +225,11 @@ module.exports = function(grunt) {
 
 	// Default task(s).
 	grunt.registerTask('default', ['build']);
-	grunt.registerTask('build', ['concat', 'uglify', 'docco']);
-	grunt.registerTask('dev', ['concat', 'uglify', 'watch:normal']);
-//	grunt.registerTask('doc', ['concat', 'uglify:docs', 'docco', 'watch:docs']);
-	grunt.registerTask('doc', ['concat', 'groc', 'watch:docs']);
+	grunt.registerTask('build', ['concat', 'comments', 'uglify']);
+	grunt.registerTask('docs', ['concat', 'groc']);
+
+	grunt.registerTask('dev', ['concat', 'comments', 'uglify', 'watch:normal']);
+	grunt.registerTask('devdocs', ['docs', 'watch:docs']);
 	grunt.registerTask('devop', ['concat', 'uglify', 'copy:to_operation', 'watch:operation']);
 
 };

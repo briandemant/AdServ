@@ -4,7 +4,7 @@ There are currently 2 ways to implement adserving on your site
 
 ## Using 'responsive' method 
 
-## Using 'append' method
+## Using 'adserv' method
 
 The installation we use here is `education`, please replace all instances of `education` with your installation.  
 Also `adspace id's` used here are taken from `education`, so replace them with `adspace id's` from your installation.
