@@ -1,14 +1,3 @@
 
-
-// grunt plugins for later
-https://github.com/rma4ok/grunt-bg-shell + https://github.com/einars/js-beautify
-https://npmjs.org/package/grunt-docco
-
-
-
-TODO/UNSUPPORTED:
-
-expanding banners
-clickTAG
-ttl
-viewthrough
+//Supported ES5 features
+http://kangax.github.io/compat-table/es5/

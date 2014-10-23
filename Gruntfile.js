@@ -6,7 +6,7 @@ module.exports = function(grunt) {
 			max : {
 				options : {
 					banner : '/*! <%= pkg.name %>  <%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %> */\n',
-//				beautify : true, 
+				beautify : true,
 //				mangle : false,
 					report : 'gzip',
 					// https://github.com/mishoo/UglifyJS2#readme
@@ -28,13 +28,10 @@ module.exports = function(grunt) {
 						join_vars : true,  // join var declarations
 						cascade : true,  // try to cascade `right` into `left` in sequences
 						side_effects : true  // drop side-effect-free statements
-					}
-//				preserveComments : 'some',
-//				sourceMap : 'AdServ.map.js',
-//				sourceMappingURL : 'http://adserving.com/src/AdServ.map.json',
+					} 
 				},
 				files : {
-					'build/responsive.min.js' : ['build/responsive.js'],
+					//'build/responsive.min.js' : ['build/responsive.js'],
 					'build/adserv.min.js' : ['build/adserv.js']
 				}
 			}
@@ -52,18 +49,26 @@ module.exports = function(grunt) {
 					       src.replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1').replace(/(^|\n)/g, '$1\t').replace(/(\n\t){2,}/g, '\n\n\t') + '\n';
 				}
 			},
-			responsive : {
-//				src : ['src/flash.js'],
-//				src : ['src/{legacy}.js'],
-				src : ['src/common/constants.js', 'src/common/legacy.js', 'src/common/utils.js', 'src/common/ready.js', 'src/common/{dom,json,event,ajax,flash,render}.js', 'src/api/responsive.js'],
-//				src : ['src/*.js'],
-				dest : 'build/responsive.js'
-			},
-			adserv : {
-//				src : ['src/flash.js'],
-//				src : ['src/{legacy}.js'],
-				src : ['src/common/constants.js', 'src/common/legacy.js', 'src/common/utils.js', 'src/common/ready.js', 'src/common/{dom,json,event,ajax,flash,render}.js', 'src/api/adserv.js'],
-//				src : ['src/*.js'],
+			//responsive : { 
+			//	src : ['src/common/constants.js', 'src/common/legacy.js', 'src/common/utils.js', 'src/common/ready.js',
+			//	       'src/common/dom.js',
+			//	       'src/common/json.js',
+			//	       'src/common/event.js',
+			//	       'src/common/ajax.js',
+			//	       'src/common/flash.js',
+			//	       'src/common/render.js',
+			//	       'src/api/responsive.js'], 
+			//	dest : 'build/responsive.js'
+			//},
+			adserv : { 
+				src : ['src/common/constants.js', 'src/common/legacy.js', 'src/common/utils.js', 'src/common/ready.js',
+				       'src/common/dom.js',
+				       'src/common/json.js',
+				       'src/common/event.js',
+				       'src/common/ajax.js',
+				       'src/common/flash.js',
+				       'src/common/render.js',
+				       'src/api/adserv.js'], 
 				dest : 'build/adserv.js'
 			}
 		},
@@ -73,27 +78,19 @@ module.exports = function(grunt) {
 		watch : {
 			normal : {
 				files : ['src/*.js', 'src/api/*.js', 'src/common/*.js', 'src/templates/*.js.tmpl'],
-				tasks : ['concat', 'uglify:max'],
-				options : {
-//					nospawn: true,
-//					forever: true
-				}
+				tasks : ['concat', 'uglify:max']
+			},
+			diff : {
+				files : ['src/*.js', 'src/api/*.js', 'src/common/*.js', 'src/templates/*.js.tmpl'],
+				tasks : ['concat', 'comments', 'diff']
 			},
 			operation : {
 				files : ['src/*.js', 'src/api/*.js', 'src/common/*.js', 'src/templates/*.js.tmpl'],
-				tasks : ['concat', 'uglify:max', 'copy:to_operation'],
-				options : {
-//					nospawn: true,
-//					forever: true
-				}
+				tasks : ['concat', 'uglify:max', 'copy:to_operation']
 			},
 			docs : {
 				files : ['src/*.js', 'src/common/*.js', 'src/templates/*.js.tmpl', 'Usage.md'],
-				tasks : ['concat', 'groc'],
-				options : {
-//					nospawn: true,
-//					forever: true
-				}
+				tasks : ['concat', 'groc']
 			},
 //			fixtures: {
 //				files  : [ 'test/browser/fixtures/*.html'],
@@ -134,14 +131,7 @@ module.exports = function(grunt) {
 //				src : ['test/browser/fixtures/*.html'],
 //				dest: 'test/browser/fixtures.js'
 //			}
-//		}
-		// -------------------------------------------------------------------------------------
-		groc : {
-			javascript : ['Usage.md', 'src/*.js', 'build/adserv.js', 'build/responsive.js'],
-			options : {
-				out : 'build/docs/'
-			}
-		},
+//		} 
 
 		// -------------------------------------------------------------------------------------
 		comments : {
@@ -151,7 +141,7 @@ module.exports = function(grunt) {
 					singleline : true,
 					multiline : true
 				},
-				src : ['build/*.js'] // files to remove comments from
+				src : ['build/adserv*.js', 'deployed/adserv*.js'] // files to remove comments from
 			}
 		},
 		// -------------------------------------------------------------------------------------
@@ -177,7 +167,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-stripcomments');
-	//grunt.loadNpmTasks('grunt-karma');
+	grunt.loadNpmTasks('grunt-karma');
 
 
 	// https://github.com/Darsain/grunt-bumpup
@@ -191,8 +181,8 @@ module.exports = function(grunt) {
 	// grunt release:minor   <- minor release
 	// grunt release:mmajor  <- major release
 	grunt.registerTask('release', function(type) {
-		type = type ? type : 'patch';     // Set the release type 
-		grunt.task.run('bumpup:' + type); // Bump up the version 
+		type = type ? type : 'patch';     // Set the release type
+		grunt.task.run('bumpup:' + type); // Bump up the version
 		grunt.task.run('updatePkg');      // update package.json
 		grunt.task.run('build');          // build
 		grunt.task.run('copy');           // copy to deployed and operation dir
@@ -205,10 +195,8 @@ module.exports = function(grunt) {
 		var args = ['-o', 'docs',
 		            '-i', 'Usage.md',
 		            '-t', 'build',
-		            'Usage.md',
-		            'src/api/*.js',
-		            'src/common/*.js',
-		            'build/responsive.js',
+		            'Usage.md', 
+		            //'build/responsive.js',
 		            'build/adserv.js'
 		];
 		require('child_process').spawn('./node_modules/groc/bin/groc',
@@ -222,15 +210,29 @@ module.exports = function(grunt) {
 		                                        })
 	});
 
+	grunt.registerTask('diff', 'diff deploy with build', function() {
+
+		grunt.log.write('opening PhpStorm diff...');
+		var args = ['diff',
+		            'build/responsive.js',
+		            'deployed/responsive.js'
+		];
+		require('child_process').spawn('pstorm',
+		                               args).on('exit', function(err) {
+			                                        if (err) {
+				                                        throw "Could not generate docs\n ./node_modules/groc/bin/groc " + args.join(" ");
+			                                        }
+		                                        })
+	});
 
 	// Default task(s).
 	grunt.registerTask('default', ['build']);
 	grunt.registerTask('build', ['concat', 'comments', 'uglify']);
 	grunt.registerTask('docs', ['concat', 'groc']);
 
+	grunt.registerTask('devdiff', ['concat', 'comments', 'watch:diff']);
 	grunt.registerTask('dev', ['concat', 'comments', 'uglify', 'watch:normal']);
 	grunt.registerTask('devdocs', ['docs', 'watch:docs']);
 	grunt.registerTask('devop', ['concat', 'uglify', 'copy:to_operation', 'watch:operation']);
 
 };
- 

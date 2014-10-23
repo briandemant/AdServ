@@ -20,7 +20,8 @@ console.log = console.log || safe_log("log");
 console.debug = console.debug || safe_log("debug");
 console.error = console.error || safe_log("error");
 console.warn = console.warn || safe_log("warn");
- 
+console.info = console.info || safe_log("info");
+
 // Protect against missing globals
 window.adServingLoad = window.adServingLoad || '';
 
@@ -30,7 +31,7 @@ if (!Date.now) {
 		return +new Date();
 	};
 }
- 
+
 if (DEBUG) {
 	var ie = false;
 	(function(ua) {

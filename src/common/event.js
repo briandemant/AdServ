@@ -79,10 +79,11 @@ window.onresize = function() {
 	try {
 		originalResize();
 	} catch (e) {}
-	emit('resize');
+	emit('page:resize');
 };
 
-// Emit load event when dom is loaded
+// Emit load event when dom is loaded 
+
 ready(function() {
-	emit('load');
+	emit('page:loaded');
 }); 

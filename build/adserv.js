@@ -1,16 +1,16 @@
 "use strict";
 /*!
  * ## AdServing js library:
- * Version  : **2.1.5**  
- * Released : **2014-10-23 11:52:15** 
+ * Version  : 2.2.2  
+ * Released : 2014-10-23 13:40:42 
  * @author Brian Demant <brian.demantgmail.com> (2013)
  */
 (function (window, definition) { 
 	window.AdServ = definition(window, window.document); 
 })(window,  function (window, document) { 
 	var AdServ = window.AdServ || {};
-	AdServ.version = '2.1.5';
-	AdServ.released = '2014-10-23 11:52:15';
+	AdServ.version = '2.2.2';
+	AdServ.released = '2014-10-23 13:40:42';
 	window.AdServ = AdServ; 
 	DEBUG = true;
 	var
@@ -39,13 +39,14 @@
 	console.debug = console.debug || safe_log("debug");
 	console.error = console.error || safe_log("error");
 	console.warn = console.warn || safe_log("warn");
+	console.info = console.info || safe_log("info");
 	window.adServingLoad = window.adServingLoad || '';
 	if (!Date.now) {
 		Date.now = function now() {
 			return +new Date();
 		};
 	}
-	 
+
 	if (DEBUG) {
 		var ie = false;
 		(function(ua) {
@@ -234,6 +235,141 @@
 			                loaded ? fn() : fns.push(fn)
 		                })
 	})();
+	var $ID = AdServ.$ID = function(target) {
+		if (isElement(target)) {
+			return target;
+		}
+		return document.getElementById(target);
+	}
+	var $ = AdServ.$ = function(selector, parent) {
+		if (isElement(selector)) {
+			return selector;
+		}
+		if (!parent) {parent = document;}
+
+		return parent.querySelector(selector);
+	};
+	var $$ = AdServ.$$ = function(selector, parent) {
+		if (!parent) {parent = document;}
+
+		return slice.call(parent.querySelectorAll(selector));
+	}; 
+	var getComputedStyle;
+	if (!window.getComputedStyle) {
+		getComputedStyle = function getComputedStyleShim(el, pseudo) {
+			var style = {};
+			style.el = el;
+			style.getPropertyValue = function getPropertyValueShim(prop) {
+				var re = /(\-([a-z]){1})/g;
+				if (prop == 'float') {
+					prop = 'styleFloat';
+				}
+				if (re.test(prop)) {
+					prop = prop.replace(re, function() {
+						return arguments[2].toUpperCase();
+					});
+				} 
+				return style.el.currentStyle[prop] ? style.el.currentStyle[prop] : null;
+			};
+			return style;
+		};
+	} else {
+		getComputedStyle = window.getComputedStyle;
+	}
+	var css = AdServ.css = function(elemOrSelector, name) {
+		var elem = $ID(elemOrSelector);
+		if (!elem) {
+			return null;
+		}
+		return getComputedStyle($(elem)).getPropertyValue(name);
+	};
+	var isVisible = AdServ.isVisible = function(elemOrSelector) {
+		var elem = $ID(elemOrSelector);
+		if (!elem) {
+			return false;
+		}
+		if (elem.nodeName === 'BODY') {
+			return true;
+		}
+		if (css(elem, 'visibility') == 'hidden') {
+			return false;
+		}
+		if (css(elem, 'display') == 'none') {
+			return false;
+		}
+		if (css(elem, 'opacity') == '0') {
+			return false;
+		}
+		return isVisible(elem.parentNode);
+	};
+	var evil = function(s) {
+		return (new Function("return (" + s + ")"))();
+	};
+
+		var parseJSON = typeof JSON === 'object' ? JSON.parse : function(source) {
+		source += "";
+		if (source != '') {
+			var simplified = source
+				.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, "@")
+				.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]")
+				.replace(/(?:^|:|,)(?:\s*\[)+/g, "");
+			if (/^[\],:{}\s]*$/.test(simplified)) {
+				return evil(source);
+			}
+		}
+		throw  "parseJSON failed";
+	};
+	var eventHandlers = {};
+	var on = AdServ.on = function(event, fn, context) {
+		if (event && fn) {
+			eventHandlers[event] = (typeof eventHandlers[event] === 'undefined') ? [] : eventHandlers[event];
+
+			eventHandlers[event].push(function(args) {
+
+				return  fn.apply(context || window, args);
+			});
+		}
+	};
+	var once = AdServ.once = function(event, fn, context) {
+		on(event, function() {
+			fn();
+			fn = noop;
+		}, context);
+	};
+	var emit = AdServ.emit = function(event) {
+		if (typeof eventHandlers[event] !== 'undefined') {
+			var args = slice.call(arguments, 1);
+			for (var i = 0; i < len(eventHandlers[event]); i++) {
+				eventHandlers[event][i](args);
+			}
+		}
+	};
+
+	var bind = AdServ.bind = function(elem, type, handler) {
+		if (elem[addEventListener]) {
+			elem[addEventListener](type, handler, false);
+		} else {
+			elem.attachEvent("on" + type, handler);
+		}
+	};
+	var unbind = AdServ.unbind = function(elem, type, handler) {
+		if (elem[addEventListener]) {
+			elem.removeEventListener(type, handler, false);
+		} else {
+			elem.detachEvent(type, handler);
+		}
+	};
+	var originalResize = window['onresize'] || noop;
+	window.onresize = function() {
+		try {
+			originalResize();
+		} catch (e) {}
+		emit('page:resize');
+	};
+
+	ready(function() {
+		emit('page:loaded');
+	}); 
 	function get(url, cb) {
 		cb = cb || noop;
 		var requestTimeout, xhr;
@@ -317,123 +453,6 @@
 		head.appendChild(script);
 	}
 	AdServ.loadScript = loadScript;
-	var $ID = AdServ.$ID = function(target) {
-		if (isElement(target)) {
-			return target;
-		}
-		return document.getElementById(target);
-	}
-	var $ = AdServ.$ = function(selector, parent) {
-		if (isElement(selector)) {
-			return selector;
-		}
-		if (!parent) {parent = document;}
-
-		return parent.querySelector(selector);
-	};
-	var $$ = AdServ.$$ = function(selector, parent) {
-		if (!parent) {parent = document;}
-
-		return slice.call(parent.querySelectorAll(selector));
-	}; 
-	var getComputedStyle;
-	if (!window.getComputedStyle) {
-		getComputedStyle = function getComputedStyleShim(el, pseudo) {
-			var style = {};
-			style.el = el;
-			style.getPropertyValue = function getPropertyValueShim(prop) {
-				var re = /(\-([a-z]){1})/g;
-				if (prop == 'float') {
-					prop = 'styleFloat';
-				}
-				if (re.test(prop)) {
-					prop = prop.replace(re, function() {
-						return arguments[2].toUpperCase();
-					});
-				} 
-				return style.el.currentStyle[prop] ? style.el.currentStyle[prop] : null;
-			};
-			return style;
-		};
-	} else {
-		getComputedStyle = window.getComputedStyle;
-	}
-	var css = AdServ.css = function(elemOrSelector, name) {
-		var elem = $ID(elemOrSelector);
-		if (!elem) {
-			return null;
-		}
-		return getComputedStyle($(elem)).getPropertyValue(name);
-	};
-	var isVisible = AdServ.isVisible = function(elemOrSelector) {
-		var elem = $ID(elemOrSelector);
-		if (!elem) {
-			return false;
-		}
-		if (elem.nodeName === 'BODY') {
-			return true;
-		}
-		if (css(elem, 'visibility') == 'hidden') {
-			return false;
-		}
-		if (css(elem, 'display') == 'none') {
-			return false;
-		}
-		if (css(elem, 'opacity') == '0') {
-			return false;
-		}
-		return isVisible(elem.parentNode);
-	};
-	var eventHandlers = {};
-	var on = AdServ.on = function(event, fn, context) {
-		if (event && fn) {
-			eventHandlers[event] = (typeof eventHandlers[event] === 'undefined') ? [] : eventHandlers[event];
-
-			eventHandlers[event].push(function(args) {
-
-				return  fn.apply(context || window, args);
-			});
-		}
-	};
-	var once = AdServ.once = function(event, fn, context) {
-		on(event, function() {
-			fn();
-			fn = noop;
-		}, context);
-	};
-	var emit = AdServ.emit = function(event) {
-		if (typeof eventHandlers[event] !== 'undefined') {
-			var args = slice.call(arguments, 1);
-			for (var i = 0; i < len(eventHandlers[event]); i++) {
-				eventHandlers[event][i](args);
-			}
-		}
-	};
-
-	var bind = AdServ.bind = function(elem, type, handler) {
-		if (elem[addEventListener]) {
-			elem[addEventListener](type, handler, false);
-		} else {
-			elem.attachEvent("on" + type, handler);
-		}
-	};
-	var unbind = AdServ.unbind = function(elem, type, handler) {
-		if (elem[addEventListener]) {
-			elem.removeEventListener(type, handler, false);
-		} else {
-			elem.detachEvent(type, handler);
-		}
-	};
-	var originalResize = window['onresize'] || noop;
-	window.onresize = function() {
-		try {
-			originalResize();
-		} catch (e) {}
-		emit('resize');
-	};
-	ready(function() {
-		emit('load');
-	}); 
 	var playerVersion;
 	function getPlayerVersion() {
 		if (activeX) {
@@ -526,23 +545,6 @@
 		}
 	};
 	window.baSWFObject = Flash;
-	var evil = function(s) {
-		return (new Function("return (" + s + ")"))();
-	};
-
-		var parseJSON = typeof JSON === 'object' ? JSON.parse : function(source) {
-		source += "";
-		if (source != '') {
-			var simplified = source
-				.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, "@")
-				.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]")
-				.replace(/(?:^|:|,)(?:\s*\[)+/g, "");
-			if (/^[\],:{}\s]*$/.test(simplified)) {
-				return evil(source);
-			}
-		}
-		throw  "parseJSON failed";
-	};
 	var engines = {};
 
 	function passbackHandlerMaker(elem, campaign) {
@@ -557,7 +559,7 @@
 				}
 				if (!err && payload.adspace == campaign.adspace) {
 					console.warn("passback from adspace " + campaign.adspace + " to " + payload.next)
-					console.log("campaign rejected:", campaign);
+					console.warn("campaign rejected:", campaign);
 					elem.innerHTML = ""; // would rather just hide iframe .. but deep tunnel make this harder
 					campaign.nesting = (campaign.nesting | 0) + 1;
 					if (campaign.nesting < 10) {
@@ -612,9 +614,7 @@
 	}
 
 	engines["flash"] = function renderFlash(elem, campaign) {
-
-		var url = campaign.flash + "?" + campaign.click_tag_type + "=" + urlencode(campaign.click);
-		console.log(url,campaign);
+		var url = campaign.flash + "?" + campaign.click_tag_type + "=" + urlencode(campaign.click); 
 		var flash = new Flash(url, guid('flash', campaign.adspace, campaign.campaign), campaign.width, campaign.height);
 		if (!flash.write(elem)) {
 			var img = makeImg(campaign);
@@ -646,7 +646,7 @@
 
 		var classes = document.body.getAttribute('class');
 		document.body.setAttribute('class', (classes || '') + ' adserving_wallpaper_loaded');
-		emit('wallpaper_loaded', campaign);
+		emit('wallpaper:loaded', campaign);
 	}
 
 	engines["html"] = function renderHtml(elem, campaign) {
@@ -723,7 +723,7 @@
 		console.log(campaign);
 
 		var uid = guid('float');
-		console.log("got a floating banner!", uid);
+		console.info("got a floating banner!", uid);
 		var style = 'position:fixed; width:' + campaign.width + 'px; height:' + (campaign.height) + 'px; z-index:2147483646;';
 
 		if (campaign.floating_position == 'centre') {
@@ -758,6 +758,7 @@
 			clearTimeout(floatingElem.timeout);
 			floatingElem.style.display = 'none';
 
+			AdServ.emit("floating:close", campaign);
 			floatingElem.close = noop;
 		};
 		floatingElem.timeout = setTimeout(floatingElem.close, 1000 * campaign.floating_time);
@@ -791,9 +792,11 @@
 		floatingElem.appendChild(contentElem);
 		floatingElem.setAttribute('style', style);
 		floatingElem.setAttribute('class', "adserving_float adserving_float_" + campaign.adspace);
-		document.body.appendChild(floatingElem);
-		return campaign.elem = contentElem;
+		campaign.elem.appendChild(floatingElem);
+		AdServ.emit("floating:open", campaign);
+		return contentElem;
 	}
+
 	function render(campaign) {
 		var ifrm;
 		var targetElem;
@@ -816,8 +819,7 @@
 			}
 			var engine = engines[campaign.banner_type];
 			if (engine) {
-				engine(targetElem, campaign);
-				emit('adspace_loaded', campaign);
+				engine(targetElem, campaign); 
 			} else {
 				console.error('no renderer for banner type yet : ' + campaign.banner_type, campaign);
 			}
@@ -836,25 +838,25 @@
 			searchword : adspace.searchword || AdServ.searchword,
 			adServingLoad : ''
 		};
-		
+
 		if (adspace.adServingLoad) {
 			adspace.context.adServingLoad += adspace.adServingLoad;
 		}
-		
+
 		if (!AdServ.keyword) {
 			AdServ.keyword = adspace.keyword;
 		}
 	}
 
-	function set(name,def,args) {
+	function set(name, def, args) {
 		AdServ[name] = (isObject(args[0]) && args[0][name]) || AdServ[name] || def;
 	}
 	var prepareContexts = function(args) {
-		set('baseUrl','',args);
-		set('keyword','',args);
-		set('searchword','',args);
+		set('baseUrl', '', args);
+		set('keyword', '', args);
+		set('searchword', '', args);
 
-		var conf = { baseUrl : AdServ.baseUrl, xhrTimeout : 5000, guid : guid("ad") };
+		var conf = {baseUrl : AdServ.baseUrl, xhrTimeout : 5000, guid : guid("ad")};
 
 		for (var index = 0; index < len(args); index++) {
 			var arg = args[index];
@@ -890,7 +892,7 @@
 			if (!global || len(global) === 0 || global.added) {
 			} else {
 				global.added = true;
-				conf['floating'] = [global];
+				conf['floating'] = global;
 			}
 		}
 
@@ -906,15 +908,12 @@
 			}
 		}
 		if (conf['floating']) {
-			adspaces = conf['floating'];
-			for (index = 0; index < len(adspaces); index++) {
-				var adspace = adspaces[index];
-				if (adspace.id > 0) {
-					getContext(adspace, contexts);
-					adspace.context.floating = adspace;
-					adspace.context.adspaces[adspace.id] = adspace;
-				} else {
-				}
+			var adspace = conf['floating'];
+			if (adspace.id > 0) {
+				getContext(adspace, contexts);
+				adspace.context.floating = adspace;
+				adspace.context.adspaces[adspace.id] = adspace;
+			} else {
 			}
 		}
 		if (conf['wallpaper']) {
@@ -956,7 +955,7 @@
 		invisibleAdspaces = notReady;
 	}, 200);
 
-	AdServ.on('resize', function() {
+	AdServ.on('page:resize', function() {
 		if (recheck) {
 			clearInterval(recheck);
 		}
@@ -987,6 +986,7 @@
 				ctx.conf = conf;
 				return function(err, data) {
 					if (err) {
+						console.error(err);
 					} else {
 						var campaigns = data.campaigns;
 						ctx.adServingLoad = data.meta.adServingLoad;
@@ -998,22 +998,26 @@
 							campaign.type = (campaign.wallpaper ? "wallpaper:" : "") + (campaign.floating ? "floating:" : "") + campaign.banner_type;
 							campaign.elem = $ID(campaign.target);
 							if (campaign.elem) {
-								console.log(campaign.elem);
-
 								if ($ID(ctx.adspaces[campaign.adspace].target)) {
-									campaign.elem.innerHTML = '<!-- Adspace ' + campaign.adspace + ' here -->';
+									if (campaign.campaign && campaign.banner && campaign.adspace) {
+										campaign.elem.innerHTML = '<!-- Adspace: ' + campaign.adspace
+										                          + ' Group:  ' + campaign.group
+										                          + ' Campaign:  ' + campaign.campaign
+										                          + ' Banner:  ' + campaign.banner
+										                          + ' here -->';
+									} else {
+										campaign.elem.innerHTML = '<!-- Adspace ' + campaign.adspace + ' (empty) here -->';
+									}
 								}
-								
-								console.log("adspace:" + campaign.adspace);
-								
+
+								console.info("Adspace: " + campaign.adspace, campaign.elem);
+								emit('adspace:loaded', campaign);
 								if (campaign.campaign && campaign.banner && campaign.adspace) {
 									console.log("group:" + campaign.group);
-									campaign.target !== document.body && console.log(campaign.banner_type, campaign.elem);
 									invisibleAdspaces.push(campaign);
 								} else {
 									console.warn("Adspace was empty: " + campaign.adspace, campaign);
 								}
-
 							} else {
 								console.error("target for adspace not found : " + campaign.target, campaign);
 							}

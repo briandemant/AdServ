@@ -15,7 +15,7 @@ function passbackHandlerMaker(elem, campaign) {
 //				console.log("payload:", payload);
 				console.warn("passback from adspace " + campaign.adspace + " to " + payload.next)
 				//			iframe.contentDocument.body.innerHTML = "<b>THIS WAS REJECTED</b>";
-				console.log("campaign rejected:", campaign);
+				console.warn("campaign rejected:", campaign);
 //				console.log("elem:", uid, elem);
 				//			console.log("err:", err);
 //				console.log("m:", m);
@@ -80,10 +80,7 @@ engines["iframe"] = function renderImage(elem, campaign) {
 }
 
 engines["flash"] = function renderFlash(elem, campaign) {
-//	console.debug("qwe");
-
-	var url = campaign.flash + "?" + campaign.click_tag_type + "=" + urlencode(campaign.click);
-	console.log(url,campaign);
+	var url = campaign.flash + "?" + campaign.click_tag_type + "=" + urlencode(campaign.click); 
 	var flash = new Flash(url, guid('flash', campaign.adspace, campaign.campaign), campaign.width, campaign.height);
 	if (!flash.write(elem)) {
 		var img = makeImg(campaign);
@@ -116,7 +113,7 @@ engines["wallpaper"] = function renderwallpaper(elem, campaign) {
 
 	var classes = document.body.getAttribute('class');
 	document.body.setAttribute('class', (classes || '') + ' adserving_wallpaper_loaded');
-	emit('wallpaper_loaded', campaign);
+	emit('wallpaper:loaded', campaign);
 }
 
 engines["html"] = function renderHtml(elem, campaign) {
@@ -219,7 +216,7 @@ function makeFloat(campaign) {
 	console.log(campaign);
 
 	var uid = guid('float');
-	console.log("got a floating banner!", uid);
+	console.info("got a floating banner!", uid);
 //	console.log(" floating_close_position : " + campaign.floating_close_position);
 //	console.log(" floating_position : " + campaign.floating_position);
 //	console.log(" floating_time : " + campaign.floating_time);
@@ -258,7 +255,7 @@ function makeFloat(campaign) {
 		clearTimeout(floatingElem.timeout);
 		floatingElem.style.display = 'none';
 
-
+		AdServ.emit("floating:close", campaign);
 		floatingElem.close = noop;
 	};
 	floatingElem.timeout = setTimeout(floatingElem.close, 1000 * campaign.floating_time);
@@ -295,9 +292,11 @@ function makeFloat(campaign) {
 	floatingElem.appendChild(contentElem);
 	floatingElem.setAttribute('style', style);
 	floatingElem.setAttribute('class', "adserving_float adserving_float_" + campaign.adspace);
-	document.body.appendChild(floatingElem);
-	return campaign.elem = contentElem;
+	campaign.elem.appendChild(floatingElem);
+	AdServ.emit("floating:open", campaign);
+	return contentElem;
 }
+
 function render(campaign) {
 	var ifrm;
 	var targetElem;
@@ -322,8 +321,7 @@ function render(campaign) {
 		}
 		var engine = engines[campaign.banner_type];
 		if (engine) {
-			engine(targetElem, campaign);
-			emit('adspace_loaded', campaign);
+			engine(targetElem, campaign); 
 		} else {
 			console.error('no renderer for banner type yet : ' + campaign.banner_type, campaign);
 		}

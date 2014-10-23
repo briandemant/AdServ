@@ -80,7 +80,7 @@ AdServ.loadAdspaces = function(baseUrl) {
 										var id = 'script_' + adspace.target + "_" + campaign.adspace;
 
 										var script = $ID(id);
-
+ 
 										if (!script) {
 											script = doc.createElement('script');
 											script.id = id;
