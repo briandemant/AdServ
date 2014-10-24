@@ -232,6 +232,13 @@ function mix(defaults, overrides) {
 	return result;
 }
 
+/**
+ * a version of eval which does not trip up minifying
+ */
+var evil = function(s) {
+	return (new Function("return (" + s + ")"))();
+};
+
 
 /**
  * Parse query string or hash and get the value for the key, prefers search over hash

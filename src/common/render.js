@@ -183,7 +183,7 @@ engines["html"] = function renderHtml(elem, campaign) {
 			setTimeout((function(src) {
 				return function() {
 					console.log("eval", src); 
-					eval(safeScriptContent(src));
+					evil(safeScriptContent(src));
 				}
 			})(original.innerHTML), 1000);
 		}

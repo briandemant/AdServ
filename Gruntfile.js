@@ -6,8 +6,8 @@ module.exports = function(grunt) {
 			max : {
 				options : {
 					banner : '/*! <%= pkg.name %>  <%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %> */\n',
-				beautify : true,
-//				mangle : false,
+					beautify : true,
+					mangle : false,
 					report : 'gzip',
 					// https://github.com/mishoo/UglifyJS2#readme
 					compress : {
@@ -28,11 +28,11 @@ module.exports = function(grunt) {
 						join_vars : true,  // join var declarations
 						cascade : true,  // try to cascade `right` into `left` in sequences
 						side_effects : true  // drop side-effect-free statements
-					} 
+					}
 				},
 				files : {
 					//'build/responsive.min.js' : ['build/responsive.js'],
-					'build/adserv.min.js' : ['build/adserv.js']
+					'build/adserv.min.js' : ['build/adserv.js'] 
 				}
 			}
 		},
@@ -60,7 +60,7 @@ module.exports = function(grunt) {
 			//	       'src/api/responsive.js'], 
 			//	dest : 'build/responsive.js'
 			//},
-			adserv : { 
+			adserv : {
 				src : ['src/common/constants.js', 'src/common/legacy.js', 'src/common/utils.js', 'src/common/ready.js',
 				       'src/common/dom.js',
 				       'src/common/json.js',
@@ -68,7 +68,7 @@ module.exports = function(grunt) {
 				       'src/common/ajax.js',
 				       'src/common/flash.js',
 				       'src/common/render.js',
-				       'src/api/adserv.js'], 
+				       'src/api/adserv.js'],
 				dest : 'build/adserv.js'
 			}
 		},
@@ -91,6 +91,10 @@ module.exports = function(grunt) {
 			docs : {
 				files : ['src/*.js', 'src/common/*.js', 'src/templates/*.js.tmpl', 'Usage.md'],
 				tasks : ['concat', 'groc']
+			},
+			minify : {
+				files : ['build/test.js'],
+				tasks : ['uglify:max', 'output']
 			},
 //			fixtures: {
 //				files  : [ 'test/browser/fixtures/*.html'],
@@ -189,14 +193,38 @@ module.exports = function(grunt) {
 	});
 
 
+	grunt.registerTask('output', function() {
+		 
+		var done = this.async();
+      var fs = require('fs');
+		
+		var result = grunt.file.read('build/test.min.js').substr(0,500);
+		var cmd = require('child_process').spawn('ls', ['-lh','build/test.js','build/test.min.js'])
+		cmd.stdout.on('data', function(data) {
+			console.log(  data.toString() );
+		});
+
+		cmd.stderr.on('data', function(data) {
+			console.log("ERROR"+ data);
+		});
+
+		cmd.on('exit', function(err) {
+			if (err) {
+				throw err;
+			}
+			console.log(result);
+			
+			done();
+		})
+	});
 	grunt.registerTask('groc', 'Generate documentation', function() {
 		var done = this.async();
 		grunt.log.write('Generating Documentation...');
 		var args = ['-o', 'docs',
 		            '-i', 'Usage.md',
 		            '-t', 'build',
-		            'Usage.md', 
-		            //'build/responsive.js',
+		            'Usage.md',
+			//'build/responsive.js',
 		            'build/adserv.js'
 		];
 		require('child_process').spawn('./node_modules/groc/bin/groc',
@@ -230,8 +258,8 @@ module.exports = function(grunt) {
 	grunt.registerTask('build', ['concat', 'comments', 'uglify']);
 	grunt.registerTask('docs', ['concat', 'groc']);
 
-	grunt.registerTask('devdiff', ['concat', 'comments', 'watch:diff']);
 	grunt.registerTask('dev', ['concat', 'comments', 'uglify', 'watch:normal']);
+	grunt.registerTask('devdiff', ['concat', 'comments', 'watch:diff']);
 	grunt.registerTask('devdocs', ['docs', 'watch:docs']);
 	grunt.registerTask('devop', ['concat', 'uglify', 'copy:to_operation', 'watch:operation']);
 

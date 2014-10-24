@@ -2,7 +2,7 @@
 /*!
  * ## AdServing js library:
  * Version  : 2.2.2  
- * Released : 2014-10-23 13:40:42 
+ * Released : 2014-10-24 14:53:27 
  * @author Brian Demant <brian.demantgmail.com> (2013)
  */
 (function (window, definition) { 
@@ -10,7 +10,7 @@
 })(window,  function (window, document) { 
 	var AdServ = window.AdServ || {};
 	AdServ.version = '2.2.2';
-	AdServ.released = '2014-10-23 13:40:42';
+	AdServ.released = '2014-10-24 14:53:27';
 	window.AdServ = AdServ; 
 	DEBUG = true;
 	var
@@ -173,6 +173,10 @@
 		return result;
 	}
 
+		var evil = function(s) {
+		return (new Function("return (" + s + ")"))();
+	};
+
 		function getRequestParameter(key) {
 		var qs = location.search + "&" + location.hash;
 		if (len(qs) > 1) {
@@ -302,10 +306,6 @@
 		}
 		return isVisible(elem.parentNode);
 	};
-	var evil = function(s) {
-		return (new Function("return (" + s + ")"))();
-	};
-
 		var parseJSON = typeof JSON === 'object' ? JSON.parse : function(source) {
 		source += "";
 		if (source != '') {
@@ -690,7 +690,7 @@
 				setTimeout((function(src) {
 					return function() {
 						console.log("eval", src); 
-						eval(safeScriptContent(src));
+						evil(safeScriptContent(src));
 					}
 				})(original.innerHTML), 1000);
 			}

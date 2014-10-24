@@ -1,8 +1,4 @@
 "use strict"; 
-var evil = function(s) {
-	return (new Function("return (" + s + ")"))();
-};
-
 /**
  * a minimal JSON parser .. based on json2 (https://github.com/douglascrockford/JSON-js)
  *
