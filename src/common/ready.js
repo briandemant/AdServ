@@ -23,7 +23,8 @@ var ready = AdServ.ready = (function (ready) {
 		loaded = 1;
 		while (f = fns.shift()) {
 			f()
-		}
+		} 
+		emit('page:load')
 	}
 
 	document[addEventListener] && document[addEventListener](domContentLoaded, fn = function () {

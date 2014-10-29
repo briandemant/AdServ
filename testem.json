@@ -1,0 +1,15 @@
+{
+  "framework": "mocha",
+  "test_page": "/",
+  "src_files": [
+	"src/**/*.js",
+	"test/**/*.js"
+  ],
+  "src_files_ignore": "js/toxic/*.js",
+  "routes": {
+    "/": "test/all_tests.html",
+    "/examples": "test/examples",
+    "/helpers/js": "test/helpers/js",
+    "/helpers/css": "test/helpers/css"
+  }
+}

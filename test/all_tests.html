@@ -1,0 +1,67 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Test wrapper</title>
+	<link rel="stylesheet" href="/helpers/css/mocha.css"/>
+	<style>
+
+		body {
+			background: #eee;
+		}
+
+		#result {
+			background: white;
+			width: 400px;
+			height: 100%;
+			display: block;
+			position: absolute;
+			border-right: 1px solid grey;
+			overflow: scroll;
+		}
+
+		#result:hover {
+			width: 800px;
+		}
+
+		#mocha {
+			width: 800px;
+			padding-bottom: 18px;
+			margin: 30px 20px;
+		}
+		#mocha-report {
+			background: white;
+		}
+		#frame {
+			width: 830px;  
+			border: 1px solid #808080;
+		}
+		#testarea { 
+			display: block;
+			position: absolute;
+			padding: 70px 0 0 410px;
+		}
+		
+		
+	</style>
+</head>
+<body>
+
+	<div id="testarea">
+		TESTAREA!!!
+	</div>
+	<div id="result">
+		<div id="mocha"></div>
+	</div>
+	<script src="/helpers/js/mocha.js"></script>
+	<script src="/helpers/js/chai.js"></script>
+	<script src="/helpers/js/lodash.js"></script>
+	<script src="/helpers/js/mocha_prepare.js"></script>
+	
+	<script src="/examples/adserv/basic.test.js"></script> 
+	<script src="/examples/other.test.js"></script>  
+	 
+	<script src="/helpers/js/mocha_run.js"></script>
+	
+	<script src="/testem.js"></script>
+</body>
+</html>

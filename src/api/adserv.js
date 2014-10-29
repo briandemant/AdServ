@@ -6,7 +6,7 @@ function getContext(adspace, contexts) {
 		name : ctxName,
 		ids : [],
 		adspaces : {},
-		keyword : adspace.keyword || AdServ.keyword,
+		keyword :    adspace.keyword || AdServ.keyword,
 		searchword : adspace.searchword || AdServ.searchword,
 		adServingLoad : ''
 	};
@@ -132,6 +132,7 @@ var showCampaign = function(campaign) {
 };
 
 var checkVisibility = throttle(function() {
+
 	var notReady = [];
 	for (var index = 0; index < len(invisibleAdspaces); index++) {
 		var campaign = invisibleAdspaces[index];
@@ -144,6 +145,7 @@ var checkVisibility = throttle(function() {
 			notReady.push(campaign);
 		}
 	}
+	emit("debug:checkVisibility:leave", notReady.length);
 	invisibleAdspaces = notReady;
 }, 200);
 
@@ -204,12 +206,15 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 									campaign.elem.innerHTML = '<!-- Adspace ' + campaign.adspace + ' (empty) here -->';
 								}
 							}
+							if (  campaign.type != 'undefined') {
+								console.info("Adspace: " + campaign.adspace + " " + campaign.type + ( campaign.iframe ? "" : " in iframe"), campaign.elem);
+							} else {
+								console.info("Adspace: " + campaign.adspace + " is EMPTY", campaign.elem); 
+							}
 
 
-							console.info("Adspace: " + campaign.adspace, campaign.elem);
 							emit('adspace:loaded', campaign);
-							if (campaign.campaign && campaign.banner && campaign.adspace) {
-								console.log("group:" + campaign.group);
+							if (campaign.campaign && campaign.banner && campaign.adspace) { 
 //								console.log("campaign:" + campaign.campaign);
 //								console.log("banner:" + campaign.banner);
 //								console.log("keyword:" + campaign.ctx.keyword); 
@@ -224,6 +229,7 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 				}
 				--anyWaiting;
 				if (!anyWaiting) {
+					emit('debug:contexts:loaded', invisibleAdspaces);
 					ready(function() {
 						checkVisibility();
 					});

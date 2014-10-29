@@ -181,9 +181,9 @@ module.exports = function(grunt) {
 	});
 
 	// usage:
-	// grunt release         <- patch release
-	// grunt release:minor   <- minor release
-	// grunt release:mmajor  <- major release
+	// grunt release         <- patch   release
+	// grunt release:minor   <- feature release
+	// grunt release:major   <- major   release
 	grunt.registerTask('release', function(type) {
 		type = type ? type : 'patch';     // Set the release type
 		grunt.task.run('bumpup:' + type); // Bump up the version

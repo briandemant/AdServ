@@ -1,2 +1,2 @@
-#!/usr/bin/env bash
-./node_modules/karma/bin/karma start test/browser/karma_unit.conf.js
+#!/bin/bash
+node ./node_modules/testem/testem.js -g --host 0.0.0.0

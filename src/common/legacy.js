@@ -32,7 +32,7 @@ if (!Date.now) {
 	};
 }
 
-if (DEBUG) {
+function detectIEversion() { 
 	var ie = false;
 	(function(ua) {
 		var result;
@@ -45,6 +45,7 @@ if (DEBUG) {
 				version : parseInt(result[1]) + 4
 			}
 		}
+		// check if this is an fake/emulated ie
 		if (ie) {
 			var jscript = 0 /*@cc_on + @_jscript_version @*/;
 			ie.supported = (jscript >= 5.8 || ie.version > 10);
@@ -59,3 +60,4 @@ if (DEBUG) {
 
 	AdServ.ie = ie;
 }
+ 

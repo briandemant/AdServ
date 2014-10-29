@@ -43,6 +43,7 @@ function makeA(elem, campaign) {
 	a.id = guid("a", campaign.adspace, campaign.campaign)
 	a.setAttribute('href', campaign.click);
 	a.setAttribute('target', "_blank");
+ 
 	a.appendChild(elem);
 	return a;
 }
@@ -50,7 +51,11 @@ function makeA(elem, campaign) {
 function makeImg(campaign) {
 	var img = document.createElement('img');
 	img.id = guid("img", campaign.adspace, campaign.campaign); 
-	img.border = 0;
+ 
+	img.style.border = "0"; 
+	img.style.margin = "0 auto"; 
+	img.style.display = "block"; 
+	
 	img.src = campaign.image;
 	return img;
 }
@@ -58,26 +63,11 @@ function makeImg(campaign) {
 
 engines["image"] = function renderImage(elem, campaign) {
 	var img = makeImg(campaign);
-	var a = makeA(img, campaign);
+	var a = makeA(img, campaign); 
 	elem.appendChild(a);
 }
 
-engines["iframe"] = function renderImage(elem, campaign) {
-	var ifrm = document.createElement("iframe");
-	ifrm.id = guid('iframe', campaign.adspace, campaign.campaign);
-	ifrm.style.width = campaign.width + "px";
-	ifrm.style.height = campaign.height + "px";
-	ifrm.style.border = 0;
-	ifrm.style.borderStyle = "none";
-	ifrm.frameBorder = 0;
-	ifrm.scrolling = "no";
 
-
-	AdServ.bind(window, "message", passbackHandlerMaker(elem, campaign)(ifrm))
-
-	ifrm.src = campaign.iframe_src;
-	elem.appendChild(ifrm);
-}
 
 engines["flash"] = function renderFlash(elem, campaign) {
 	var url = campaign.flash + "?" + campaign.click_tag_type + "=" + urlencode(campaign.click); 
@@ -190,18 +180,30 @@ engines["html"] = function renderHtml(elem, campaign) {
 	}
  
 }
+engines["iframe"] = function renderImage(elem, campaign) {
+	var ifrm = createIframe(campaign)
 
-function createIframe(campaign) {
+
+	AdServ.bind(window, "message", passbackHandlerMaker(elem, campaign)(ifrm))
+
+	ifrm.src = campaign.iframe_src;
+	elem.appendChild(ifrm);
+}
+
+function createIframe(campaign) {  
 	var ifrm = document.createElement("iframe");
 	ifrm.id = guid('iframe', campaign.adspace, campaign.campaign);
 	ifrm.style.width = campaign.width + "px";
 	ifrm.style.height = campaign.height + "px";
-	ifrm.style.border = 0;
-	ifrm.style.borderStyle = "none";
+	ifrm.style.border = 0;  
+	ifrm.style.margin = "auto";
+	ifrm.style.display = "block"; 
+	   
 	ifrm.frameBorder = 0;
 	ifrm.scrolling = "no";
 	return ifrm;
 }
+
 function wrapIframe(target, campaign) {
 	var ifrm = createIframe(campaign);
 	target.appendChild(ifrm);

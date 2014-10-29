@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Basic banners</title>
+	<script>
+		// this is just so testing from a remote machine is possible
+		var baseUrl = '//' + document.location.hostname + ':1337';
+		document.write('<' + 'script src="' + baseUrl + '/api/v2/js/responsive.js"></' + 'script>');
+		var keyword = document.location.pathname.replace(/.*\/([^\.]*).*/, '$1');
+	</script>
+	<link rel="stylesheet" href="../style.css"/>
+	<link rel="stylesheet" href="./responsive.css"/>
+</head>
+<body>
+	<h1>Basic banners</h1>
+
+	<div class="small shown">small</div>
+	<div class="medium shown">medium</div>
+	<div class="large shown">large</div>
+	<div class="wrapper">
+		
+		<div class="container">
+			<h3>Empty</h3>
+
+			<div class="banner" id="banner1">Banner 1 failed</div>
+			<div class="description">No banner should be displayed</div>
+		</div>
+
+		<div class="container small">
+			<h3>High iframe</h3>
+
+			<div class="banner" id="banner2">Banner 2 failed</div>
+			<div class="description">vertial iframe</div>
+		</div>
+
+		<div class="container medium">
+			<h3>Square iframe</h3>
+
+			<div class="banner" id="banner3">Banner 3 failed</div>
+			<div class="description">Square iframe</div>
+		</div>
+
+		<div class="container large">
+			<h3>Wide iframe</h3>
+
+			<div class="banner" id="banner4">Banner 4 failed</div>
+			<div class="description">Wide iframe</div>
+		</div>
+
+		<div class="container large">
+			<h3>High image</h3>
+
+			<div class="banner" id="banner5">Banner 5 failed</div>
+			<div class="description">vertial image</div>
+		</div>  
+	</div>
+
+	<script>
+		AdServ.load({
+			            "baseUrl" : baseUrl,
+			            "keyword" : keyword,
+			            "adspaces" : [
+				            {'id' : 1, 'target' : 'banner1', "keyword" : keyword},
+				            {'id' : 20, 'target' : 'banner2'},
+				            {'id' : 30, 'target' : 'banner3'},
+				            {'id' : 10, 'target' : 'banner4'},
+				            {'id' : 2, 'target' : 'banner5'}, 
+			            ]
+		            })
+	</script>
+	<script>
+		top.postMessage("testpage:ready", '*');
+	</script>
+</body>
+</html>

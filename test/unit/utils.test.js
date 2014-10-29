@@ -15,53 +15,54 @@ describe('utils.js', function() {
 	describe('guid', function() {
 		it('should be added to AdServ public api', function() {
 			helpers.run("./src/common/utils.js", assert, function() {
-			}, function() { 
+			}, function() {
 				assert.ok(guid());
 			});
 		});
 
-		it('should return a random string', function() {
-			helpers.run("./src/common/utils.js", assert, function () {
+		it('should return a random string', function() { 
+			helpers.run("./src/common/utils.js", assert, function() {
 				// fixing random to be the predictable  
 				var next = 0.98;
-				var time = 1396875596000;
+				var fixedTime = 1396875596000;
 				var Math = {
 					random : function() {
 						next = next * next;
-						return  next;
+						return next;
 					}
 				}
 				var Date = {
 					now : function() {
-						return  time;
+						return fixedTime;
 					}
 				}
 			}, function() {
-				assert.equal(guid(), "ad_1004ebec_f5dc_ec2051da");
-				assert.equal(guid(), "ad_1004ebec_d9cb_b94aceb2");
+				assert.equal(guid(), "1004ebec_0001_f5dcc63f");
+				assert.equal(guid(), "1004ebec_0002_ec2051da");
 			});
-			helpers.run("./src/common/utils.js", assert, function () {
+			helpers.run("./src/common/utils.js", assert, function() {
 				// fixing random to be the predictable  
-				var next = 0.98;
-				var time = 1396875597000;
+				var next = 0.97;
+				var fixedTime = 1396875596000 + (60 * 60 * 1000);
 				var Math = {
 					random : function() {
 						next = next * next;
-						return  next;
+						return next;
 					}
 				}
 				var Date = {
 					now : function() {
-						return  time;
+						// let time be different on this run
+						return fixedTime;
 					}
 				}
 			}, function() {
-				assert.equal(guid(), "ad_1004ebed_f5dc_ec2051da");
-				assert.equal(guid(), "ad_1004ebed_d9cb_b94aceb2");
+				assert.equal(guid(), "1004f9fc_0001_f0ded288");
+				assert.equal(guid(), "1004f9fc_0002_e2a28cb2");
 			});
 		});
 	});
-	
+
 	describe('getRequestParameter', function() {
 		it('location.search is searched', function() {
 			helpers.run("./src/common/utils.js", assert, function() {

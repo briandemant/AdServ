@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+		<h1>The Other Example</h1>
+		<div>more text</div> 
+	<div id="banner1">banner1 failed</div>
+	<div id="banner2">banner2 failed</div>
+	<div id="banner3">banner3 failed</div>
+	<script>
+		// this is just so testing from a remote machine is possible
+		document.write('<' + 'script src="//' + document.location.hostname + ':1337/api/v2/js/adserv.js"></' + 'script>');
+	</script>
+	<script>
+		AdServ.load({
+			            "baseUrl" : 'http://fynskemedieradmin.adservinginternational.com',
+			            "adspaces" : [ 
+				            {'id' : 219, 'target' : 'banner3'}
+			            ]
+		            })
+		
+		setTimeout(function() {
+			AdServ.load({
+				            "baseUrl" : 'http://fynskemedieradmin.adservinginternational.com',
+				            "adspaces" : [
+					            {'id' : 200, 'target' : 'banner1'},
+					            {'id' : 220, 'target' : 'banner2'} 
+				            ]
+			            })
+
+
+			top.postMessage("testpage:ready", '*');
+			
+		},500)
+	</script> 
+</body>
+</html>
