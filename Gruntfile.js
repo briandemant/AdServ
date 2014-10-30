@@ -68,7 +68,7 @@ module.exports = function(grunt) {
 				       'src/common/ajax.js',
 				       'src/common/flash.js',
 				       'src/common/render.js',
-				       'src/api/adserv.js'],
+				       'src/api/adserv.api.js'],
 				dest : 'build/adserv.js'
 			}
 		},

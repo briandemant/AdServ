@@ -2,8 +2,8 @@
   "framework": "mocha",
   "test_page": "/",
   "src_files": [
-	"src/**/*.js",
-	"test/**/*.js"
+	"build/*.js",
+	"test/**/*"
   ],
   "src_files_ignore": "js/toxic/*.js",
   "routes": {

@@ -25,7 +25,9 @@ app.get('/favicon.ico', function(req, res) {
 	res.writeHead(200, {'Content-Type' : 'image/x-icon'});
 	res.end();
 });
-server.listen(3000, function() { 
+
+
+server.listen(3000, function() {
 	console.log("spec on http://0.0.0.0:3000")
 }) 
 

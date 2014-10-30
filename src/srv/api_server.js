@@ -8,13 +8,17 @@ var v2 = express.Router();
 
 app.use(morgan('dev'))
 app.all('*', function(req, res, next) {
+	
+	req.urlRoot = "http://" + req.hostname + ":1337";
+	console.log("qweqweqwe "  + req.urlRoot);
 	res.header("Access-Control-Allow-Origin", "*");
 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 	next();
 });
 
 function startCampaign(type, req, adspace, idx) {
-	req.baseUrl = "http://" + req.hostname + ":1337";
+
+	console.log("adadasd " + req.urlRoot);
 	var group = (adspace + "" + idx) | 0;
 	var campaign = (adspace + "0" + idx) | 0;
 	var banner = (adspace + "00" + idx) | 0;
@@ -24,15 +28,15 @@ function startCampaign(type, req, adspace, idx) {
 		"campaign" : campaign,
 		"banner" : banner,
 		"banner_type" : type,
-		"click" :  req.baseUrl + "/click.php?raw=" + campaign + "|" + banner + "|",
-		"count" :  req.baseUrl + "/api/v2/count/view/" + adspace + "/" + campaign + "/" + banner + "?keyword=",
+		"click" :  req.urlRoot + "/click.php?raw=" + campaign + "|" + banner + "|",
+		"count" :  req.urlRoot + "/api/v2/count/view/" + adspace + "/" + campaign + "/" + banner + "?keyword=",
 		"iframe" : adspace % 2 == 0
 	}
 }
 
 function imageCampaign(type, width, height, req, adspace, idx) {
 	var campaign = startCampaign('image', req, adspace, idx);
-	campaign.image = req.baseUrl + "/banner/" + type + "/" + ( adspace % 10 ) + ".jpg";
+	campaign.image = req.urlRoot + "/banner/" + type + "/" + ( adspace % 10 ) + ".jpg";
 	campaign.width = width;
 	campaign.height = height;
 	return campaign;
@@ -40,10 +44,11 @@ function imageCampaign(type, width, height, req, adspace, idx) {
 
 var campaignMakers = {
 	"0" : function(req, adspace, keyword, idx) {
-		var baseUrl = "//" + req.host + ":1337";
+		//var urlRoot = "//" + req.host + ":1337";
+		console.log("0 " + req.urlRoot);
 		return {
 			"adspace" : adspace,
-			"count" : baseUrl + "/api/v2/count/view/" + adspace + "?keyword=" + keyword,
+			"count" : req.urlRoot + "/api/v2/count/view/" + adspace + "?keyword=" + keyword,
 			"msg" : "nothing found"
 		}
 	},
@@ -65,7 +70,9 @@ var campaignMakers = {
 	},
 	"5" : function(req, adspace, keyword, idx) {
 		var campaign = startCampaign('html', req, adspace, idx);
-		campaign.html = "Banner " + adspace + "_" + campaign.group;
+		campaign.html = "<b><center>Banner " + adspace + "_" + campaign.group + "</center></b>" +
+		                "<script>console.log('js inline for adspace ' + "+ adspace+")</script>"+
+		                "<script src='" + req.urlRoot + "/jsurl?adspace=" + adspace + "'>console.error('DO NOT RUN THIS')</script>";
 		campaign.width = 150;
 		campaign.height = 150;
 		return campaign;
@@ -109,18 +116,22 @@ v2.get("/count/*", function(req, res) {
 });
 
 v2.get('/get/js_banner', function(req, res) {
-	res.send("document.getElementById('" + req.query.appendTo + "').innerHTML='" + JSON.stringify(req.query).replace(/[{}]/g, '').replace(/,/g, "<br>").replace(/"([a-z]+)":/gi, "$1 : ") + "'");
+	res.send("document.getElementById('" + req.query.appendTo + "').appendChild(document.createTextNode('" + JSON.stringify(req.query).replace(/[{}]/g, '').replace(/,/g, "<br>").replace(/"([a-z]+)":/gi, "$1 : ") + "'))");
 });
 
 root.get('/banner/:kind/:name', function(req, res) {
 	var fileName = req.params.kind + '/' + req.params.name;
 	res.sendFile(fileName, {root : __dirname + '/../../test/examples/banners'})
 });
+
 root.get('/show_campaign.php', function(req, res) {
 	res.send("<pre>" + JSON.stringify(req.query).replace(/[{}]/g, '').replace(/,/g, "\n").replace(/"([a-z]+)":/ig, "$1 : "));
 });
 
 
+root.get('/jsurl', function(req, res) {
+	res.send("console.log('jsurl : "+req.query.adspace+"')");
+});
 app.use('/', root);
 app.use('/api/v2', v2);
 

@@ -25,9 +25,11 @@ function passbackHandlerMaker(elem, campaign) {
 				campaign.nesting = (campaign.nesting | 0) + 1;
 				if (campaign.nesting < 10) {
 					//setTimeout(function() {
-						AdServ.load({ adspaces : [
-							{id : payload.next, target : elem, adServingLoad : campaign.ctx.adServingLoad}
-						]})
+					AdServ.load({
+						            adspaces : [
+							            {id : payload.next, target : elem, adServingLoad : campaign.ctx.adServingLoad}
+						            ]
+					            })
 					//},0)
 				} else {
 					console.error("too deep")
@@ -43,19 +45,19 @@ function makeA(elem, campaign) {
 	a.id = guid("a", campaign.adspace, campaign.campaign)
 	a.setAttribute('href', campaign.click);
 	a.setAttribute('target', "_blank");
- 
+
 	a.appendChild(elem);
 	return a;
 }
 
 function makeImg(campaign) {
 	var img = document.createElement('img');
-	img.id = guid("img", campaign.adspace, campaign.campaign); 
- 
-	img.style.border = "0"; 
-	img.style.margin = "0 auto"; 
-	img.style.display = "block"; 
-	
+	img.id = guid("img", campaign.adspace, campaign.campaign);
+
+	img.style.border = "0";
+	img.style.margin = "0 auto";
+	img.style.display = "block";
+
 	img.src = campaign.image;
 	return img;
 }
@@ -63,14 +65,13 @@ function makeImg(campaign) {
 
 engines["image"] = function renderImage(elem, campaign) {
 	var img = makeImg(campaign);
-	var a = makeA(img, campaign); 
+	var a = makeA(img, campaign);
 	elem.appendChild(a);
 }
 
 
-
 engines["flash"] = function renderFlash(elem, campaign) {
-	var url = campaign.flash + "?" + campaign.click_tag_type + "=" + urlencode(campaign.click); 
+	var url = campaign.flash + "?" + campaign.click_tag_type + "=" + urlencode(campaign.click);
 	var flash = new Flash(url, guid('flash', campaign.adspace, campaign.campaign), campaign.width, campaign.height);
 	if (!flash.write(elem)) {
 		var img = makeImg(campaign);
@@ -107,10 +108,10 @@ engines["wallpaper"] = function renderwallpaper(elem, campaign) {
 }
 
 engines["html"] = function renderHtml(elem, campaign) {
-	
+
 	var script, original;
 
-	function safeScriptContent(js) { 
+	function safeScriptContent(js) {
 		// remove document.write to avoid accidential dom rewrite
 //		return js.replace('document.write(', 'console.log("WARNING : document.write -> "+');
 		return js.replace('document.write(', 'console.warn("WARNING : banner: ' + campaign.banner + ' uses document.write");document.write(');
@@ -121,10 +122,10 @@ engines["html"] = function renderHtml(elem, campaign) {
 	}
 
 	//console.debug("using direct access"); 
-	elem.innerHTML = campaign.html;
+	elem.innerHTML += campaign.html;
 //	elem.src = "javascript:" + campaign.html_as_js;
- 
-		
+
+
 	var scripts = elem.getElementsByTagName("script");
 //	console.log(scripts.length);
 //	console.log(elem.innerHTML);
@@ -135,50 +136,36 @@ engines["html"] = function renderHtml(elem, campaign) {
 		AdServ.bind(window, "message", passbackHandlerMaker(elem, campaign)(iframes[0]));
 	}
 
-	var original; 
+	var original;
 	var length = scripts.length;
 	var uid = guid("js", campaign.adspace, campaign.campaign);
-	for (var i = 0; i < length; i++) {
-//		alert("script " + i);
+	for (var i = 0; i < length; i++) { 
 		original = scripts[i];
-		console.log("original", original);
 		if (original.src) {
-			console.log("original.src");
+			console.warn("original.src", original);
 			script = document.createElement("script");
 			script.id = uid + "_" + i;
 			script.src = original.src; 
-//			setTimeout((function(script, elem) {
-//				return function() {
-					elem.appendChild(script);
-//				}
-//			})(script, elem), 0);
-		}
-
-		if (original.innerText) {
-			console.log("original.txt");
+			elem.appendChild(script); 
+		// which browser  allow running of src + inline???? 
+		//}   if (original.innerText) {
+		} else if (original.innerText) {
+			console.warn("original.txt", original);
 			script = document.createElement("script");
 			script.id = uid + "_" + i;
-//			console.log(original.innerHTML); 
 			script.innerText = safeScriptContent(original.innerText);
-//			setTimeout((function (script,elem) {
-//				return function() {
-					elem.appendChild(script);
-//				}
-//			})(script,elem),0);
-////			break;
-		} else if (original.innerHTML) {
-//			alert("using script.innerHTML");
-			console.log("original.html", original);
-//			eval(safeScriptContent(original.innerHTML));
+			elem.appendChild(script);
+		} else if (original.innerHTML) { 
+			console.warn("original.html", original); 
 			setTimeout((function(src) {
 				return function() {
-					console.log("eval", src); 
+					console.log("eval", src);
 					evil(safeScriptContent(src));
 				}
 			})(original.innerHTML), 1000);
 		}
 	}
- 
+
 }
 engines["iframe"] = function renderImage(elem, campaign) {
 	var ifrm = createIframe(campaign)
@@ -190,15 +177,15 @@ engines["iframe"] = function renderImage(elem, campaign) {
 	elem.appendChild(ifrm);
 }
 
-function createIframe(campaign) {  
+function createIframe(campaign) {
 	var ifrm = document.createElement("iframe");
 	ifrm.id = guid('iframe', campaign.adspace, campaign.campaign);
 	ifrm.style.width = campaign.width + "px";
 	ifrm.style.height = campaign.height + "px";
-	ifrm.style.border = 0;  
+	ifrm.style.border = 0;
 	ifrm.style.margin = "auto";
-	ifrm.style.display = "block"; 
-	   
+	ifrm.style.display = "block";
+
 	ifrm.frameBorder = 0;
 	ifrm.scrolling = "no";
 	return ifrm;
@@ -265,7 +252,6 @@ function makeFloat(campaign) {
 
 	var contentElem = document.createElement('div');
 	contentElem.id = "content_" + uid;
-	
 
 
 	if (campaign.floating_close_position.indexOf('off') != 0) {
@@ -302,7 +288,7 @@ function makeFloat(campaign) {
 function render(campaign) {
 	var ifrm;
 	var targetElem;
-	if (campaign.elem) { 
+	if (campaign.elem) {
 		targetElem = campaign.elem;
 		if (campaign.floating) {
 			targetElem = makeFloat(campaign);
@@ -323,7 +309,7 @@ function render(campaign) {
 		}
 		var engine = engines[campaign.banner_type];
 		if (engine) {
-			engine(targetElem, campaign); 
+			engine(targetElem, campaign);
 		} else {
 			console.error('no renderer for banner type yet : ' + campaign.banner_type, campaign);
 		}

@@ -198,12 +198,12 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 							if ($ID(ctx.adspaces[campaign.adspace].target)) {
 								if (campaign.campaign && campaign.banner && campaign.adspace) {
 									campaign.elem.innerHTML = '<!-- Adspace: ' + campaign.adspace
-									                          + ' Group:  ' + campaign.group
-									                          + ' Campaign:  ' + campaign.campaign
-									                          + ' Banner:  ' + campaign.banner
+									                          + ' Group: ' + campaign.group
+									                          + ' Campaign: ' + campaign.campaign
+									                          + ' Banner: ' + campaign.banner
 									                          + ' here -->';
 								} else {
-									campaign.elem.innerHTML = '<!-- Adspace ' + campaign.adspace + ' (empty) here -->';
+									campaign.elem.innerHTML = '<!-- Adspace: ' + campaign.adspace + ' (empty) here -->';
 								}
 							}
 							if (  campaign.type != 'undefined') {
