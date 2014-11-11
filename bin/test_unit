@@ -1,2 +1,4 @@
 #!/usr/bin/env bash
-./node_modules/mocha/bin/mocha -R spec -G -w test/unit/*.test.js
+#./node_modules/mocha/bin/mocha -R spec -G -w test/unit/*.test.js
+cd test 
+node ../node_modules/nodemon/bin/nodemon.js  -q -e js -w ../build/ -w unit/ ../node_modules/mocha/bin/mocha --inline-diffs --check-leaks -R spec -G  unit/*.test.js

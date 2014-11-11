@@ -4,10 +4,10 @@ mocha.setup('bdd');
 var currentIframe, win, doc, asd;
 
 function loadPage(page, width, height, cb) {
+	console.debug("loading : " + page);
+	
 	var testarea = document.getElementById("testarea");
-	testarea.innerHTML = '';
-
-
+	testarea.innerHTML = ''; 
 	var ifrm = document.createElement("iframe");
 
 	ifrm.style.width = width + "px";
@@ -18,6 +18,7 @@ function loadPage(page, width, height, cb) {
 	ifrm.scrolling = "no";
 
 	ifrm.onload = function() {
+		console.debug('ifrm.onload ')
 		win = currentIframe.contentWindow;
 		doc = win.document;
 		cb(win, doc);

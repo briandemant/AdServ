@@ -1,10 +1,10 @@
 describe('empty load', function() {
 	before(function(done) {
-		loadPage('/examples/adserv/empty.html', 800, 800, function(win, doc) {
-			win.AdServ.on('debug:checkVisibility:leave', function(rest) {
-				if (!rest) {
-					done();
-				}
+		console.debug('before')
+		loadPage('/examples/adserv/empty.html', 800, 800, function(win, doc) { 
+			win.AdServ.on('debug:all:contexts:loaded', function() {
+				console.debug("done!!");
+				done();
 			})
 		});
 	})

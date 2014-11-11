@@ -78,7 +78,7 @@ module.exports = function(grunt) {
 		watch : {
 			normal : {
 				files : ['src/*.js', 'src/api/*.js', 'src/common/*.js', 'src/templates/*.js.tmpl'],
-				tasks : ['concat', 'uglify:max']
+				tasks : ['concat']
 			},
 			diff : {
 				files : ['src/*.js', 'src/api/*.js', 'src/common/*.js', 'src/templates/*.js.tmpl'],
@@ -258,7 +258,7 @@ module.exports = function(grunt) {
 	grunt.registerTask('build', ['concat', 'comments', 'uglify']);
 	grunt.registerTask('docs', ['concat', 'groc']);
 
-	grunt.registerTask('dev', ['concat', 'comments', 'uglify', 'watch:normal']);
+	grunt.registerTask('dev', ['concat', 'comments',  'watch:normal']);
 	grunt.registerTask('devdiff', ['concat', 'comments', 'watch:diff']);
 	grunt.registerTask('devdocs', ['docs', 'watch:docs']);
 	grunt.registerTask('devop', ['concat', 'uglify', 'copy:to_operation', 'watch:operation']);

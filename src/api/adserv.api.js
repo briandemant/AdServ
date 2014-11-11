@@ -132,6 +132,9 @@ var showCampaign = function(campaign) {
 };
 
 var checkVisibility = throttle(function() {
+	if (len(invisibleAdspaces) == 0) {
+		return;
+	}
 
 	var notReady = [];
 	for (var index = 0; index < len(invisibleAdspaces); index++) {
@@ -177,6 +180,7 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 		          + '&adServingLoad=' + urlencode(ctx.adServingLoad)
 		          + '&keyword=' + urlencode(ctx.keyword)
 		          + '&sw=' + urlencode(ctx.searchword)
+		          + ( ctxName != '_GLOBAL_' ? '&context=' + ctxName : '')
 		          + '&uid=' + conf.guid + '&count';
 		getJSON(url, (function(ctx) {
 
@@ -206,15 +210,15 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 									campaign.elem.innerHTML = '<!-- Adspace: ' + campaign.adspace + ' (empty) here -->';
 								}
 							}
-							if (  campaign.type != 'undefined') {
+							if (campaign.type != 'undefined') {
 								console.info("Adspace: " + campaign.adspace + " " + campaign.type + ( campaign.iframe ? "" : " in iframe"), campaign.elem);
 							} else {
-								console.info("Adspace: " + campaign.adspace + " is EMPTY", campaign.elem); 
+								console.info("Adspace: " + campaign.adspace + " is EMPTY", campaign.elem);
 							}
 
 
 							emit('adspace:loaded', campaign);
-							if (campaign.campaign && campaign.banner && campaign.adspace) { 
+							if (campaign.campaign && campaign.banner && campaign.adspace) {
 //								console.log("campaign:" + campaign.campaign);
 //								console.log("banner:" + campaign.banner);
 //								console.log("keyword:" + campaign.ctx.keyword); 
@@ -227,11 +231,12 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 						}
 					}
 				}
+				emit('debug:context:loaded', ctx);
 				--anyWaiting;
 				if (!anyWaiting) {
-					emit('debug:contexts:loaded', invisibleAdspaces);
 					ready(function() {
 						checkVisibility();
+						emit('debug:all:contexts:loaded', invisibleAdspaces);
 					});
 				}
 			};

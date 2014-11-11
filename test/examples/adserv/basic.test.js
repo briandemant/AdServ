@@ -1,19 +1,10 @@
 describe('basic functionality', function() {
 	before(function(done) {
 		loadPage('/examples/adserv/basic.html', 800, 800, function(win, doc) {
-			win.AdServ.on('debug:contexts:loaded', function() {
-				//console.log("loaded!!");
-			});
-			//console.log("done!!");
-
-			win.AdServ.on('debug:checkVisibility:leave', function(rest) {
-				//console.log("leave");
-
-				if (!rest) {
-					done();
-				}
-			})
-
+			win.AdServ.on('debug:all:contexts:loaded', function() {
+				console.debug("done!!");
+				done();
+			}) 
 		});
 	})
 
@@ -40,7 +31,7 @@ describe('basic functionality', function() {
 
 
 	it('should have loaded some as iframes', function() {
-		var expected = [2, 3, 4, 8, 10];
+		var expected = [2, 3, 4, 8, 10, 12];
 		var iframes = doc.getElementsByTagName('iframe');
 		assert.equal(iframes.length, expected.length, 'expected 5 banners to be loaded as iframes');
 		_.each(iframes, function(ifm, i) {
@@ -48,15 +39,15 @@ describe('basic functionality', function() {
 			assert.equal(elem.id, 'banner' + expected[i]);
 		})
 	});
- 
-
-	it('should have loaded some images', function() {  
-		assert.equal($(getBannerIframeDoc(2)).find('a').find('img').length,1,"banner2 should be an image with link in an iframe"); 
-		assert.equal($(getBannerIframeDoc(3)).find('a').find('img').length,1,"banner2 should be an image with link in an iframe"); 
-		assert.equal($(getBannerIframeDoc(4)).find('a').find('img').length,1,"banner2 should be an image with link in an iframe"); 
+  
 	
-		assert.equal($(getBannerElem(5)).find('a').find('img').length,1,"banner4 should be an image");
-		assert.equal($(getBannerElem(6)).find('a').find('img').length,1,"banner4 should be an image");
-		assert.equal($(getBannerElem(7)).find('a').find('img').length,1,"banner4 should be an image");
+	it('should have loaded some images', function() {
+		assert.equal($(getBannerIframeDoc(2)).find('a').find('img').length, 1, "banner2 should be an image with link in an iframe");
+		assert.equal($(getBannerIframeDoc(3)).find('a').find('img').length, 1, "banner2 should be an image with link in an iframe");
+		assert.equal($(getBannerIframeDoc(4)).find('a').find('img').length, 1, "banner2 should be an image with link in an iframe");
+
+		assert.equal($(getBannerElem(5)).find('a').find('img').length, 1, "banner4 should be an image");
+		assert.equal($(getBannerElem(6)).find('a').find('img').length, 1, "banner4 should be an image");
+		assert.equal($(getBannerElem(7)).find('a').find('img').length, 1, "banner4 should be an image");
 	});
 });

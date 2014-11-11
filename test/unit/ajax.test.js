@@ -6,7 +6,7 @@ describe('ajax.js', function() {
 		it.skip('should be tested', function() {
 			helpers.run("./src/ajax.js", assert, function() {
 			}, function() {
-				assert.ok(AdServ.guid);
+				 assert.ok(AdServ.guid);
 			});
 		});
 	});

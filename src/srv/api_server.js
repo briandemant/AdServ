@@ -7,10 +7,8 @@ var root = express.Router();
 var v2 = express.Router();
 
 app.use(morgan('dev'))
-app.all('*', function(req, res, next) {
-
-	req.urlRoot = "http://" + req.hostname + ":1337";
-	console.log("qweqweqwe " + req.urlRoot);
+app.all('*', function(req, res, next) { 
+	req.urlRoot = "http://" + req.hostname + ":1337"; 
 	res.header("Access-Control-Allow-Origin", "*");
 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 	next();
@@ -41,9 +39,7 @@ function imageCampaign(type, width, height, req, adspace, idx) {
 }
 
 var campaignMakers = {
-	"0" : function(req, adspace, keyword, idx) {
-		//var urlRoot = "//" + req.host + ":1337";
-		console.log("0 " + req.urlRoot);
+	"0" : function(req, adspace, keyword, idx) { 
 		return {
 			"adspace" : adspace,
 			"count" : req.urlRoot + "/api/v2/count/view/" + adspace + "?keyword=" + keyword,

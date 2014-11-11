@@ -15,7 +15,7 @@ var server = http.createServer(app)
 
 var options = {
 	dir : __dirname + '/../../',
-	ignored : /node_modules/  //ignored file
+	ignored : /common/  //ignored file
 }
 
 app.use(puer.connect(app, server, options))   //use as puer connect middleware
