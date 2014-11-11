@@ -14,10 +14,16 @@ var on = AdServ.on = function(event, fn, context) {
 	if (event && fn) {
 		eventHandlers[event] = (typeof eventHandlers[event] === 'undefined') ? [] : eventHandlers[event];
 
-		eventHandlers[event].push(function(args) {
-
-			return  fn.apply(context || window, args);
-		});
+		if (event !== '*') {
+			eventHandlers[event].push(function(args) {
+				return fn.apply(context || window, args);
+			});
+		} else {
+			eventHandlers[event].push(function(args,event) { 
+				args.unshift(event);
+				return fn.apply(context || window, args);
+			});
+		}
 	}
 };
 
@@ -44,10 +50,18 @@ var once = AdServ.once = function(event, fn, context) {
 //  * **event** eventname 
 //  * **arguments** *optional* all other arguments are passed on to the callback
 var emit = AdServ.emit = function(event) {
+	//console.log(event, slice.call(arguments, 1));
+
 	if (typeof eventHandlers[event] !== 'undefined') {
 		var args = slice.call(arguments, 1);
 		for (var i = 0; i < len(eventHandlers[event]); i++) {
 			eventHandlers[event][i](args);
+		}
+	}
+	if (typeof eventHandlers['*'] !== 'undefined') {
+		var args = slice.call(arguments, 1);
+		for (var i = 0; i < len(eventHandlers['*']); i++) {
+			eventHandlers['*'][i](args,event);
 		}
 	}
 };
@@ -74,12 +88,16 @@ var unbind = AdServ.unbind = function(elem, type, handler) {
 // Save original `onresize`
 var originalResize = window['onresize'] || noop;
 
+var emitResize = throttle(function() {
+	emit('page:resize', viewport());
+}, 200);
+
 // Register new wrapping `onresize`
 window.onresize = function() {
 	try {
 		originalResize();
 	} catch (e) {}
-	emit('page:resize');
+	emitResize();
 };
 
 // Emit load event when dom is loaded 

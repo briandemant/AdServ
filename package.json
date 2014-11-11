@@ -31,6 +31,7 @@
     "lodash": "*",
     "mocha": "*",
     "morgan": "^1.4.1",
+    "nodemon": "^1.2.1",
     "puer": "^1.0.8",
     "serve-index": "^1.0.1",
     "serve-static": "^1.0.4",

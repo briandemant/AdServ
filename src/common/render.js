@@ -71,7 +71,7 @@ engines["image"] = function renderImage(elem, campaign) {
 
 
 engines["flash"] = function renderFlash(elem, campaign) {
-	var url = campaign.flash + "?" + campaign.click_tag_type + "=" + urlencode(campaign.click);
+	var url = campaign.flash + (campaign.flash.indexOf('?') > -1 ? '&' : "?") + campaign.click_tag_type + "=" + urlencode(campaign.click);
 	var flash = new Flash(url, guid('flash', campaign.adspace, campaign.campaign), campaign.width, campaign.height);
 	if (!flash.write(elem)) {
 		var img = makeImg(campaign);
@@ -139,24 +139,24 @@ engines["html"] = function renderHtml(elem, campaign) {
 	var original;
 	var length = scripts.length;
 	var uid = guid("js", campaign.adspace, campaign.campaign);
-	for (var i = 0; i < length; i++) { 
+	for (var i = 0; i < length; i++) {
 		original = scripts[i];
 		if (original.src) {
 			console.warn("original.src", original);
 			script = document.createElement("script");
 			script.id = uid + "_" + i;
-			script.src = original.src; 
-			elem.appendChild(script); 
-		// which browser  allow running of src + inline???? 
-		//}   if (original.innerText) {
+			script.src = original.src;
+			elem.appendChild(script);
+			// which browser  allow running of src + inline???? 
+			//}   if (original.innerText) {
 		} else if (original.innerText) {
 			console.warn("original.txt", original);
 			script = document.createElement("script");
 			script.id = uid + "_" + i;
 			script.innerText = safeScriptContent(original.innerText);
 			elem.appendChild(script);
-		} else if (original.innerHTML) { 
-			console.warn("original.html", original); 
+		} else if (original.innerHTML) {
+			console.warn("original.html", original);
 			setTimeout((function(src) {
 				return function() {
 					console.log("eval", src);
@@ -286,6 +286,7 @@ function makeFloat(campaign) {
 }
 
 function render(campaign) {
+	emit('debug:before:render', campaign);
 	var ifrm;
 	var targetElem;
 	if (campaign.elem) {
@@ -297,6 +298,7 @@ function render(campaign) {
 			if (campaign.banner_type !== 'html') {
 				ifrm = wrapIframe(targetElem, campaign);
 				targetElem = ifrm.contentDocument.body;
+				emit('debug:wrapped', campaign, ifrm, targetElem);
 			} else {
 				ifrm = createIframe(campaign);
 //				ifrm.src = AdServ.baseUrl+"/api/v2/get/html/" + campaign.banner;
@@ -304,12 +306,15 @@ function render(campaign) {
 //				console.log(ifrm.src);
 				AdServ.bind(window, "message", passbackHandlerMaker(targetElem, campaign)(ifrm));
 				targetElem.appendChild(ifrm);
+				emit('debug:wrapped', campaign, ifrm, ifrm.contentDocument.body);
+				emit('debug:after:render', campaign);
 				return;
 			}
 		}
 		var engine = engines[campaign.banner_type];
 		if (engine) {
-			engine(targetElem, campaign);
+			engine(targetElem, campaign); 
+			emit('debug:after:render', campaign);
 		} else {
 			console.error('no renderer for banner type yet : ' + campaign.banner_type, campaign);
 		}

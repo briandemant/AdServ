@@ -1,2 +1,2 @@
 #!/bin/bash
-nodemon -w src/srv/ src/srv/example_server.js
+node ./node_modules/nodemon/bin/nodemon.js  -w src/srv/ src/srv/example_server.js

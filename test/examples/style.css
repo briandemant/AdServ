@@ -26,9 +26,12 @@ body {
 	bottom:44px;
 	left:12px;
 	height: 65px;
-	width: 130px;
+	width: 128px;
 	font-size: 12px;
-	background: rgba(250, 250, 250, 0.8); 
+	border: 1px solid hotpink;
+	background: rgba(255, 155, 200, 0.8);
+	box-shadow: 0 0 20px 2px rgba(255, 155, 200, 0.5);
+
 }
 
 .container:hover > .description {

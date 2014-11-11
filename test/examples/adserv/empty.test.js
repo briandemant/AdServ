@@ -1,0 +1,35 @@
+describe('empty load', function() {
+	before(function(done) {
+		loadPage('/examples/adserv/empty.html', 800, 800, function(win, doc) {
+			win.AdServ.on('debug:checkVisibility:leave', function(rest) {
+				if (!rest) {
+					done();
+				}
+			})
+		});
+	})
+
+	it('should first to be empty', function() {
+		var elem = getBannerElem(1);
+		var info = getBannerInfo(elem);
+		assert.equal(elem.id, 'banner1');
+		assert.isTrue(info.empty, 'banner1 should be empty');
+		assert.equal(info.adspace, 1, 'banner1 should not be adspace 2');
+	});
+	it('should second to be empty', function() {
+		var elem = getBannerElem(2);
+		var info = getBannerInfo(elem);
+		assert.equal(elem.id, 'banner2');
+		assert.isTrue(info.empty, 'banner1 should be empty');
+		assert.notMatch(elem.innerText,/failed/, 'banner3 should not be loaded');
+		assert.equal(info.adspace, 4, 'banner2 should not be adspace 4');
+	});
+	it('should third to not be loaded', function() {
+		var elem = getBannerElem(3);
+		var info = getBannerInfo(elem);
+		assert.equal(elem.id, 'banner3');
+		assert.match(elem.innerText,/ignored/, 'banner3 should not be loaded');
+		assert.isUndefined(info.adspace, 'banner3 should not be loaded');
+	});
+
+});
