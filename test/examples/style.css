@@ -48,3 +48,7 @@ body {
 	font-size: 12px;
 }
  
+.section { 
+	float: left;
+	display: block;
+}

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="../style.css"/>
+	<title>Reject features</title>
+</head>
+<body>
+	<script src="../example.setup.js"></script>
+	<script src="../example.run.js"></script>
+
+
+	<div class="section">
+
+		<div class="container">
+			<h3>Empty</h3>
+
+			<div class="banner" id="banner1">Banner 1 failed</div>
+			<div class="description">No banner should be displayed</div>
+		</div>
+		<div class="container">
+			<h3>High iframe</h3>
+
+			<div class="banner" id="banner2">
+				Banner 2 failed
+				<!-- preserved comment -->
+				<div>failed i said!</div>
+			</div>
+			<div class="description">vertial iframe</div>
+		</div>
+
+		<div class="container">
+			<h3>Square iframe</h3>
+
+			<div class="banner" id="banner3">Banner 3 failed</div>
+			<div class="description">Square iframe</div>
+		</div>
+
+		<div class="container">
+			<h3>Wide iframe</h3>
+
+			<div class="banner" id="banner4">Banner 4 failed</div>
+			<div class="description">Wide iframe</div>
+		</div>
+
+		<div class="container">
+			<h3>High image</h3>
+
+			<div class="banner" id="banner5">Banner 5 failed</div>
+			<div class="description">vertial image</div>
+		</div>
+
+		<div class="container">
+			<h3>Square image</h3>
+
+			<div class="banner" id="banner6">Banner 6 failed</div>
+			<div class="description">Square image</div>
+		</div>
+
+		<div class="container">
+			<h3>Wide image</h3>
+
+			<div class="banner" id="banner7">Banner 7 failed</div>
+			<div class="description">Wide image</div>
+		</div>
+	</div> 
+	<script>
+		AdServ.load({
+			            "baseUrl" : baseUrl,
+			            "keyword" : keyword,
+			            "adspaces" : [
+				            {'id' : 70, 'target' : 'banner1'},
+				            {'id' : 71, 'target' : 'banner2'},
+				            {'id' : 72, 'target' : 'banner3'},
+				            {'id' : 73, 'target' : 'banner4'},
+				            {'id' : 74, 'target' : 'banner5'},
+				            {'id' : 75, 'target' : 'banner6'},
+				            {'id' : 76, 'target' : 'banner7'}, 
+			            ]
+		            })
+	</script>
+</body>
+</html>

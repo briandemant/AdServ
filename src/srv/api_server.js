@@ -7,8 +7,8 @@ var root = express.Router();
 var v2 = express.Router();
 
 app.use(morgan('dev'))
-app.all('*', function(req, res, next) { 
-	req.urlRoot = "http://" + req.hostname + ":1337"; 
+app.all('*', function(req, res, next) {
+	req.urlRoot = "http://" + req.hostname + ":1337";
 	res.header("Access-Control-Allow-Origin", "*");
 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 	next();
@@ -39,7 +39,7 @@ function imageCampaign(type, width, height, req, adspace, idx) {
 }
 
 var campaignMakers = {
-	"0" : function(req, adspace, keyword, idx) { 
+	"0" : function(req, adspace, keyword, idx) {
 		return {
 			"adspace" : adspace,
 			"count" : req.urlRoot + "/api/v2/count/view/" + adspace + "?keyword=" + keyword,
@@ -66,14 +66,30 @@ var campaignMakers = {
 		var campaign = startCampaign('html', req, adspace, idx);
 		campaign.html = "<b><center>Banner " + adspace + "_" + campaign.group + "</center></b>" +
 		                "<script>console.log('js inline for adspace ' + " + adspace + ")</script>" +
-		                "<script src='" + req.urlRoot + "/jsurl?adspace=" + adspace + "'>console.error('DO NOT RUN THIS')</script>";
+		                "<script src='" + req.urlRoot + "/jsurl?adspace=" + adspace + "&keyword=" + keyword + "'>alert('DO NOT RUN THIS')</script>";
 		campaign.width = 150;
 		campaign.height = 150;
 		return campaign;
 	},
 	"6" : function(req, adspace, keyword, idx) {
 		var campaign = startCampaign('flash', req, adspace, idx);
-		campaign.flash = req.urlRoot + "/banner/test.swf?bg=ddeeff&token=" + idx + ":" + adspace + "&text=B:" + idx + "%20/%20A:" + adspace;
+		campaign.flash = req.urlRoot + "/banner/test.swf?bg=ddeeff&token=token:" + idx + ":" + adspace + "&text=B:" + idx + "%20/%20A:" + adspace + "&clickTAG=click:" + idx + ":" + adspace;
+		campaign.width = 150;
+		campaign.height = 150;
+		return campaign;
+	},
+	"7" : function(req, adspace, keyword, idx) {
+		var campaign = startCampaign('html', req, adspace, idx);
+		var next = (adspace % 10) + '' + (adspace % 10);
+		campaign.html = '<iframe src="' + req.urlRoot + '/api/v2/rejected?adspace=' + adspace + '&next=' + next + '" frameborder=0 width=0 height=0></iframe>';
+		campaign.width = 150;
+		campaign.height = 150;
+		return campaign;
+	},
+	"8" : function(req, adspace, keyword, idx) {
+		var campaign = startCampaign('html', req, adspace, idx);
+		var next = 70 + (adspace % 10);
+		campaign.html = '<iframe src="' + req.urlRoot + '/api/v2/rejected?adspace=' + adspace + '&next=' + next + '" frameborder=0 width=0 height=0></iframe>';
 		campaign.width = 150;
 		campaign.height = 150;
 		return campaign;
@@ -95,7 +111,7 @@ v2.get('/get/campaigns.json', function(req, res) {
 			"timestamp_human" : new Date(),
 			"keyord" : keyword,
 			"sw" : null,
-			"adServingLoad" : ""
+			"adServingLoad" : req.query.adServingLoad
 		},
 		"campaigns" : []
 	};
@@ -121,28 +137,50 @@ v2.get('/get/campaigns.json', function(req, res) {
 });
 
 v2.get("/count/*", function(req, res) {
+	res.setHeader("Cache-Control", "public, max-age=60");
 	res.send("ok");
 });
 
 v2.get('/get/js_banner', function(req, res) {
+	res.setHeader("Cache-Control", "public, max-age=60");
 	res.send("document.getElementById('" + req.query.appendTo + "').appendChild(document.createTextNode('" + JSON.stringify(req.query).replace(/[{}]/g, '').replace(/,/g, "<br>").replace(/"([a-z]+)":/gi, "$1 : ") + "'))");
+});
+v2.get('/rejected', function(req, res) {
+	res.setHeader("Cache-Control", "public, max-age=10");
+	res.send("<script>top.postMessage('{\"adspace\":" + req.query.adspace + ",\"next\":" + req.query.next + "}',\"*\") ; parent.postMessage('{\"adspace\":" + req.query.adspace + ",\"next\":" + req.query.next + "}',\"*\"); parent.parent.postMessage('{\"adspace\":" + req.query.adspace + ",\"next\":" + req.query.next + "}',\"*\");</script>");
 });
 
 root.get('/banner/:kind/:name', function(req, res) {
 	var fileName = req.params.kind + '/' + req.params.name;
-	res.sendFile(fileName, {root : __dirname + '/../../test/examples/banners'})
+	res.setHeader("Cache-Control", "public, max-age=60");
+	res.sendFile(fileName, {root : __dirname + '/../../test/examples/_fixtures'})
 });
 root.get('/banner/test.swf', function(req, res) {
-	res.sendFile('test.swf', {root : __dirname + '/../../test/examples/banners'})
+	res.setHeader("Cache-Control", "public, max-age=600");
+	res.sendFile('test.swf', {root : __dirname + '/../../test/examples/_fixtures'})
 });
 
 root.get('/show_campaign.php', function(req, res) {
-	res.send("<pre>" + JSON.stringify(req.query).replace(/[{}]/g, '').replace(/,/g, "\n").replace(/"([a-z]+)":/ig, "$1 : "));
+	res.setHeader("Cache-Control", "public, max-age=60");
+	var adspace = req.query.adspaceid;
+	if (adspace < 70) {
+		res.send("<pre>" + JSON.stringify(req.query).replace(/[{}]/g, '').replace(/,/g, "\n").replace(/"([a-z]+)":/ig, "$1 : "));
+	} else {
+		var next = 0;
+		if (adspace < 80) {
+			next = (adspace % 10) + '' + (adspace % 10);
+			next = next == '00' ? 1 : next;
+		} else {
+			next = 70 + (adspace % 10);
+		}
+		res.send('<iframe src="' + req.urlRoot + '/api/v2/rejected?adspace=' + adspace + '&next=' + next + '">');
+	}
 });
 
 
 root.get('/jsurl', function(req, res) {
-	res.send("console.log('jsurl : " + req.query.adspace + "')");
+	res.setHeader("Cache-Control", "public, max-age=60");
+	res.send("top.postMessage(JSON.stringify({source : 'jsurl', adspace:" + req.query.adspace + ", keyword:'" + req.query.keyword + "'}),'*')");
 });
 app.use('/', root);
 app.use('/api/v2', v2);

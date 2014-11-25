@@ -1,131 +1,5 @@
 "use strict";
 
-function getContext(adspace, contexts) {
-	var ctxName = adspace.context || '_GLOBAL_';
-	adspace.context = contexts[ctxName] = contexts[ctxName] || {
-		name : ctxName,
-		ids : [],
-		adspaces : {},
-		keyword :    adspace.keyword || AdServ.keyword,
-		searchword : adspace.searchword || AdServ.searchword,
-		adServingLoad : ''
-	};
-
-	if (adspace.adServingLoad) {
-		adspace.context.adServingLoad += adspace.adServingLoad;
-	}
-
-	if (!AdServ.keyword) {
-		AdServ.keyword = adspace.keyword;
-	}
-}
-
-function set(name, def, args) {
-	AdServ[name] = (isObject(args[0]) && args[0][name]) || AdServ[name] || def;
-}
-var prepareContexts = function(args) {
-	set('baseUrl', '', args);
-	set('keyword', '', args);
-	set('searchword', '', args);
-
-	var conf = {baseUrl : AdServ.baseUrl, xhrTimeout : 5000, guid : guid("ad")};
-
-	for (var index = 0; index < len(args); index++) {
-		var arg = args[index];
-		if (isFunction(arg)) {
-			conf.ondone = arg;
-		} else if (isObject(arg)) {
-			conf = mix(conf, arg);
-		} else if (isArray(arg)) {
-			conf['adspaces'] = arg;
-		}
-	}
-
-	if (!isArray(conf['adspaces'])) {
-		var global = window['ba_adspaces'];
-		if (!global || len(global) === 0 || global.added) {
-			conf['adspaces'] = []
-//			console.warn('adspaces empty');
-		} else {
-			global.added = true;
-			conf['adspaces'] = global;
-		}
-	}
-
-	if (!conf['wallpaper']) {
-		var global = window['ba_wallpaper'];
-		if (!global || len(global) === 0 || global.added) {
-//			console.warn('no wallpaper');
-		} else {
-			global.added = true;
-			conf['wallpaper'] = global;
-		}
-	}
-	if (!conf['floating']) {
-		var global = window['ba_floating'];
-		if (!global || len(global) === 0 || global.added) {
-//			console.warn('no wallpaper');
-		} else {
-			global.added = true;
-			conf['floating'] = global;
-		}
-	}
-
-
-	var contexts = conf.contexts = {};
-	var adspaces = conf.adspaces;
-	for (index = 0; index < len(adspaces); index++) {
-		var adspace = adspaces[index];
-		if (adspace.id > 0) {
-			getContext(adspace, contexts);
-			adspace.context.ids.push(adspace.id);
-			adspace.context.adspaces[adspace.id] = adspace;
-		} else {
-			// console.error('no id', adspace);
-		}
-	}
-	if (conf['floating']) {
-		var adspace = conf['floating'];
-		if (adspace.id > 0) {
-			getContext(adspace, contexts);
-			adspace.context.floating = adspace;
-			adspace.context.adspaces[adspace.id] = adspace;
-		} else {
-			// console.error('no id', adspace);
-		}
-	}
-	if (conf['wallpaper']) {
-		var adspace = conf['wallpaper'];
-		if (adspace.id > 0) {
-			getContext(adspace, contexts);
-			adspace.context.wallpaper = adspace;
-			adspace.context.adspaces[adspace.id] = adspace;
-		} else {
-			// console.error('no id', adspace);
-		}
-	}
-
-	if (conf['adspaces'].length == 0 && !conf['wallpaper'] && !conf['floating']) {
-		console.error('no adspaces or wallpaper provided');
-	} else {
-
-
-//		if (conf['wallpaper']) {
-//			console.log('wallpaper', conf['wallpaper']);
-//		}
-//		if (conf['floating']) {
-//			if (conf['floating'].length == 1) {
-//				console.log('floating', conf['floating'][0]);
-//			} else {
-//				console.log('floating', conf['floating']);
-//			}
-//		}
-//		console.log('adspaces', conf['adspaces']);
-
-	}
-
-	return conf;
-};
 
 var showCampaign = function(campaign) {
 	render(campaign);
@@ -162,7 +36,9 @@ AdServ.on('page:resize', function() {
 
 var recheck = 0;
 var invisibleAdspaces = [];
+
 AdServ.loadAdspaces = AdServ.load = function load() {
+ 
 	var conf = prepareContexts(arguments);
 	var anyWaiting = 0;
 	// count contexts
@@ -193,21 +69,24 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 					ctx.adServingLoad = data.meta.adServingLoad;
 					for (var index = 0; index < len(campaigns); index++) {
 						var campaign = campaigns[index];
+					 
 
 						campaign.ctx = ctx;
-						campaign.target = ctx.adspaces[campaign.adspace].target || ctx.adspaces[campaign.adspace].wallpaperTarget || document.body;
+						campaign.target = ctx.adspaces[index].target || ctx.adspaces[index].wallpaperTarget || document.body;
 						campaign.type = (campaign.wallpaper ? "wallpaper:" : "") + (campaign.floating ? "floating:" : "") + campaign.banner_type;
 						campaign.elem = $ID(campaign.target);
 						if (campaign.elem) {
-							if ($ID(ctx.adspaces[campaign.adspace].target)) {
-								if (campaign.campaign && campaign.banner && campaign.adspace) {
-									campaign.elem.innerHTML = '<!-- Adspace: ' + campaign.adspace
-									                          + ' Group: ' + campaign.group
-									                          + ' Campaign: ' + campaign.campaign
-									                          + ' Banner: ' + campaign.banner
-									                          + ' here -->';
+							if ($ID(ctx.adspaces[index].target)) {
+								clearTarget(campaign);
+								if (campaign.campaign && campaign.banner && campaign.adspace) { 
+									addComment(campaign.elem,' Adspace: ' + campaign.adspace
+									                                 + ' Group: ' + campaign.group
+									                                 + ' Campaign: ' + campaign.campaign
+									                                 + ' Banner: ' + campaign.banner + ' ');
 								} else {
-									campaign.elem.innerHTML = '<!-- Adspace: ' + campaign.adspace + ' (empty) here -->';
+									var comment = ' Adspace: ' + campaign.adspace + ' (empty)';
+							 
+								addComment(campaign.elem, comment);
 								}
 							}
 							if (campaign.type != 'undefined') {
@@ -235,12 +114,12 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 				--anyWaiting;
 				if (!anyWaiting) {
 					ready(function() {
-						checkVisibility();
+					 checkVisibility();
 						emit('debug:all:contexts:loaded', invisibleAdspaces);
 					});
 				}
 			};
-		})(ctx));
+		})(ctx)); 
 	}
 
 	return conf;

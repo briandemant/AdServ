@@ -1,10 +1,11 @@
 describe('basic functionality', function() {
 	before(function(done) {
+		messages = [];
 		loadPage('/examples/adserv/basic.html', 800, 800, function(win, doc) {
 			win.AdServ.on('debug:all:contexts:loaded', function() {
-				console.debug("done!!");
+				console.debug("go test!!");
 				done();
-			}) 
+			})
 		});
 	})
 
@@ -12,12 +13,12 @@ describe('basic functionality', function() {
 		assert.isDefined(win.AdServ, 'AdServ should be a global object');
 	});
 
-	it('should have loaded all adspaces', function() {
+	it('should have loaded all adspaces once', function() {
 		[1, 20, 30, 10, 21, 31, 11, 40, 41, 50, 51].forEach(function(adspace, idx) {
 			var elem = getBannerElem(idx + 1);
-			var info = getBannerInfo(elem);
-			assert.notMatch(elem.innerHTML, /failed/, info.id + ' should have changed');
+			var info = getBannerInfo(elem); 
 			assert.equal(info.adspace, adspace, 'expected Adspace:  ' + adspace + ' but got ' + info.adspace);
+			assert.equal(info.prev.length, 1, 'expected only one load pr banner space got ' + info.prev.length);
 		});
 	});
 
@@ -39,15 +40,70 @@ describe('basic functionality', function() {
 			assert.equal(elem.id, 'banner' + expected[i]);
 		})
 	});
-  
-	
 	it('should have loaded some images', function() {
-		assert.equal($(getBannerIframeDoc(2)).find('a').find('img').length, 1, "banner2 should be an image with link in an iframe");
-		assert.equal($(getBannerIframeDoc(3)).find('a').find('img').length, 1, "banner2 should be an image with link in an iframe");
-		assert.equal($(getBannerIframeDoc(4)).find('a').find('img').length, 1, "banner2 should be an image with link in an iframe");
 
-		assert.equal($(getBannerElem(5)).find('a').find('img').length, 1, "banner4 should be an image");
-		assert.equal($(getBannerElem(6)).find('a').find('img').length, 1, "banner4 should be an image");
-		assert.equal($(getBannerElem(7)).find('a').find('img').length, 1, "banner4 should be an image");
+		var promises = [];
+
+		[2, 3, 4].forEach(function(id) {
+			var imglist = $(getBannerIframeDoc(id)).find('a').find('img');
+			assert.equal(imglist.length, 1, "banner" + id + " should be an image with link in an iframe");
+			if (imglist[0].naturalWidth) {
+				assert.notEqual(imglist[0].naturalWidth, 0, "banner" + id + " should be an loaded");
+			} else {
+				var promise = Q.Promise(function(resolve, reject, notify) {
+					imglist[0].onload = function() {
+						//console.debug(id + " !!");
+						//console.dir(this); 
+						assert.isDefined(this.naturalWidth, "banner" + id + " should be an loaded");
+						assert.notEqual(this.naturalWidth, 0, "banner" + id + " should have a width");
+						resolve();
+					}
+					setTimeout(function() {
+						reject(new Error("banner" + id + " image should be loaded"));
+					}, 600);
+				})
+				promises.push(promise);
+			}
+		});
+		
+		[5, 6, 7].forEach(function(id) {
+			var imglist = $(getBannerElem(id)).find('a').find('img');
+			assert.equal(imglist.length, 1, "banner" + id + " should be an image with link");
+			if (imglist[0].naturalWidth) {
+				assert.notEqual(imglist[0].naturalWidth, 0, "banner" + id + " should be an loaded");
+			} else {
+				var promise = Q.Promise(function(resolve, reject, notify) {
+					imglist[0].onload = function() {
+						assert.isDefined(this.naturalWidth, "banner" + id + " should be an loaded");
+						assert.notEqual(this.naturalWidth, 0, "banner" + id + " should have a width");
+						resolve();
+					}
+					setTimeout(function() {
+						reject(new Error("banner" + id + " image should be loaded"));
+					}, 600);
+				})
+				promises.push(promise);
+			}
+		});
+
+		return Q.all(promises);
+
 	});
-});
+
+
+	it('should load flash files', function() {
+		return waitForMessages('flash', 2, 1000).then(function(messages) {
+			assert.equal(messages.length, 2, "2 flash banners should have been loaded");
+			[{banner : 12, expect : "11:60"}, {banner : 13, expect : "12:61"}].forEach(function(exp) {
+				var banner = _.find(messages, function(m) {
+					return m.token == 'token:' + exp.expect;
+				})
+				  
+				assert.isDefined(banner, "banner " + exp.banner + " should have loaded a flash");
+				assert.equal(banner.click, 'click:' + exp.expect, "banner " + exp.banner + " should have the correct click path");
+			})
+		})
+	});
+
+})
+;

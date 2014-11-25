@@ -50,7 +50,7 @@
 		}
 	</script>
 	<script>
-		top.postMessage("testpage:ready", '*');
+		top.postMessage(JSON.stringify({'source' : 'testpage', 'status' : 'ready'}), '*');
 	</script>
 </body>
 </html>

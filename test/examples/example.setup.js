@@ -1,7 +1,7 @@
 // this is just so testing from a remote machine is possible
 var baseUrl = '//' + document.location.hostname + ':1337';
 var keyword = document.location.pathname.replace(/.*\/([^\.]*).*/, '$1');
- 
+
 document.write('<' + 'script src="' + baseUrl + '/api/v2/js/adserv.js"></' + 'script>');
 
 var title = document.createElement("h2");
@@ -13,8 +13,6 @@ link.appendChild(title);
 document.body.appendChild(link);
 
 function flashCalled(token, click) {
-	console.log(token, click);
-	//top.postMessage("flashCalled", '*', [JSON.stringify({token : token, click : click})]);
-	top.postMessage("flashCalled", '*' );
+	top.postMessage(JSON.stringify({source : 'flash', token : token, click : click}), '*');
 }
  

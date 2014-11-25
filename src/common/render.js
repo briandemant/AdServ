@@ -21,7 +21,8 @@ function passbackHandlerMaker(elem, campaign) {
 //				console.log("m:", m);
 				//			console.log("payload:", campaign.nesting | 0);
 //				iframe.style.display = "none";
-				elem.innerHTML = ""; // would rather just hide iframe .. but deep tunnel make this harder
+			   clearTarget(campaign);
+				//elem.innerHTML = ""; // would rather just hide iframe .. but deep tunnel make this harder
 				campaign.nesting = (campaign.nesting | 0) + 1;
 				if (campaign.nesting < 10) {
 					//setTimeout(function() {
@@ -285,17 +286,43 @@ function makeFloat(campaign) {
 	return contentElem;
 }
 
+function clearTarget(campaign) {
+	if (campaign.elem == document.body) {
+		console.error("NEVER REMOVE CONTENT OF BODY");
+		return;
+	}
+	if (campaign.banner_type == 'wallpaper') {
+		console.error("NEVER REMOVE CONTENT OF wallpaper");
+		return;
+	}
+	
+	var childNodes = [].slice.call(campaign.elem.childNodes);
+	for (var j = 0; j < childNodes.length; j++) {
+		var node = childNodes[j]; 
+		if (node.nodeType != 8) {
+			node.outerHTML && addComment(campaign.elem, "REMOVED: " + node.outerHTML);
+
+			campaign.elem.removeChild(node);
+		}
+	}
+}
+
+function addComment(elem, comment) {
+	elem.appendChild(document.createComment(comment));
+}
+
 function render(campaign) {
 	emit('debug:before:render', campaign);
 	var ifrm;
 	var targetElem;
 	if (campaign.elem) {
 		targetElem = campaign.elem;
+		clearTarget(campaign);
 		if (campaign.floating) {
 			targetElem = makeFloat(campaign);
 		}
 		if (campaign.iframe && campaign.banner_type !== 'iframe' && campaign.banner_type !== 'wallpaper') {
-			if (campaign.banner_type !== 'html') {
+			if (campaign.banner_type !== 'html') { 
 				ifrm = wrapIframe(targetElem, campaign);
 				targetElem = ifrm.contentDocument.body;
 				emit('debug:wrapped', campaign, ifrm, targetElem);
