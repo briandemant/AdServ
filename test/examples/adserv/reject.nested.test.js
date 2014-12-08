@@ -12,40 +12,9 @@ describe('reject nesting functionality', function() {
 			})
 		});
 	})
-
-	function makeTestPromise(adspace, last, divIdx, expectedLayers) {
-		var max = 200;
-		return new Q.Promise(function(resolve, reject) {
-			function abort() {
-				clearInterval(int);
-				reject(new Error('timeout'));
-			}
-
-			var int = setInterval(function() {
-				messages.forEach(function(message) {
-					if (--max == 0) {
-						abort();
-					}
-					if (message.next == last) {
-						var info = getBannerInfo(divIdx);
-						if (info.prev.length == expectedLayers) {
-							clearInterval(int);
-							//console.debug("final",info);
-
-							if (info.adspace == last) {
-								resolve();
-							} else {
-								reject(new Error('expected Adspace:  ' + last + ' but got ' + info.adspace));
-							}
-						}
-					}
-				});
-			}, 10)
-		});
-	}
-
+ 
 	it('should reject 80 and load next', function() {
-		this.timeout(4000);
+		this.timeout(5000);
 		return makeTestPromise(80, 1, 1, 3)
 	});
 	it('should reject 81 and load next', function() {

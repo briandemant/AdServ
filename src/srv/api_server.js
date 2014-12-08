@@ -79,6 +79,7 @@ var campaignMakers = {
 		return campaign;
 	},
 	"7" : function(req, adspace, keyword, idx) {
+		// reject
 		var campaign = startCampaign('html', req, adspace, idx);
 		var next = (adspace % 10) + '' + (adspace % 10);
 		campaign.html = '<iframe src="' + req.urlRoot + '/api/v2/rejected?adspace=' + adspace + '&next=' + next + '" frameborder=0 width=0 height=0></iframe>';
@@ -87,6 +88,16 @@ var campaignMakers = {
 		return campaign;
 	},
 	"8" : function(req, adspace, keyword, idx) {
+		// reject to rejection
+		var campaign = startCampaign('html', req, adspace, idx);
+		var next = 70 + (adspace % 10);
+		campaign.html = '<iframe src="' + req.urlRoot + '/api/v2/rejected?adspace=' + adspace + '&next=' + next + '" frameborder=0 width=0 height=0></iframe>';
+		campaign.width = 150;
+		campaign.height = 150;
+		return campaign;
+	},
+	"9" : function(req, adspace, keyword, idx) {
+		// reject to dubs
 		var campaign = startCampaign('html', req, adspace, idx);
 		var next = 70 + (adspace % 10);
 		campaign.html = '<iframe src="' + req.urlRoot + '/api/v2/rejected?adspace=' + adspace + '&next=' + next + '" frameborder=0 width=0 height=0></iframe>';

@@ -2,41 +2,70 @@
 var engines = {};
 
 function passbackHandlerMaker(elem, campaign) {
-	var uid = guid("handler", campaign.adspace);
 	return function(iframe) {
-		return function(m) {
-			var payload, err;
+
+		var listener = function(m) {
+			var payload;
 			try {
 				payload = parseJSON(m.data);
-			} catch (e) {
-				err = e;
-			}
-			if (!err && payload.adspace == campaign.adspace) {
-//				console.log("payload:", payload);
-				console.warn("passback from adspace " + campaign.adspace + " to " + payload.next)
-				//			iframe.contentDocument.body.innerHTML = "<b>THIS WAS REJECTED</b>";
-				console.warn("campaign rejected:", campaign);
+
+
+				if (payload.target) {
+					if (payload.target == campaign.target) {
+
+						//console.error('----', payload);
+						//console.log(payload.adspace);
+						//console.log(payload.next);
+						//console.log(campaign.adspace);
+						if (payload.adspace == campaign.adspace && payload.target == campaign.target) {
+							elem['tried'] = elem['tried'] || [];
+							elem['tried'].push(payload.campaignid);
+							if (elem['tried'].length == 10) {
+								console.error(campaign.target, "nesting too deep .. 10 is max");
+								return;
+							}
+
+							console.warn("passback from adspace " + campaign.adspace + " to " + payload.next + " in " + payload.target)
+							//			iframe.contentDocument.body.innerHTML = "<b>THIS WAS REJECTED</b>";
+							console.warn("campaign rejected:", payload);
+							for (var i = 0; i < elem['tried'].length - 1; i++) {
+								if (elem['tried'][i] == payload.campaignid) {
+									console.error("loop detected .. aborting");
+									console.error("history:", elem['tried']);
+									return false;
+								}
+							}
+							console.warn("history:", elem['tried']);
+
 //				console.log("elem:", uid, elem);
-				//			console.log("err:", err);
+							//			console.log("err:", err);
 //				console.log("m:", m);
-				//			console.log("payload:", campaign.nesting | 0);
+							//			console.log("payload:", campaign.nesting | 0);
 //				iframe.style.display = "none";
-			   clearTarget(campaign);
-				//elem.innerHTML = ""; // would rather just hide iframe .. but deep tunnel make this harder
-				campaign.nesting = (campaign.nesting | 0) + 1;
-				if (campaign.nesting < 10) {
-					//setTimeout(function() {
-					AdServ.load({
-						            adspaces : [
-							            {id : payload.next, target : elem, adServingLoad : campaign.ctx.adServingLoad}
-						            ]
-					            })
-					//},0)
-				} else {
-					console.error("too deep")
+							clearTarget(campaign);
+							//elem.innerHTML = ""; // would rather just hide iframe .. but deep tunnel make this harder
+
+							//setTimeout(function() {
+							AdServ.load({
+								            adspaces : [
+									            {
+										            id : payload.next,
+										            target : payload.target,
+										            adServingLoad : campaign.ctx.adServingLoad,
+										            context : 'Reject' + payload.adspace
+									            }
+								            ]
+							            })
+							//}, 10)
+
+						} else {
+						}
+					}
 				}
+			} catch (e) {
 			}
 		}
+		return listener;
 	};
 };
 
@@ -134,7 +163,7 @@ engines["html"] = function renderHtml(elem, campaign) {
 	// just in case the result is an inline iframe
 	var iframes = elem.getElementsByTagName("iframe");
 	if (iframes.length == 1) {
-		AdServ.bind(window, "message", passbackHandlerMaker(elem, campaign)(iframes[0]));
+		bindReject(window, elem, campaign, iframes[0]);
 	}
 
 	var original;
@@ -171,8 +200,7 @@ engines["html"] = function renderHtml(elem, campaign) {
 engines["iframe"] = function renderImage(elem, campaign) {
 	var ifrm = createIframe(campaign)
 
-
-	AdServ.bind(window, "message", passbackHandlerMaker(elem, campaign)(ifrm))
+	bindReject(window, elem, campaign, ifrm);
 
 	ifrm.src = campaign.iframe_src;
 	elem.appendChild(ifrm);
@@ -192,12 +220,19 @@ function createIframe(campaign) {
 	return ifrm;
 }
 
+function bindReject(bindTo, target, campaign, ifrm) {
+	AdServ.bind(bindTo, "message", passbackHandlerMaker(target, campaign)(ifrm))
+
+	//AdServ.bind(ifrm.contentWindow, "message", passbackHandlerMaker(target, campaign)(ifrm))
+
+}
+
 function wrapIframe(target, campaign) {
 	var ifrm = createIframe(campaign);
 	target.appendChild(ifrm);
 	ifrm.contentDocument.write('<!doctype html><body style="margin:0px;padding:0px;width:100%;height:100%;"></body>');
 
-	AdServ.bind(window, "message", passbackHandlerMaker(target, campaign)(ifrm))
+	bindReject(window, target, campaign, ifrm);
 
 	return ifrm;
 }
@@ -288,20 +323,18 @@ function makeFloat(campaign) {
 
 function clearTarget(campaign) {
 	if (campaign.elem == document.body) {
-		console.error("NEVER REMOVE CONTENT OF BODY");
+		//console.error("NEVER REMOVE CONTENT OF BODY");
 		return;
 	}
 	if (campaign.banner_type == 'wallpaper') {
-		console.error("NEVER REMOVE CONTENT OF wallpaper");
+		//console.error("NEVER REMOVE CONTENT OF wallpaper");
 		return;
 	}
-	
+
 	var childNodes = [].slice.call(campaign.elem.childNodes);
 	for (var j = 0; j < childNodes.length; j++) {
-		var node = childNodes[j]; 
+		var node = childNodes[j];
 		if (node.nodeType != 8) {
-			node.outerHTML && addComment(campaign.elem, "REMOVED: " + node.outerHTML);
-
 			campaign.elem.removeChild(node);
 		}
 	}
@@ -322,32 +355,29 @@ function render(campaign) {
 			targetElem = makeFloat(campaign);
 		}
 		if (campaign.iframe && campaign.banner_type !== 'iframe' && campaign.banner_type !== 'wallpaper') {
-			if (campaign.banner_type !== 'html') { 
-				ifrm = wrapIframe(targetElem, campaign);
-				targetElem = ifrm.contentDocument.body;
-				emit('debug:wrapped', campaign, ifrm, targetElem);
-			} else {
-				ifrm = createIframe(campaign);
-//				ifrm.src = AdServ.baseUrl+"/api/v2/get/html/" + campaign.banner;
-				ifrm.src = AdServ.baseUrl + "/show_campaign.php?nocount=1&adspaceid=" + campaign.adspace + "&campaignid=" + campaign.campaign + "&bannerid=" + campaign.banner
-//				console.log(ifrm.src);
-				AdServ.bind(window, "message", passbackHandlerMaker(targetElem, campaign)(ifrm));
-				targetElem.appendChild(ifrm);
-				emit('debug:wrapped', campaign, ifrm, ifrm.contentDocument.body);
-				emit('debug:after:render', campaign);
-				return;
-			}
-		}
-		var engine = engines[campaign.banner_type];
-		if (engine) {
-			engine(targetElem, campaign); 
-			emit('debug:after:render', campaign);
+			ifrm = createIframe(campaign);
+			targetElem.appendChild(ifrm);
+			ifrm.contentDocument.write('<!doctype html><body style="margin:0px;padding:0px;width:100%;height:100%;" adserv="true"></body>');
+			ifrm.src = AdServ.baseUrl + "/show_campaign.php?nocount=1&adspaceid=" + campaign.adspace
+			           + "&campaignid=" + campaign.campaign
+			           + "&bannerid=" + campaign.banner
+			           + "&target=" + campaign.target;
+			bindReject(window, targetElem, campaign, ifrm);
+			emit('debug:wrapped', campaign, ifrm, ifrm.contentDocument.body);
+			emit('debug:after:render', campaign, true);
 		} else {
-			console.error('no renderer for banner type yet : ' + campaign.banner_type, campaign);
+			var engine = engines[campaign.banner_type];
+			if (engine) {
+				engine(targetElem, campaign);
+				emit('debug:after:render', campaign, false);
+			} else {
+				console.error('no renderer for banner type yet : ' + campaign.banner_type, campaign);
+			}
 		}
 	} else {
 		console.error('no element for banner yet : ' + campaign.banner_type, campaign);
 	}
-};
+}
+
 AdServ.render = render;
   

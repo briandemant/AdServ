@@ -76,7 +76,7 @@ var prepareContexts = function(args) {
 	var contexts = conf.contexts = {};
 	var adspaces = conf.adspaces;
 	for (index = 0; index < len(adspaces); index++) {
-		var adspace = adspaces[index];
+		var adspace = adspaces[index]; 
 		if (adspace.id > 0) {
 			getContext(adspace, contexts);
 			adspace.context.ids.push(adspace.id);

@@ -6,8 +6,8 @@ module.exports = function(grunt) {
 			max : {
 				options : {
 					banner : '/*! <%= pkg.name %>  <%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %> */\n',
-					beautify : true,
-					mangle : false,
+					beautify : false,
+					mangle : true,
 					report : 'gzip',
 					// https://github.com/mishoo/UglifyJS2#readme
 					compress : {
@@ -259,9 +259,9 @@ module.exports = function(grunt) {
 	grunt.registerTask('build', ['concat', 'comments', 'uglify']);
 	grunt.registerTask('docs', ['concat', 'groc']);
 
-	grunt.registerTask('dev', ['concat', 'comments',  'watch:normal']);
+	grunt.registerTask('dev', ['concat', 'comments', 'uglify', 'watch:normal']);
 	grunt.registerTask('devdiff', ['concat', 'comments', 'watch:diff']);
 	grunt.registerTask('devdocs', ['docs', 'watch:docs']);
-	grunt.registerTask('devop', ['concat', 'uglify', 'copy:to_operation', 'watch:operation']);
+	grunt.registerTask('devop', ['concat', 'comments','uglify', 'copy:to_operation', 'watch:operation']);
 
 };

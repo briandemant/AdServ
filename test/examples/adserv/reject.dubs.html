@@ -3,13 +3,15 @@
 <head>
 	<meta charset="UTF-8">
 	<link rel="stylesheet" href="../style.css"/>
-	<title>Reject with more than one layerfeatures</title>
+	<title>Reject with dub features</title>
 </head>
 <body>
 	<script src="../example.setup.js"></script>
 	<script src="../example.run.js"></script>
 
- 
+
+	<div class="section">
+
 		<div class="container">
 			<h3>Empty</h3>
 
@@ -60,21 +62,15 @@
 
 			<div class="banner" id="banner7">Banner 7 failed</div>
 			<div class="description">Wide image</div>
-		</div> 
-	 
+		</div>
+	</div> 
 	<script>
 		AdServ.load({
 			            "baseUrl" : baseUrl,
 			            "keyword" : keyword,
 			            "adspaces" : [
-				            {'id' : 80, 'target' : 'banner1'},
-				            {'id' : 81, 'target' : 'banner2'},
-				            {'id' : 82, 'target' : 'banner3'},
-				            {'id' : 83, 'target' : 'banner4'},
-				            {'id' : 84, 'target' : 'banner5'},
-				            {'id' : 85, 'target' : 'banner6'},
-				            {'id' : 86, 'target' : 'banner7'},
-//				             
+				            {'id' : 90, 'target' : 'banner1'},
+				            {'id' : 90, 'target' : 'banner2'}, 
 			            ]
 		            })
 	</script>

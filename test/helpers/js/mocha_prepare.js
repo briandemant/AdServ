@@ -120,3 +120,35 @@ function waitForMessages(source, count, timeout) {
 
 	return promise;
 }
+
+function makeTestPromise(adspace, last, divIdx, expectedLayers) {
+	var max = 100 * 5;
+	var start = Date.now();
+	return new Q.Promise(function(resolve, reject) {
+		function abort() {
+			clearInterval(int);
+			reject(new Error('timeout after ' + ( Date.now() - start) / 1000 + ' seconds'));
+		}
+
+		var int = setInterval(function() {
+			messages.forEach(function(message) {
+				if (--max == 0) {
+					abort();
+				}
+				if (message.next == last) {
+					var info = getBannerInfo(divIdx);
+					if (info.prev.length == expectedLayers) {
+						clearInterval(int);
+						//console.debug("final",info);
+
+						if (info.adspace == last) {
+							resolve();
+						} else {
+							reject(new Error('expected Adspace:  ' + last + ' but got ' + info.adspace));
+						}
+					}
+				}
+			});
+		}, 10)
+	});
+}

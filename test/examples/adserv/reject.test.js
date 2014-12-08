@@ -11,39 +11,7 @@ describe('reject functionality', function() {
 			})
 		});
 	})
-
-
-	function makeTestPromise(adspace, last, divIdx, expectedLayers) {
-		var max = 200;
-		return new Q.Promise(function(resolve, reject) {
-			function abort() {
-				clearInterval(int);
-				reject(new Error('timeout of test on ' + adspace + ' to ' + last));
-			}
-
-			var int = setInterval(function() {
-				messages.forEach(function(message) {
-					if (--max == 0) {
-						abort();
-					}
-					if (message.next == last) {
-						var info = getBannerInfo(divIdx);
-						if (info.prev.length == expectedLayers) {
-							clearInterval(int);
-							//console.debug("final",info);
-
-							if (info.adspace == last) {
-								resolve();
-							} else {
-								reject(new Error('expected Adspace:  ' + last + ' but got ' + info.adspace));
-							}
-						}
-					}
-				});
-			}, 10)
-		});
-	}
-
+ 
 	it('should reject 70 and load next', function() {
 		this.timeout(3000);
 		return makeTestPromise(70, 1, 1, 2)

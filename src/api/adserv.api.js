@@ -38,7 +38,7 @@ var recheck = 0;
 var invisibleAdspaces = [];
 
 AdServ.loadAdspaces = AdServ.load = function load() {
- 
+
 	var conf = prepareContexts(arguments);
 	var anyWaiting = 0;
 	// count contexts
@@ -69,8 +69,8 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 					ctx.adServingLoad = data.meta.adServingLoad;
 					for (var index = 0; index < len(campaigns); index++) {
 						var campaign = campaigns[index];
-					 
 
+						ctx.adspaces[index].guid = campaign.guid = guid("ad");
 						campaign.ctx = ctx;
 						campaign.target = ctx.adspaces[index].target || ctx.adspaces[index].wallpaperTarget || document.body;
 						campaign.type = (campaign.wallpaper ? "wallpaper:" : "") + (campaign.floating ? "floating:" : "") + campaign.banner_type;
@@ -78,24 +78,31 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 						if (campaign.elem) {
 							if ($ID(ctx.adspaces[index].target)) {
 								clearTarget(campaign);
-								if (campaign.campaign && campaign.banner && campaign.adspace) { 
-									addComment(campaign.elem,' Adspace: ' + campaign.adspace
-									                                 + ' Group: ' + campaign.group
-									                                 + ' Campaign: ' + campaign.campaign
-									                                 + ' Banner: ' + campaign.banner + ' ');
+								if (campaign.campaign && campaign.banner && campaign.adspace) {
+									addComment(campaign.elem, ' Adspace: ' + campaign.adspace
+									                          + ' Group: ' + campaign.group
+									                          + ' Campaign: ' + campaign.campaign
+									                          + ' Banner: ' + campaign.banner + ' ');
 								} else {
 									var comment = ' Adspace: ' + campaign.adspace + ' (empty)';
-							 
-								addComment(campaign.elem, comment);
+
+									addComment(campaign.elem, comment);
 								}
 							}
-							if (campaign.type != 'undefined') {
-								console.info("Adspace: " + campaign.adspace + " " + campaign.type + ( campaign.iframe ? "" : " in iframe"), campaign.elem);
+
+							var info = 'Adspace';
+							if (ctx.name == '_GLOBAL_') {
+								info += ': ';
 							} else {
-								console.info("Adspace: " + campaign.adspace + " is EMPTY", campaign.elem);
+								info += '(' + ctx.name + '): ';
 							}
-
-
+							
+							if (campaign.type != 'undefined') {
+								console.info(info + campaign.adspace + " " + campaign.type + ( campaign.iframe ? "" : " in iframe"), campaign.elem);
+							} else {
+								console.info(info + campaign.adspace + " is EMPTY", campaign.elem);
+							}
+ 
 							emit('adspace:loaded', campaign);
 							if (campaign.campaign && campaign.banner && campaign.adspace) {
 //								console.log("campaign:" + campaign.campaign);
@@ -114,12 +121,12 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 				--anyWaiting;
 				if (!anyWaiting) {
 					ready(function() {
-					 checkVisibility();
+						checkVisibility();
 						emit('debug:all:contexts:loaded', invisibleAdspaces);
 					});
 				}
 			};
-		})(ctx)); 
+		})(ctx));
 	}
 
 	return conf;
