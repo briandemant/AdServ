@@ -56,12 +56,12 @@ function getBannerInfo(div) {
 		if (node.nodeType == 8 && /^ Adspace:/.test(comment)) {
 			var data = {};
 			while (match = pattern.exec(comment)) {
-				if (first) { 
+				if (first) {
 					result[match[1].toLowerCase()] = match[2] | 0;
 				}
 				data[match[1].toLowerCase()] = match[2] | 0;
 			}
-			first=false;
+			first = false;
 			result.prev.push(data)
 		}
 	}
@@ -78,9 +78,13 @@ window.addEventListener("message", function(event) {
 	var payload;
 	try {
 		payload = JSON.parse(event.data);
-		if (payload.next) {
+		if (payload.next && payload.target) {
 			console.debug("got rejected", event.data);
-		//	win.postMessage(event.data, '*')
+			win.postMessage(event.data, '*')
+		} else if (!payload.source) {
+			console.debug("got top message", event.data);
+		} else {
+			console.warn("got debug message", event.data);
 		}
 	} catch (e) {
 		console.error("got message", event.data);
@@ -111,7 +115,7 @@ function waitForMessages(source, count, timeout) {
 		}
 		setTimeout(function() {
 			window.removeEventListener("message", listener);
-			reject(messages);
+			reject(new Error("waitForMessages:timeout exceeded (" + timeout + ")"));
 		}, timeout);
 
 		window.addEventListener("message", listener);
@@ -121,34 +125,35 @@ function waitForMessages(source, count, timeout) {
 	return promise;
 }
 
-function makeTestPromise(adspace, last, divIdx, expectedLayers) {
-	var max = 100 * 5;
+function makeTestPromise(adspace, tunnel, target) {
 	var start = Date.now();
 	return new Q.Promise(function(resolve, reject) {
-		function abort() {
-			clearInterval(int);
-			reject(new Error('timeout after ' + ( Date.now() - start) / 1000 + ' seconds'));
-		}
-
-		var int = setInterval(function() {
+		var checkMessages = function() {
+			var resolved = false;
 			messages.forEach(function(message) {
-				if (--max == 0) {
-					abort();
-				}
-				if (message.next == last) {
-					var info = getBannerInfo(divIdx);
-					if (info.prev.length == expectedLayers) {
-						clearInterval(int);
-						//console.debug("final",info);
-
-						if (info.adspace == last) {
+				if (message.target == target) {
+					console.debug("msg", message, target);
+					console.debug(tunnel);
+					if (message.next == tunnel[0]) {
+						tunnel.shift();
+						var info = getBannerInfo(target);
+						console.debug("info", info);
+						if (tunnel.length == 0) {
+							console.debug("final", info, message);
 							resolve();
-						} else {
-							reject(new Error('expected Adspace:  ' + last + ' but got ' + info.adspace));
+							resolved = true;
 						}
 					}
 				}
 			});
-		}, 10)
+			if (!resolved) {
+				if (5000 < Date.now() - start) {
+					reject(new Error('Adspace ' + adspace + ' .. timeout after ' + ( Date.now() - start) / 1000 + ' seconds'));
+				} else {
+					setTimeout(checkMessages, 250);
+				}
+			}
+		};
+		setTimeout(checkMessages, 10);
 	});
 }

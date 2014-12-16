@@ -10,39 +10,40 @@
 	<script src="../example.run.js"></script>
 
 	<div class="container">
-		<h3>_GLOBAL_</h3>
+		<h3>Wide _GLOBAL_</h3>
 
 		<div class="banner" id="banner1">Banner 1 failed</div>
 		<div class="description">global context</div>
 	</div>
 
 	<div class="container">
-		<h3>_GLOBAL_</h3>
+		<h3>High _GLOBAL_</h3>
 
 		<div class="banner" id="banner2">Banner 2 failed</div>
 		<div class="description">global context</div>
 	</div>
 
 	<div class="container">
-		<h3>group 1</h3>
+		<h3>Wide group 1</h3>
 
 		<div class="banner" id="banner3">Banner 3 failed</div>
-		<div class="description">group 1 context with other keyword</div>
+		<div class="description">group 1 context</div>
 	</div> 
 
 
 
 	<script>
 
-		var ba_adspaces = [
-			{'id' : 10, 'target' : 'banner1', "keyword" : keyword},
-			{'id' : 21, 'target' : 'banner2'},
-			{'id' : 14, 'target' : 'banner3', context : 'group1', "keyword" : keyword+'_v2'}
-		];
-		var ba_wallpaper =[];
 		var adServingLoad = "expected";
-		AdServ.baseUrl = baseUrl;
-		AdServ.load();
+		AdServ.load({
+			            "baseUrl" : baseUrl,
+			            "keyword" : keyword,
+			            "adspaces" : [
+				            {'id' : 10, 'target' : 'banner1'},
+				            {'id' : 21, 'target' : 'banner2'},
+				            {'id' : 14, 'target' : 'banner3', context : 'group1'} 
+			            ]
+		            })
 	</script>
 </body>
 </html>

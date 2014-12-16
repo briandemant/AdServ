@@ -35,6 +35,8 @@ var prepareContexts = function(args) {
 		var arg = args[index];
 		if (isFunction(arg)) {
 			conf.ondone = arg;
+		} else if (isObject(arg) && (!arg.adspaces || arg.id || arg.wallpaper || arg.floating )) {
+			conf = mix(conf, arg);
 		} else if (isObject(arg)) {
 			conf = mix(conf, arg);
 		} else if (isArray(arg)) {
@@ -51,8 +53,8 @@ var prepareContexts = function(args) {
 			global.added = true;
 			conf['adspaces'] = global;
 		}
-	}
-
+	} 
+	
 	if (!conf['wallpaper']) {
 		var global = window['ba_wallpaper'];
 		if (!global || len(global) === 0 || global.added) {
@@ -108,22 +110,7 @@ var prepareContexts = function(args) {
 
 	if (conf['adspaces'].length == 0 && !conf['wallpaper'] && !conf['floating']) {
 		console.error('no adspaces or wallpaper provided');
-	} else {
-
-
-//		if (conf['wallpaper']) {
-//			console.log('wallpaper', conf['wallpaper']);
-//		}
-//		if (conf['floating']) {
-//			if (conf['floating'].length == 1) {
-//				console.log('floating', conf['floating'][0]);
-//			} else {
-//				console.log('floating', conf['floating']);
-//			}
-//		}
-//		console.log('adspaces', conf['adspaces']);
-
-	}
+	} 
 
 	return conf;
 };

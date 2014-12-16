@@ -1,7 +1,7 @@
-describe('combine with old', function() {
+describe('combine with sync', function() {
 	var contexts = {loaded : []};
 	before(function(done) {
-		loadPage('/examples/adserv/with_old.html', 800, 800, function(win, doc) {
+		loadPage('/examples/adserv/with_sync.html', 800, 800, function(win, doc) {
 			win.AdServ.on('debug:context:loaded', function(ctx) {
 				console.debug(ctx);
 				contexts.loaded.push(ctx);
@@ -26,10 +26,10 @@ describe('combine with old', function() {
 		assert.deepEqual(context.adServingLoad, "expected,i100,e211", 'expected _GLOBAL_ to contain global adServingLoad');
 	});
 	
-	it('should use group1 context (adServingLoad,keyword)', function() {
+	it('should not global adServingLoad to group1 context', function() {
 		var context = contexts['group1'];
 		assert.isDefined(context, 'expected group1 to exists');
-		assert.deepEqual(context.adServingLoad, ",i1140", 'expected group1 not contain global adServingLoad and use other keyword');
+		assert.deepEqual(context.adServingLoad, ",i140", 'expected group1 not contain global adServingLoad');
 	});
 
 });

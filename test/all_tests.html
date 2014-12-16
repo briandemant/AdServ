@@ -11,7 +11,7 @@
 
 		#result {
 			background: white;
-			width: 800px;
+			width: 600px;
 			height: 100%;
 			display: block;
 			position: absolute;
@@ -32,16 +32,16 @@
 			background: white;
 		}
 		#frame {
-			width: 830px;  
+			width: 610px;  
 			border: 1px solid #808080;
+			border: 1px solid red;
 		}
-		#testarea { 
+
+		#testarea {
 			display: block;
 			position: absolute;
-			padding: 70px 0 0 810px;
-		}
-		
-		
+			padding: 70px 0 0 610px; 
+		}  
 	</style>
 </head>
 <body>
@@ -58,16 +58,26 @@
 	<script src="/helpers/js/jquery-1.11.1.min.js"></script>
 	<script src="/helpers/js/q-1.1.1.min.js"></script>
 	<script src="/helpers/js/mocha_prepare.js"></script>
-	
+	<!-- basic -->
 	<script src="/examples/adserv/empty.test.js"></script>  
 	<script src="/examples/adserv/basic.test.js"></script>  
 	<script src="/examples/adserv/context.test.js"></script>  
-	<script src="/examples/adserv/with_old.test.js"></script>  
-	<script src="/examples/adserv/with_dubs.test.js"></script>  
+	
+	<!-- wallpaper -->
+	<script src="/examples/adserv/wallpaper.test.js"></script>  
+	<script src="/examples/adserv/wallpaper.target.test.js"></script>  
+	
+	<!-- rejected -->
 	<script src="/examples/adserv/reject.test.js"></script>  
 	<script src="/examples/adserv/reject.nested.test.js"></script>  
-	<script src="/examples/adserv/reject.dubs.test.js"></script>  
-	 
+	<script src="/examples/adserv/reject.dubs.test.js"></script>
+ 
+	<!-- special cases  --> 
+	<script src="/examples/adserv/with_old.test.js"></script>  
+	<script src="/examples/adserv/with_sync.test.js"></script>  
+	<script src="/examples/adserv/with_dubs.test.js"></script>
+	
+	
 	<script src="/helpers/js/mocha_run.js"></script>
 	
 	<script src="/testem.js"></script>

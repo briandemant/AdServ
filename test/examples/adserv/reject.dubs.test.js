@@ -11,27 +11,21 @@ describe('reject with dub functionality', function() {
 			})
 		});
 	})
- 
+
 	it('should reject 70 and load next', function() {
-		this.timeout(3000);
-		return makeTestPromise(90, 1, 1, 2)
+		this.timeout(5000);
+		return makeTestPromise(72, [62], 'banner1')
 	});
-	//it('should reject 71 and load next', function() {
-	//	return makeTestPromise(91, 11, 2, 2)
-	//});
-	//it('should reject 72 and load next', function() {
-	//	return makeTestPromise(72, 22, 3, 2)
-	//});
-	//it('should reject 73 and load next', function() {
-	//	return makeTestPromise(73, 33, 4, 2)
-	//});
-	//it('should reject 74 and load next', function() {
-	//	return makeTestPromise(74, 44, 5, 2)
-	//});
-	//it('should reject 75 and load next', function() {
-	//	return makeTestPromise(75, 55, 6, 2)
-	//});
-	//it('should reject 76 and load next', function() {
-	//	return makeTestPromise(76, 66, 7, 2)
-	//});
+	it('should reject 80 and load next', function() {
+		this.timeout(5000);
+		return makeTestPromise(82, [72, 62], 'banner2')
+	});
+	it('should reject 90 and load next', function() {
+		this.timeout(5000);
+		return makeTestPromise(92, [82, 72, 62], 'banner3')
+	});
+	it('should reject 90 even though its dub of banner3', function() {
+		this.timeout(5000);
+		return makeTestPromise(92, [82, 72, 62], 'banner4')
+	});
 });

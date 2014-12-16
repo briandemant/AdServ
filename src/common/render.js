@@ -8,12 +8,12 @@ function passbackHandlerMaker(elem, campaign) {
 			var payload;
 			try {
 				payload = parseJSON(m.data);
-
-
-				if (payload.target) {
+ 
+				if (payload.target && payload.next) {
 					if (payload.target == campaign.target) {
 
-						//console.error('----', payload);
+						//console.error('----', payload); 
+						//console.error('listener', Date.now()-payload.time);
 						//console.log(payload.adspace);
 						//console.log(payload.next);
 						//console.log(campaign.adspace);
@@ -37,11 +37,11 @@ function passbackHandlerMaker(elem, campaign) {
 							}
 							console.warn("history:", elem['tried']);
 
-//				console.log("elem:", uid, elem);
-							//			console.log("err:", err);
-//				console.log("m:", m);
-							//			console.log("payload:", campaign.nesting | 0);
-//				iframe.style.display = "none";
+							//console.log("elem:", uid, elem);
+							//console.log("err:", err);
+							//console.log("m:", m);
+							//console.log("payload:", campaign.nesting | 0);
+							iframe.style.display = "none";
 							clearTarget(campaign);
 							//elem.innerHTML = ""; // would rather just hide iframe .. but deep tunnel make this harder
 
@@ -59,8 +59,11 @@ function passbackHandlerMaker(elem, campaign) {
 							//}, 10)
 
 						} else {
+							//console.warn('ignored message .. wrong target', payload);
 						}
 					}
+				} else {
+					//console.warn('ignored message', payload);
 				}
 			} catch (e) {
 			}
@@ -172,7 +175,7 @@ engines["html"] = function renderHtml(elem, campaign) {
 	for (var i = 0; i < length; i++) {
 		original = scripts[i];
 		if (original.src) {
-			console.warn("original.src", original);
+			//console.warn("original.src", original);
 			script = document.createElement("script");
 			script.id = uid + "_" + i;
 			script.src = original.src;
@@ -180,7 +183,7 @@ engines["html"] = function renderHtml(elem, campaign) {
 			// which browser  allow running of src + inline???? 
 			//}   if (original.innerText) {
 		} else if (original.innerText) {
-			console.warn("original.txt", original);
+			//console.warn("original.txt", original);
 			script = document.createElement("script");
 			script.id = uid + "_" + i;
 			script.innerText = safeScriptContent(original.innerText);
@@ -357,11 +360,18 @@ function render(campaign) {
 		if (campaign.iframe && campaign.banner_type !== 'iframe' && campaign.banner_type !== 'wallpaper') {
 			ifrm = createIframe(campaign);
 			targetElem.appendChild(ifrm);
+			//console.debug("append");
+			
 			ifrm.contentDocument.write('<!doctype html><body style="margin:0px;padding:0px;width:100%;height:100%;" adserv="true"></body>');
 			ifrm.src = AdServ.baseUrl + "/show_campaign.php?nocount=1&adspaceid=" + campaign.adspace
 			           + "&campaignid=" + campaign.campaign
 			           + "&bannerid=" + campaign.banner
 			           + "&target=" + campaign.target;
+			//console.debug("src", ifrm.src);
+			//ifrm.onload = function() {
+			//console.debug("load");
+			//	
+			//}
 			bindReject(window, targetElem, campaign, ifrm);
 			emit('debug:wrapped', campaign, ifrm, ifrm.contentDocument.body);
 			emit('debug:after:render', campaign, true);

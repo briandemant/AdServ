@@ -2,6 +2,8 @@
 
 
 var showCampaign = function(campaign) {
+	//console.debug('show',campaign);
+	
 	render(campaign);
 };
 
@@ -58,10 +60,13 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 		          + '&sw=' + urlencode(ctx.searchword)
 		          + ( ctxName != '_GLOBAL_' ? '&context=' + ctxName : '')
 		          + '&uid=' + conf.guid + '&count';
-		getJSON(url, (function(ctx) {
-
+		//console.debug('load',url);
+		
+		getJSON(url, (function(ctx) { 
 			ctx.conf = conf;
 			return function(err, data) {
+
+				//console.debug('got', data);
 				if (err) {
 					console.error(err);
 				} else {

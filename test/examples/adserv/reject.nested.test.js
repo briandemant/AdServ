@@ -12,28 +12,19 @@ describe('reject nesting functionality', function() {
 			})
 		});
 	})
- 
-	it('should reject 80 and load next', function() {
-		this.timeout(5000);
-		return makeTestPromise(80, 1, 1, 3)
-	});
-	it('should reject 81 and load next', function() {
 
-		return makeTestPromise(81, 11, 2, 3)
+	it('should reject 80 and load next x 2 (empty)', function() {
+		this.timeout(5000);
+		return makeTestPromise(80, [70, 1], 'banner1')
 	});
-	it('should reject 82 and load next', function() {
-		return makeTestPromise(82, 22, 3, 3)
+
+	it('should reject 82 and load next x 2', function() {
+		this.timeout(5000);
+		return makeTestPromise(82, [72, 62], 'banner2')
 	});
-	it('should reject 83 and load next', function() {
-		return makeTestPromise(83, 33, 4, 3)
-	});
-	it('should reject 84 and load next', function() {
-		return makeTestPromise(84, 44, 5, 3)
-	});
-	it('should reject 83 and load next', function() {
-		return makeTestPromise(85, 55, 6, 3)
-	});
-	it('should reject 84 and load next', function() {
-		return makeTestPromise(86, 66, 7, 3)
+	
+	it('should reject 94 and load next x 3', function() {
+		this.timeout(5000);
+		return makeTestPromise(94, [84, 74, 64], 'banner3')
 	});
 });
