@@ -1,4 +1,4 @@
-describe('context functionality', function() {
+describe('basic: context functionality', function() {
 	var contexts = {loaded : []};
 	before(function(done) {
 		loadPage('/examples/adserv/context.html', 800, 800, function(win, doc) {

@@ -1,4 +1,4 @@
-describe('basic functionality', function() {
+describe('basic: common functionality', function() {
 	before(function(done) {
 		messages = [];
 		loadPage('/examples/adserv/basic.html', 800, 800, function(win, doc) {
@@ -50,7 +50,7 @@ describe('basic functionality', function() {
 			{banner : 8, expect : "40"}, {banner : 10, expect : "50"}, {banner : 12, expect : "60"}
 		];
 		return waitForMessages('show_campaign', iframes.length, 2500).then(function(messages) {
-			console.dir(messages);
+			//console.dir(messages);
 			assert.equal(messages.length, iframes.length, iframes.length + " iframes banner should have been loaded");
 
 			iframes.forEach(function(exp) {
@@ -90,6 +90,7 @@ describe('basic functionality', function() {
 	
 	
 	it('should load flash files', function() {
+		this.timeout(5000);
 		return waitForMessages('flash', 1, 2500).then(function(messages) {
 			assert.equal(messages.length, 1, "1 flash banner should have been loaded");
 			var exp = {banner : 13, expect : "12:61"}; 

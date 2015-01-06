@@ -1,4 +1,4 @@
-describe('empty load', function() {
+describe('basic: empty load', function() {
 	before(function(done) {
 		console.debug('before')
 		loadPage('/examples/adserv/empty.html', 800, 800, function(win, doc) { 

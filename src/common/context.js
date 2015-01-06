@@ -6,6 +6,7 @@ function getContext(adspace, contexts) {
 	adspace.context = contexts[ctxName] = contexts[ctxName] || {
 		name : ctxName,
 		ids : [],
+		exceptExcludedIds : [],
 		adspaces : [],
 		keyword :    adspace.keyword || AdServ.keyword,
 		searchword : adspace.searchword || AdServ.searchword,
@@ -53,8 +54,8 @@ var prepareContexts = function(args) {
 			global.added = true;
 			conf['adspaces'] = global;
 		}
-	} 
-	
+	}
+
 	if (!conf['wallpaper']) {
 		var global = window['ba_wallpaper'];
 		if (!global || len(global) === 0 || global.added) {
@@ -78,11 +79,22 @@ var prepareContexts = function(args) {
 	var contexts = conf.contexts = {};
 	var adspaces = conf.adspaces;
 	for (index = 0; index < len(adspaces); index++) {
-		var adspace = adspaces[index]; 
+		var adspace = adspaces[index];
 		if (adspace.id > 0) {
+			console.debug('--', adspace.excludeOnWallpaper);
+			if (adspace.excludeOnWallpaper) {
+				var target = conf['originalWallpaperTarget'] || conf['wallpaper'] && (conf['wallpaper'].target || conf['wallpaper'].wallpaperTarget) || document.body;
+				console.debug('--',target);
+				if (AdServ.hasWallpaperChanged(target, conf.originalWallpaper)) {
+					console.debug('wallpaper excluded', adspace);
+					continue;
+				}
+			}
+
 			getContext(adspace, contexts);
 			adspace.context.ids.push(adspace.id);
 			adspace.context.adspaces.push(adspace);
+
 		} else {
 			// console.error('no id', adspace);
 		}
@@ -110,7 +122,7 @@ var prepareContexts = function(args) {
 
 	if (conf['adspaces'].length == 0 && !conf['wallpaper'] && !conf['floating']) {
 		console.error('no adspaces or wallpaper provided');
-	} 
+	}
 
 	return conf;
 };

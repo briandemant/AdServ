@@ -91,38 +91,33 @@ window.addEventListener("message", function(event) {
 	}
 	messages.push(payload);
 }, false);
+ 
+ 
 
 function waitForMessages(source, count, timeout) {
-	var promise = Q.Promise(function(resolve, reject, notify) {
-		var messages = [];
-		var listener = function(event) {
-			var payload;
-			try {
-				payload = JSON.parse(event.data);
-				if (source == payload.source) {
-					console.debug("got message xx", event.data);
-					messages.push(payload);
+	console.debug("wait for " + count + ' messages from ' + source); 
+	var start = Date.now();
+	return new Q.Promise(function(resolve, reject) {
+		var checkMessages = function() {
+			var result = [];
+			messages.forEach(function(message) {
+				if (message.source == source) {
+					result.push(message);
 				}
-			} catch (e) {
-				console.error("got message xx", event.data);
-				messages.push({error : event.data})
+			});
+			if (result.length >= count){
+				resolve(result);
+			} else  {
+				if (timeout < Date.now() - start) {
+					console.error("wait for " + count + ' messages from ' + source +" >> timeout exceeded (" + timeout + ")"); 
+								reject(new Error("waitForMessages:timeout exceeded (" + timeout + ")"));
+				} else {
+					setTimeout(checkMessages, 250);
+				}
 			}
-
-			if (typeof count == 'undefined' || messages.length == count) {
-				window.removeEventListener("message", listener);
-				resolve(messages);
-			}
-		}
-		setTimeout(function() {
-			window.removeEventListener("message", listener);
-			reject(new Error("waitForMessages:timeout exceeded (" + timeout + ")"));
-		}, timeout);
-
-		window.addEventListener("message", listener);
+		};
+		setTimeout(checkMessages, 10);
 	});
-
-
-	return promise;
 }
 
 function makeTestPromise(adspace, tunnel, target) {

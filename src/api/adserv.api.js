@@ -3,7 +3,7 @@
 
 var showCampaign = function(campaign) {
 	//console.debug('show',campaign);
-	
+
 	render(campaign);
 };
 
@@ -48,7 +48,7 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 		anyWaiting++;
 	}
 
-	for (var ctxName in conf.contexts) {
+	for (var ctxName in conf.contexts) { 
 		//noinspection JSUnfilteredForInLoop
 		var ctx = conf.contexts[ctxName];
 		var url = conf.baseUrl + '/api/v2/get/campaigns.json?'
@@ -61,8 +61,8 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 		          + ( ctxName != '_GLOBAL_' ? '&context=' + ctxName : '')
 		          + '&uid=' + conf.guid + '&count';
 		//console.debug('load',url);
-		
-		getJSON(url, (function(ctx) { 
+
+		getJSON(url, (function(ctx) {
 			ctx.conf = conf;
 			return function(err, data) {
 
@@ -101,13 +101,13 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 							} else {
 								info += '(' + ctx.name + '): ';
 							}
-							
+
 							if (campaign.type != 'undefined') {
 								console.info(info + campaign.adspace + " " + campaign.type + ( campaign.iframe ? "" : " in iframe"), campaign.elem);
 							} else {
 								console.info(info + campaign.adspace + " is EMPTY", campaign.elem);
 							}
- 
+
 							emit('adspace:loaded', campaign);
 							if (campaign.campaign && campaign.banner && campaign.adspace) {
 //								console.log("campaign:" + campaign.campaign);
@@ -138,3 +138,4 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 };
 
 console.debug("AdServ.released : " + AdServ.released);
+

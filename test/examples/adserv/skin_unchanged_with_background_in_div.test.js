@@ -1,7 +1,7 @@
-describe('combine with sync', function() {
+describe('skin/div: unchanged with background', function() {
 	var contexts = {loaded : []};
 	before(function(done) {
-		loadPage('/examples/adserv/with_sync.html', 800, 800, function(win, doc) {
+		loadPage('/examples/adserv/skin_unchanged_with_background_in_div.html', 800, 800, function(win, doc) {
 			win.AdServ.on('debug:context:loaded', function(ctx) {
 				console.debug(ctx);
 				contexts.loaded.push(ctx);

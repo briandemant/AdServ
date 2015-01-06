@@ -70,3 +70,15 @@ body {
 	top: 0;
 	left: 0; 
 }
+
+.background {
+	background-image: url(//127.0.0.1:1337/banner/wide/1.jpg);
+}
+
+.background_div {
+	background-image: url(//127.0.0.1:1337/banner/wide/2.jpg);
+	height:300px;
+}
+.background_div_empty { 
+	height:300px;
+}

@@ -6,7 +6,7 @@ var $ID = AdServ.$ID = function(target) {
 	}
 	return document.getElementById(target);
 }
- 
+
 // Shortcut for querySelector  
 var $ = AdServ.$ = function(selector, parent) {
 	// Returns elem directly if selector is an element 
@@ -26,7 +26,7 @@ var $$ = AdServ.$$ = function(selector, parent) {
 	if (!parent) {parent = document;}
 
 	return slice.call(parent.querySelectorAll(selector));
-}; 
+};
 
 // Shim for getComputedStyle used by `AdServ.css`
 var getComputedStyle;
@@ -43,7 +43,7 @@ if (!window.getComputedStyle) {
 				prop = prop.replace(re, function() {
 					return arguments[2].toUpperCase();
 				});
-			} 
+			}
 			return style.el.currentStyle[prop] ? style.el.currentStyle[prop] : null;
 		};
 		return style;
@@ -92,6 +92,22 @@ var isVisible = AdServ.isVisible = function(elemOrSelector) {
 	return isVisible(elem.parentNode);
 };
 
+
+AdServ.hasWallpaperChanged = function(target, original) {
+	var regExp = new RegExp(original + '\\)$');
+	var wallpaper = AdServ.css(target, 'background-image');
+	var same = typeof original == 'undefined' && wallpaper == 'none';
+	if (!same) {
+		same = regExp.test(wallpaper);
+		//console.debug('regExp', regExp);
+		//console.debug('wallpaper', wallpaper);
+	}
+	console.debug('same', same);
+	console.debug('original', original);
+	console.debug('wallpaper', wallpaper);
+
+	return !same;
+};
 
 function viewport() {
 	var e = window;
