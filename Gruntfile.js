@@ -87,7 +87,7 @@ module.exports = function(grunt) {
 			},
 			operation : {
 				files : ['src/*.js', 'src/api/*.js', 'src/common/*.js', 'src/templates/*.js.tmpl'],
-				tasks : ['concat', 'uglify:max', 'copy:to_operation']
+				tasks : ['concat', 'comments', 'uglify:max', 'copy:to_operation']
 			},
 			docs : {
 				files : ['src/*.js', 'src/common/*.js', 'src/templates/*.js.tmpl', 'Usage.md'],

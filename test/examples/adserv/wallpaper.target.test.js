@@ -21,8 +21,7 @@ describe('wallpaper target functionality', function() {
 
 
 	it('should have a wallpaper', function() {
-		var body = $('#wallpaper', doc)
-
+		var body = $('#wallpaper', doc) 
 		assert.match(body.css('background-image'), /2.jpg/, 'expected an background to be loaded');
 
 	});

@@ -27,7 +27,7 @@ function passbackHandlerMaker(elem, campaign) {
 
 							console.warn("passback from adspace " + campaign.adspace + " to " + payload.next + " in " + payload.target)
 							//			iframe.contentDocument.body.innerHTML = "<b>THIS WAS REJECTED</b>";
-							console.warn("campaign rejected:", payload);
+							//console.warn("campaign rejected:", payload);
 							for (var i = 0; i < elem['tried'].length - 1; i++) {
 								if (elem['tried'][i] == payload.campaignid) {
 									console.error("loop detected .. aborting");
@@ -35,7 +35,7 @@ function passbackHandlerMaker(elem, campaign) {
 									return false;
 								}
 							}
-							console.warn("history:", elem['tried']);
+							//console.warn("history:", elem['tried']);
 
 							//console.log("elem:", uid, elem);
 							//console.log("err:", err);
@@ -347,6 +347,53 @@ function addComment(elem, comment) {
 	elem.appendChild(document.createComment(comment));
 }
 
+
+var recheck = 0;
+var invisibleAdspaces = [];
+
+var checkVisibility = throttle(function() {
+	if (len(invisibleAdspaces) == 0) {
+		return;
+	}
+
+	var notReady = [];
+	for (var index = 0; index < len(invisibleAdspaces); index++) {
+		var campaign = invisibleAdspaces[index];
+		if (isVisible(campaign.elem)) {
+			if (recheck) {
+				clearInterval(recheck);
+			}
+			render(campaign);
+		} else {
+			notReady.push(campaign);
+		}
+	}
+	emit("debug:checkVisibility:leave", notReady.length);
+	invisibleAdspaces = notReady;
+}, 200);
+
+AdServ.on('page:resize', function() {
+	if (recheck) {
+		clearInterval(recheck);
+	}
+	checkVisibility();
+});
+
+function addDebugComment(campaign) {
+	if (campaign.campaign && campaign.banner && campaign.adspace) {
+		addComment(campaign.elem, ' Adspace: ' + campaign.adspace
+		                          + ' Group: ' + campaign.group
+		                          + ' Campaign: ' + campaign.campaign
+		                          + ' Banner: ' + campaign.banner + ' ');
+	} else {
+		var comment = ' Adspace: ' + campaign.adspace + ' (empty)';
+
+		addComment(campaign.elem, comment);
+	}
+	return comment;
+}
+
+
 function render(campaign) {
 	emit('debug:before:render', campaign);
 	var ifrm;
@@ -388,6 +435,5 @@ function render(campaign) {
 		console.error('no element for banner yet : ' + campaign.banner_type, campaign);
 	}
 }
-
-AdServ.render = render;
+ 
   

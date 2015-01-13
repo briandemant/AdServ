@@ -94,19 +94,27 @@ var isVisible = AdServ.isVisible = function(elemOrSelector) {
 
 
 AdServ.hasWallpaperChanged = function(target, original) {
-	var regExp = new RegExp(original + '\\)$');
-	var wallpaper = AdServ.css(target, 'background-image');
-	var same = typeof original == 'undefined' && wallpaper == 'none';
-	if (!same) {
-		same = regExp.test(wallpaper);
-		//console.debug('regExp', regExp);
+	if (typeof AdServ.hasWallpaperChanged.changed == 'undefined') {
+		var wallpaper = AdServ.css(target, 'background-image');
+		if (typeof original == 'undefined' && wallpaper == 'none') {
+			AdServ.hasWallpaperChanged.changed = false;
+		} else {
+			var regExp = new RegExp(original + '\\)$');
+			AdServ.hasWallpaperChanged.changed = !regExp.test(wallpaper);
+		}
+		
+		//console.debug('target', target);
+		//console.debug('original', original);
 		//console.debug('wallpaper', wallpaper);
-	}
-	console.debug('same', same);
-	console.debug('original', original);
-	console.debug('wallpaper', wallpaper);
 
-	return !same;
+		if (AdServ.hasWallpaperChanged.changed) {
+			var classes = document.body.getAttribute('class');
+			document.body.setAttribute('class', (classes || '') + ' adserving_wallpaper_loaded');
+			emit('wallpaper:loaded', {skin : true});
+		}
+	}
+	//console.debug('changed', AdServ.hasWallpaperChanged.changed);
+	return AdServ.hasWallpaperChanged.changed;
 };
 
 function viewport() {

@@ -275,3 +275,37 @@ function isSupportedBrowser() {
 	);
 }
 AdServ.isSupportedBrowser = isSupportedBrowser;
+
+function set(name, def, args) {
+	AdServ[name] = (isObject(args[0]) && args[0][name]) || AdServ[name] || def;
+}
+
+
+function exclude(adspace, conf) {
+	//console.debug('ex', adspace.id, adspace.excludeOnWallpaper);
+	if (adspace.excludeOnWallpaper || adspace.isWallpaper) {
+		console.log("conf['wallpaperTarget']", conf['wallpaperTarget']);
+
+		if (AdServ.hasWallpaperChanged(conf['wallpaperTarget'], conf.originalWallpaper)) {
+			//console.debug('wallpaper excluded', adspace);
+			return true;
+		}
+	}
+}
+
+
+function logCampaign(ctx, campaign) {
+	var info = 'Adspace';
+	if (ctx.name == '_GLOBAL_') {
+		info += ': ';
+	} else {
+		info += '(' + ctx.name + '): ';
+	}
+
+	if (campaign.type != 'undefined') {
+		console.info(info + campaign.adspace + " " + campaign.type + ( campaign.iframe ? "" : " in iframe"), campaign.elem);
+	} else {
+		console.info(info + campaign.adspace + " is EMPTY", campaign.elem);
+	}
+	return info;
+}

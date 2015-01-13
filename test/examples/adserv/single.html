@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="../style.css"/>
+	<title>Basic features</title>
+</head>
+<body>
+	<script src="../example.setup.js"></script>
+	<script src="../example.run.js"></script>
+
+	<div class="container">
+		<h3>Empty</h3>
+
+		<div class="banner" id="banner1">Banner 1 failed</div>
+		<div class="description">No banner should be displayed</div>
+	</div>
+
+	<div class="container">
+		<h3>High iframe</h3>
+
+		<div class="banner" id="banner2">
+			Banner 2 failed
+			<!-- preserved comment -->
+			<div>failed i said!</div>
+		</div>
+		<div class="description">vertial iframe</div>
+	</div>
+
+	<div class="container">
+		<h3>Square iframe</h3>
+
+		<div class="banner" id="banner3">Banner 3 failed</div>
+		<div class="description">Square iframe</div>
+	</div>
+
+	<div class="container">
+		<h3>Wide iframe</h3>
+
+		<div class="banner" id="banner4">Banner 4 failed</div>
+		<div class="description">Wide iframe</div>
+	</div>
+
+	<div class="container">
+		<h3>High image</h3>
+
+		<div class="banner" id="banner5">Banner 5 failed</div>
+		<div class="description">vertial image</div>
+	</div>
+
+	<div class="container">
+		<h3>Square image</h3>
+
+		<div class="banner" id="banner6">Banner 6 failed</div>
+		<div class="description">Square image</div>
+	</div>
+
+	<div class="container">
+		<h3>Wide image</h3>
+
+		<div class="banner" id="banner7">Banner 7 failed</div>
+		<div class="description">Wide image</div>
+	</div>
+	<div class="container">
+		<h3>text / iframe NB!</h3>
+
+		<div class="banner" id="banner8">Banner 8 failed</div>
+		<div class="description">text banner in iframe<br> the font should <b>not</b> be verdana</div>
+	</div>
+	<div class="container">
+		<h3>text banner</h3>
+
+		<div class="banner" id="banner9">Banner 9 failed</div>
+		<div class="description">text banner</div>
+	</div>
+	<div class="container">
+		<h3>html / iframe</h3>
+
+		<div class="banner" id="banner10">Banner 10 failed</div>
+		<div class="description">html banner in iframe</div>
+	</div>
+	<div class="container">
+		<h3>html banner</h3>
+
+		<div class="banner" id="banner11">Banner 11 failed</div>
+		<div class="description">html banner</div>
+	</div>
+
+	<div class="container">
+		<h3>flash / iframe</h3>
+
+		<div class="banner" id="banner12">Banner 12 failed</div>
+		<div class="description">flash banner</div>
+	</div>
+
+	<script>
+		AdServ.load({
+			            "baseUrl" : baseUrl,
+			            "keyword" : keyword,
+			            "adspaces" : [
+				            {'id' : 1, 'target' : 'banner1'},
+				            {'id' : 20, 'target' : 'banner2'},
+				            {'id' : 30, 'target' : 'banner3'},
+				            {'id' : 10, 'target' : 'banner4'},
+				            {'id' : 21, 'target' : 'banner5'},
+				            {'id' : 31, 'target' : 'banner6'},
+				            {'id' : 11, 'target' : 'banner7'},
+
+			            ]
+		            })
+		AdServ.load({'id' : 40, 'target' : 'banner8'});
+		[{'id' : 41, 'target' : 'banner9'},
+		 {'id' : 50, 'target' : 'banner10'},
+		 {'id' : 51, 'target' : 'banner11'},
+		 {'id' : 60, 'target' : 'banner12'}].forEach(function(adspace, idx) {
+			                                             setTimeout(function() {
+				                                             console.log(idx, adspace);
+				                                             AdServ.load(adspace);
+			                                             }, 10 + idx);
+		                                             })
+	</script>
+</body>
+</html>

@@ -22,34 +22,13 @@ function getContext(adspace, contexts) {
 	}
 }
 
-function set(name, def, args) {
-	AdServ[name] = (isObject(args[0]) && args[0][name]) || AdServ[name] || def;
-}
-var prepareContexts = function(args) {
-	set('baseUrl', '', args);
-	set('keyword', '', args);
-	set('searchword', '', args);
 
-	var conf = {baseUrl : AdServ.baseUrl, xhrTimeout : 5000, guid : guid("ad")};
 
-	for (var index = 0; index < len(args); index++) {
-		var arg = args[index];
-		if (isFunction(arg)) {
-			conf.ondone = arg;
-		} else if (isObject(arg) && (!arg.adspaces || arg.id || arg.wallpaper || arg.floating )) {
-			conf = mix(conf, arg);
-		} else if (isObject(arg)) {
-			conf = mix(conf, arg);
-		} else if (isArray(arg)) {
-			conf['adspaces'] = arg;
-		}
-	}
-
+function addLegacyGlobals(conf) {
 	if (!isArray(conf['adspaces'])) {
 		var global = window['ba_adspaces'];
 		if (!global || len(global) === 0 || global.added) {
 			conf['adspaces'] = []
-//			console.warn('adspaces empty');
 		} else {
 			global.added = true;
 			conf['adspaces'] = global;
@@ -63,6 +42,10 @@ var prepareContexts = function(args) {
 		} else {
 			global.added = true;
 			conf['wallpaper'] = global;
+			conf['wallpaper'].target = conf['wallpaper'].target
+			                           || conf['wallpaper'].wallpaperTarget
+			                           || conf['wallpaperTarget'];
+			delete conf['wallpaper'].wallpaperTarget;
 		}
 	}
 	if (!conf['floating']) {
@@ -74,23 +57,46 @@ var prepareContexts = function(args) {
 			conf['floating'] = global;
 		}
 	}
+}
+var prepareContexts = function(args) {
+	set('baseUrl', '', args);
+	set('keyword', '', args);
+	set('searchword', '', args);
+
+	var conf = {baseUrl : AdServ.baseUrl, xhrTimeout : 5000, guid : guid("ad")};
+
+	for (var index = 0; index < len(args); index++) {
+		var arg = args[index];
+		if (isFunction(arg)) {
+			conf.ondone = arg;
+		} else if (isObject(arg) && arg.id && !(arg.adspaces || arg.wallpaper || arg.floating )) {
+			console.log("111111111", arg);
+			// single adspace expected
+			conf.adspaces = (conf.adspaces || []).concat(arg);
+		} else if (isObject(arg)) {
+			// full conf expected
+			conf = mix(conf, arg);
+		} else if (isArray(arg)) {
+			conf['adspaces'] = arg;
+		}
+	}
+
+	addLegacyGlobals(conf);
+
+	// support legacy and use document.body as default target  
+	conf['wallpaperTarget'] = conf['wallpaperTarget'] || (conf['wallpaper'] && conf['wallpaper'].target) || document.body;
 
 
 	var contexts = conf.contexts = {};
 	var adspaces = conf.adspaces;
+
+
 	for (index = 0; index < len(adspaces); index++) {
 		var adspace = adspaces[index];
 		if (adspace.id > 0) {
-			console.debug('--', adspace.excludeOnWallpaper);
-			if (adspace.excludeOnWallpaper) {
-				var target = conf['originalWallpaperTarget'] || conf['wallpaper'] && (conf['wallpaper'].target || conf['wallpaper'].wallpaperTarget) || document.body;
-				console.debug('--',target);
-				if (AdServ.hasWallpaperChanged(target, conf.originalWallpaper)) {
-					console.debug('wallpaper excluded', adspace);
-					continue;
-				}
+			if (exclude(adspace, conf)) {
+				continue;
 			}
-
 			getContext(adspace, contexts);
 			adspace.context.ids.push(adspace.id);
 			adspace.context.adspaces.push(adspace);
@@ -99,26 +105,41 @@ var prepareContexts = function(args) {
 			// console.error('no id', adspace);
 		}
 	}
+
+	if (conf['wallpaper']) {
+		var adspace = conf['wallpaper'];
+		adspace.isWallpaper = true;
+
+		conf['wallpaper'].target = conf['wallpaper'].target || conf['wallpaperTarget'];
+
+		if (adspace.id > 0) {
+			if (!exclude(adspace, conf)) {
+				getContext(adspace, contexts);
+				adspace.context.wallpaper = adspace;
+				adspace.context.adspaces.push(adspace);
+			} else {
+				delete conf['wallpaper'];
+			}
+		} else {
+			// console.error('no id', adspace);
+		}
+	}
+
 	if (conf['floating']) {
 		var adspace = conf['floating'];
 		if (adspace.id > 0) {
-			getContext(adspace, contexts);
-			adspace.context.floating = adspace;
-			adspace.context.adspaces.push(adspace);
+			if (!exclude(adspace, conf)) {
+				getContext(adspace, contexts);
+				adspace.context.floating = adspace;
+				adspace.context.adspaces.push(adspace);
+			} else {
+				delete conf['floating'];
+			}
 		} else {
 			// console.error('no id', adspace);
 		}
 	}
-	if (conf['wallpaper']) {
-		var adspace = conf['wallpaper'];
-		if (adspace.id > 0) {
-			getContext(adspace, contexts);
-			adspace.context.wallpaper = adspace;
-			adspace.context.adspaces.push(adspace);
-		} else {
-			// console.error('no id', adspace);
-		}
-	}
+
 
 	if (conf['adspaces'].length == 0 && !conf['wallpaper'] && !conf['floating']) {
 		console.error('no adspaces or wallpaper provided');
