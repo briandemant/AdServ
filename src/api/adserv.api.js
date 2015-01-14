@@ -21,6 +21,7 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 		          + '&sw=' + urlencode(ctx.searchword)
 		          + ( ctxName != '_GLOBAL_' ? '&context=' + ctxName : '')
 		          + '&uid=' + conf.guid + '&count';
+		
 		//console.debug('load',url);
 
 		getJSON(url, (function(ctx) {
@@ -39,18 +40,21 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 						ctx.adspaces[index].guid = campaign.guid = guid("ad");
 						campaign.ctx = ctx;
 						campaign.target = ctx.adspaces[index].target;
+						if (ctx.adspaces[index].isWallpaper) {
+							campaign.isWallpaper = true;
+						}
 						campaign.type = (campaign.wallpaper ? "wallpaper:" : "") + (campaign.floating ? "floating:" : "") + campaign.banner_type;
 						campaign.elem = $ID(campaign.target);
 						if (campaign.elem) {
 							clearTarget(campaign);
-							
+
 							addDebugComment(campaign);
 							logCampaign(ctx, campaign);
-							
+
 							emit('adspace:loaded', campaign);
-							if (campaign.campaign && campaign.banner && campaign.adspace) { 
+							if (campaign.campaign && campaign.banner && campaign.adspace) {
 								invisibleAdspaces.push(campaign);
-							}  
+							}
 						} else {
 							console.error("target for adspace not found : " + campaign.target, campaign);
 						}

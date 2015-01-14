@@ -19,14 +19,14 @@ function startCampaign(type, req, adspace, idx) {
 	var campaign = (adspace + "0" + idx) | 0;
 	var banner = (adspace + "00" + idx) | 0;
 	return {
-		"adspace"     : adspace,
-		"group"       : group,
-		"campaign"    : campaign,
-		"banner"      : banner,
+		"adspace" : adspace,
+		"group" : group,
+		"campaign" : campaign,
+		"banner" : banner,
 		"banner_type" : type,
-		"click"       : req.urlRoot + "/click.php?raw=" + campaign + "|" + banner + "|",
-		"count"       : req.urlRoot + "/api/v2/count/view/" + adspace + "/" + campaign + "/" + banner + "?keyword=",
-		"iframe"      : adspace % 2 == 0
+		"click" :  req.urlRoot + "/click.php?raw=" + campaign + "|" + banner + "|",
+		"count" :  req.urlRoot + "/api/v2/count/view/" + adspace + "/" + campaign + "/" + banner + "?keyword=",
+		"iframe" : adspace % 2 == 0
 	}
 }
 
@@ -42,8 +42,8 @@ var campaignMakers = {
 	"0" : function(req, adspace, keyword, idx) {
 		return {
 			"adspace" : adspace,
-			"count"   : req.urlRoot + "/api/v2/count/view/" + adspace + "?keyword=" + keyword,
-			"msg"     : "nothing found"
+			"count" : req.urlRoot + "/api/v2/count/view/" + adspace + "?keyword=" + keyword,
+			"msg" : "nothing found"
 		}
 	},
 	"1" : function(req, adspace, keyword, idx) {
@@ -116,12 +116,12 @@ v2.get('/get/campaigns.json', function(req, res) {
 	var keyword = req.query.keyword || '';
 	var count = typeof req.query.count != "undefined";
 	var result = {
-		"meta"      : {
-			"timestamp"       : Date.now(),
+		"meta" : {
+			"timestamp" : Date.now(),
 			"timestamp_human" : new Date(),
-			"keyord"          : keyword,
-			"sw"              : null,
-			"adServingLoad"   : req.query.adServingLoad
+			"keyord" : keyword,
+			"sw" : null,
+			"adServingLoad" : req.query.adServingLoad
 		},
 		"campaigns" : []
 	};
@@ -142,15 +142,22 @@ v2.get('/get/campaigns.json', function(req, res) {
 	})
 
 	if (req.query.wallpaper) {
-		var wallpaper = imageCampaign('square', 150, 100, req, req.query.wallpaper, 0);
+		var wallpaper
+		console.log(req.query.wallpaper);
+		
+		if (req.query.wallpaper < 10) {
+			wallpaper = imageCampaign('square', 150, 100, req, req.query.wallpaper, 0);
 
-		wallpaper.banner_type = 'wallpaper';
-		wallpaper.wallpaper = wallpaper.image;
-		wallpaper.wallpaper_repeat = 'repeat';
-		delete wallpaper.image;
-		delete wallpaper.iframe;
-		delete wallpaper.width;
-		delete wallpaper.height;
+			wallpaper.banner_type = 'wallpaper';
+			wallpaper.wallpaper = wallpaper.image;
+			wallpaper.wallpaper_repeat = 'repeat';
+			delete wallpaper.image;
+			delete wallpaper.iframe;
+			delete wallpaper.width;
+			delete wallpaper.height;
+		} else {
+			wallpaper = {adspace : req.query.wallpaper, msg : "nothing found"};
+		}
 		result.campaigns.push(wallpaper);
 	}
 

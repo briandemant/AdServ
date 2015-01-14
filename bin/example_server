@@ -1,2 +1,6 @@
 #!/bin/bash
-node ./node_modules/nodemon/bin/nodemon.js  -w src/srv/ src/srv/example_server.js $*
+if [[ "$1" != '' ]]; then
+	node ./node_modules/nodemon/bin/nodemon.js  -w src/srv/ src/srv/example_server.js $*
+else 
+	node src/srv/example_server.js $*
+fi

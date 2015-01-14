@@ -8,7 +8,7 @@ function passbackHandlerMaker(elem, campaign) {
 			var payload;
 			try {
 				payload = parseJSON(m.data);
- 
+
 				if (payload.target && payload.next) {
 					if (payload.target == campaign.target) {
 
@@ -47,15 +47,15 @@ function passbackHandlerMaker(elem, campaign) {
 
 							//setTimeout(function() {
 							AdServ.load({
-								            adspaces : [
-									            {
-										            id : payload.next,
-										            target : payload.target,
-										            adServingLoad : campaign.ctx.adServingLoad,
-										            context : 'Reject' + payload.adspace
-									            }
-								            ]
-							            })
+								adspaces : [
+									{
+										id : payload.next,
+										target : payload.target,
+										adServingLoad : campaign.ctx.adServingLoad,
+										context : 'Reject' + payload.adspace
+									}
+								]
+							})
 							//}, 10)
 
 						} else {
@@ -329,7 +329,7 @@ function clearTarget(campaign) {
 		//console.error("NEVER REMOVE CONTENT OF BODY");
 		return;
 	}
-	if (campaign.banner_type == 'wallpaper') {
+	if (campaign.isWallpaper) {
 		//console.error("NEVER REMOVE CONTENT OF wallpaper");
 		return;
 	}
@@ -346,7 +346,7 @@ function clearTarget(campaign) {
 function addComment(elem, comment) {
 	elem.appendChild(document.createComment(comment));
 }
- 
+
 var recheck = 0;
 var invisibleAdspaces = [];
 
@@ -407,7 +407,7 @@ function render(campaign) {
 			ifrm = createIframe(campaign);
 			targetElem.appendChild(ifrm);
 			//console.debug("append");
-			
+
 			ifrm.contentDocument.write('<!doctype html><body style="margin:0px;padding:0px;width:100%;height:100%;" adserv="true"></body>');
 			ifrm.src = AdServ.baseUrl + "/show_campaign.php?nocount=1&adspaceid=" + campaign.adspace
 			           + "&campaignid=" + campaign.campaign
