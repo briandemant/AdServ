@@ -346,8 +346,7 @@ function clearTarget(campaign) {
 function addComment(elem, comment) {
 	elem.appendChild(document.createComment(comment));
 }
-
-
+ 
 var recheck = 0;
 var invisibleAdspaces = [];
 

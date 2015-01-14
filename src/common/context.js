@@ -69,8 +69,7 @@ var prepareContexts = function(args) {
 		var arg = args[index];
 		if (isFunction(arg)) {
 			conf.ondone = arg;
-		} else if (isObject(arg) && arg.id && !(arg.adspaces || arg.wallpaper || arg.floating )) {
-			console.log("111111111", arg);
+		} else if (isObject(arg) && arg.id && !(arg.adspaces || arg.wallpaper || arg.floating )) { 
 			// single adspace expected
 			conf.adspaces = (conf.adspaces || []).concat(arg);
 		} else if (isObject(arg)) {

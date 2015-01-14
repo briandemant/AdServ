@@ -283,9 +283,7 @@ function set(name, def, args) {
 
 function exclude(adspace, conf) {
 	//console.debug('ex', adspace.id, adspace.excludeOnWallpaper);
-	if (adspace.excludeOnWallpaper || adspace.isWallpaper) {
-		console.log("conf['wallpaperTarget']", conf['wallpaperTarget']);
-
+	if (adspace.excludeOnWallpaper || adspace.isWallpaper) {  
 		if (AdServ.hasWallpaperChanged(conf['wallpaperTarget'], conf.originalWallpaper)) {
 			//console.debug('wallpaper excluded', adspace);
 			return true;
