@@ -32,9 +32,7 @@ function count() {
  *
  * @return    {String}                     something like `ad_FF40_47A1_0102_F034`
  */
-function guid() {
-
-
+function guid() { 
 	guid.count++;
 	if (!guid.date) {
 		// 1128117600000 == +new Date("2005-10-01 00:00")
@@ -49,8 +47,7 @@ function guid() {
 	result.push(count());
 	result.push(randhex(8));
 	return result.join("_");
-}
-AdServ.guid = guid;
+} 
 
 function toArray(list) {
 	return slice.call(list, 0);

@@ -3,15 +3,15 @@ var engines = {};
 
 function passbackHandlerMaker(elem, campaign) {
 	return function(iframe) {
-
+		
 		var listener = function(m) {
 			var payload;
 			try {
 				payload = parseJSON(m.data);
-
+				
 				if (payload.target && payload.next) {
 					if (payload.target == campaign.target) {
-
+						
 						//console.error('----', payload); 
 						//console.error('listener', Date.now()-payload.time);
 						//console.log(payload.adspace);
@@ -24,7 +24,7 @@ function passbackHandlerMaker(elem, campaign) {
 								console.error(campaign.target, "nesting too deep .. 10 is max");
 								return;
 							}
-
+							
 							console.warn("passback from adspace " + campaign.adspace + " to " + payload.next + " in " + payload.target)
 							//			iframe.contentDocument.body.innerHTML = "<b>THIS WAS REJECTED</b>";
 							//console.warn("campaign rejected:", payload);
@@ -36,28 +36,28 @@ function passbackHandlerMaker(elem, campaign) {
 								}
 							}
 							//console.warn("history:", elem['tried']);
-
+							
 							//console.log("elem:", uid, elem);
 							//console.log("err:", err);
 							//console.log("m:", m);
 							//console.log("payload:", campaign.nesting | 0);
 							iframe.style.display = "none";
-							clearTarget(campaign);
-							//elem.innerHTML = ""; // would rather just hide iframe .. but deep tunnel make this harder
-
+							clearTarget(campaign);  // would rather just hide iframe .. but deep tunnel make this harder
+							
 							//setTimeout(function() {
 							AdServ.load({
-								adspaces : [
-									{
-										id : payload.next,
-										target : payload.target,
-										adServingLoad : campaign.ctx.adServingLoad,
-										context : 'Reject' + payload.adspace
-									}
-								]
-							})
+								            "guid" : campaign.guid + "_" + campaign.target,
+								            adspaces : [
+									            {
+										            id : payload.next,
+										            target : payload.target,
+										            adServingLoad : campaign.ctx.adServingLoad,
+										            context : 'Reject' + payload.adspace
+									            }
+								            ]
+							            })
 							//}, 10)
-
+							
 						} else {
 							//console.warn('ignored message .. wrong target', payload);
 						}
@@ -78,7 +78,7 @@ function makeA(elem, campaign) {
 	a.id = guid("a", campaign.adspace, campaign.campaign)
 	a.setAttribute('href', campaign.click);
 	a.setAttribute('target', "_blank");
-
+	
 	a.appendChild(elem);
 	return a;
 }
@@ -86,11 +86,11 @@ function makeA(elem, campaign) {
 function makeImg(campaign) {
 	var img = document.createElement('img');
 	img.id = guid("img", campaign.adspace, campaign.campaign);
-
+	
 	img.style.border = "0";
 	img.style.margin = "0 auto";
 	img.style.display = "block";
-
+	
 	img.src = campaign.image;
 	return img;
 }
@@ -130,45 +130,45 @@ engines["wallpaper"] = function renderwallpaper(elem, campaign) {
 			window.open(campaign.click);
 		}
 	}
-
+	
 	elem.style.backgroundImage = 'url(' + campaign.wallpaper + ')';
 	elem.style.backgroundRepeat = campaign.wallpaper_repeat || 'no-repeat';
 	elem.onclick = adserving_bgclick;
-
+	
 	var classes = document.body.getAttribute('class');
 	document.body.setAttribute('class', (classes || '') + ' adserving_wallpaper_loaded');
 	emit('wallpaper:loaded', campaign);
 }
 
 engines["html"] = function renderHtml(elem, campaign) {
-
+	
 	var script, original;
-
+	
 	function safeScriptContent(js) {
 		// remove document.write to avoid accidential dom rewrite
-//		return js.replace('document.write(', 'console.log("WARNING : document.write -> "+');
+		//		return js.replace('document.write(', 'console.log("WARNING : document.write -> "+');
 		return js.replace('document.write(', 'console.warn("WARNING : banner: ' + campaign.banner + ' uses document.write");document.write(');
-//		return js.replace('document.write(', 'console.warn("WARNING document.write");document.write(');
-//		console.log(js);
-//		
-//		return "console.log('x')";
+		//		return js.replace('document.write(', 'console.warn("WARNING document.write");document.write(');
+		//		console.log(js);
+		//		
+		//		return "console.log('x')";
 	}
-
+	
 	//console.debug("using direct access"); 
 	elem.innerHTML += campaign.html;
-//	elem.src = "javascript:" + campaign.html_as_js;
-
-
+	//	elem.src = "javascript:" + campaign.html_as_js;
+	
+	
 	var scripts = elem.getElementsByTagName("script");
-//	console.log(scripts.length);
-//	console.log(elem.innerHTML);
-
+	//	console.log(scripts.length);
+	//	console.log(elem.innerHTML);
+	
 	// just in case the result is an inline iframe
 	var iframes = elem.getElementsByTagName("iframe");
 	if (iframes.length == 1) {
 		bindReject(window, elem, campaign, iframes[0]);
 	}
-
+	
 	var original;
 	var length = scripts.length;
 	var uid = guid("js", campaign.adspace, campaign.campaign);
@@ -198,13 +198,13 @@ engines["html"] = function renderHtml(elem, campaign) {
 			})(original.innerHTML), 1000);
 		}
 	}
-
+	
 }
 engines["iframe"] = function renderImage(elem, campaign) {
 	var ifrm = createIframe(campaign)
-
+	
 	bindReject(window, elem, campaign, ifrm);
-
+	
 	ifrm.src = campaign.iframe_src;
 	elem.appendChild(ifrm);
 }
@@ -217,7 +217,7 @@ function createIframe(campaign) {
 	ifrm.style.border = 0;
 	ifrm.style.margin = "auto";
 	ifrm.style.display = "block";
-
+	
 	ifrm.frameBorder = 0;
 	ifrm.scrolling = "no";
 	return ifrm;
@@ -225,31 +225,31 @@ function createIframe(campaign) {
 
 function bindReject(bindTo, target, campaign, ifrm) {
 	AdServ.bind(bindTo, "message", passbackHandlerMaker(target, campaign)(ifrm))
-
+	
 	//AdServ.bind(ifrm.contentWindow, "message", passbackHandlerMaker(target, campaign)(ifrm))
-
+	
 }
 
 function wrapIframe(target, campaign) {
 	var ifrm = createIframe(campaign);
 	target.appendChild(ifrm);
 	ifrm.contentDocument.write('<!doctype html><body style="margin:0px;padding:0px;width:100%;height:100%;"></body>');
-
+	
 	bindReject(window, target, campaign, ifrm);
-
+	
 	return ifrm;
 }
 
 function makeFloat(campaign) {
 	console.log(campaign);
-
+	
 	var uid = guid('float');
 	console.info("got a floating banner!", uid);
-//	console.log(" floating_close_position : " + campaign.floating_close_position);
-//	console.log(" floating_position : " + campaign.floating_position);
-//	console.log(" floating_time : " + campaign.floating_time);
+	//	console.log(" floating_close_position : " + campaign.floating_close_position);
+	//	console.log(" floating_position : " + campaign.floating_position);
+	//	console.log(" floating_time : " + campaign.floating_time);
 	var style = 'position:fixed; width:' + campaign.width + 'px; height:' + (campaign.height) + 'px; z-index:2147483646;';
-
+	
 	if (campaign.floating_position == 'centre') {
 		style += 'left:50%; top:50%;' +
 		         'margin-left:-' + (campaign.width / 2) + 'px;' +
@@ -274,25 +274,25 @@ function makeFloat(campaign) {
 		var coords = campaign.floating_position.split(".");
 		style += 'left:' + coords[0] + '; top:' + coords[1] + ';';
 	}
-//	console.error('TODO: REMOVE YELLOW'); 
-
+	//	console.error('TODO: REMOVE YELLOW'); 
+	
 	var floatingElem = document.createElement('div');
 	floatingElem.id = "floating_" + uid;
-
+	
 	floatingElem.close = function() {
 		clearTimeout(floatingElem.timeout);
 		floatingElem.style.display = 'none';
-
+		
 		AdServ.emit("floating:close", campaign);
 		floatingElem.close = noop;
 	};
 	floatingElem.timeout = setTimeout(floatingElem.close, 1000 * campaign.floating_time);
-
-
+	
+	
 	var contentElem = document.createElement('div');
 	contentElem.id = "content_" + uid;
-
-
+	
+	
 	if (campaign.floating_close_position.indexOf('off') != 0) {
 		var closeElem = document.createElement('div');
 		bind(closeElem, 'click', floatingElem.close);
@@ -312,10 +312,10 @@ function makeFloat(campaign) {
 		var closeImg = document.createElement('img');
 		closeImg.src = AdServ.baseUrl + '/close.gif';
 		closeElem.appendChild(closeImg);
-//		if (campaign.floating_close_position.indexOf('top') > -1) {
+		//		if (campaign.floating_close_position.indexOf('top') > -1) {
 		floatingElem.appendChild(closeElem);
 	}
-
+	
 	floatingElem.appendChild(contentElem);
 	floatingElem.setAttribute('style', style);
 	floatingElem.setAttribute('class', "adserving_float adserving_float_" + campaign.adspace);
@@ -333,7 +333,7 @@ function clearTarget(campaign) {
 		//console.error("NEVER REMOVE CONTENT OF wallpaper");
 		return;
 	}
-
+	
 	var childNodes = [].slice.call(campaign.elem.childNodes);
 	for (var j = 0; j < childNodes.length; j++) {
 		var node = childNodes[j];
@@ -347,36 +347,6 @@ function addComment(elem, comment) {
 	elem.appendChild(document.createComment(comment));
 }
 
-var recheck = 0;
-var invisibleAdspaces = [];
-
-var checkVisibility = throttle(function() {
-	if (len(invisibleAdspaces) == 0) {
-		return;
-	}
-
-	var notReady = [];
-	for (var index = 0; index < len(invisibleAdspaces); index++) {
-		var campaign = invisibleAdspaces[index];
-		if (isVisible(campaign.elem)) {
-			if (recheck) {
-				clearInterval(recheck);
-			}
-			render(campaign);
-		} else {
-			notReady.push(campaign);
-		}
-	}
-	emit("debug:checkVisibility:leave", notReady.length);
-	invisibleAdspaces = notReady;
-}, 200);
-
-AdServ.on('page:resize', function() {
-	if (recheck) {
-		clearInterval(recheck);
-	}
-	checkVisibility();
-});
 
 function addDebugComment(campaign) {
 	if (campaign.campaign && campaign.banner && campaign.adspace) {
@@ -386,7 +356,7 @@ function addDebugComment(campaign) {
 		                          + ' Banner: ' + campaign.banner + ' ');
 	} else {
 		var comment = ' Adspace: ' + campaign.adspace + ' (empty)';
-
+		
 		addComment(campaign.elem, comment);
 	}
 	return comment;
@@ -407,7 +377,7 @@ function render(campaign) {
 			ifrm = createIframe(campaign);
 			targetElem.appendChild(ifrm);
 			//console.debug("append");
-
+			
 			ifrm.contentDocument.write('<!doctype html><body style="margin:0px;padding:0px;width:100%;height:100%;" adserv="true"></body>');
 			ifrm.src = AdServ.baseUrl + "/show_campaign.php?nocount=1&adspaceid=" + campaign.adspace
 			           + "&campaignid=" + campaign.campaign

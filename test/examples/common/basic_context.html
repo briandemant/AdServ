@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="../style.css"/>
+	<title>Context features</title>
+</head>
+<body>
+	<script src="../example.setup.js"></script>
+	<script src="../example.run.js"></script>
+
+	<div class="container">
+		<h3>Wide _GLOBAL_</h3>
+
+		<div class="banner" id="banner1">Banner 1 failed</div>
+		<div class="description">global context</div>
+	</div>
+
+	<div class="container">
+		<h3>High _GLOBAL_</h3>
+
+		<div class="banner" id="banner2">Banner 2 failed</div>
+		<div class="description">global context</div>
+	</div>
+
+	<div class="container">
+		<h3>Wide group 1</h3>
+
+		<div class="banner" id="banner3">Banner 3 failed</div>
+		<div class="description">group 1 context</div>
+	</div>
+
+	<div class="container">
+		<h3>Wide group 2</h3>
+
+		<div class="banner" id="banner4">Banner 4 failed</div>
+		<div class="description">group 2 context</div>
+	</div>
+
+	<div class="container">
+		<h3>High group 2</h3>
+
+		<div class="banner" id="banner5">Banner 5 failed</div>
+		<div class="description">group 2 context, same adspaces as in double context</div>
+	</div>
+
+	<div class="container">
+		<h3>High group 1</h3>
+
+		<div class="banner" id="banner6">Banner 6 failed</div>
+		<div class="description">group 1 context</div>
+	</div>
+	<div class="container">
+		<h3>High double</h3>
+
+		<div class="banner" id="banner7">Banner 7 failed</div>
+		<div class="description">same adspace 2 x in context</div>
+	</div>
+	<div class="container">
+		<h3>High double</h3>
+
+		<div class="banner" id="banner8">Banner 8 failed</div>
+		<div class="description">same adspace 2 x in context</div>
+	</div>
+
+
+	<script>
+		AdServ.load({
+			            "guid" : 'test',
+			            "baseUrl" : baseUrl,
+			            "keyword" : keyword,
+			            "adspaces" : [
+				            {'id' : 10, 'target' : 'banner1'},
+				            {'id' : 21, 'target' : 'banner2'},
+				            {'id' : 14, 'target' : 'banner3', context : 'group1'},
+				            {'id' : 18, 'target' : 'banner4', context : 'group2'},
+				            {'id' : 23, 'target' : 'banner5', context : 'group2'}, 
+				            {'id' : 28, 'target' : 'banner6', context : 'group1'},
+				            {'id' : 28, 'target' : 'banner7', context : 'double'},
+				            {'id' : 28, 'target' : 'banner8', context : 'double'}
+			            ]
+		            })
+	</script>
+</body>
+</html>
+

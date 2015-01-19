@@ -23,7 +23,6 @@ function getContext(adspace, contexts) {
 }
 
 
-
 function addLegacyGlobals(conf) {
 	if (!isArray(conf['adspaces'])) {
 		var global = window['ba_adspaces'];
@@ -62,14 +61,20 @@ var prepareContexts = function(args) {
 	set('baseUrl', '', args);
 	set('keyword', '', args);
 	set('searchword', '', args);
+	set('responsive', AdServ.responsive, args);
 
-	var conf = {baseUrl : AdServ.baseUrl, xhrTimeout : 5000, guid : guid("ad")};
+	var conf = {
+		baseUrl : AdServ.baseUrl,
+		responsive : AdServ.responsive,
+		xhrTimeout : 5000,
+		guid : guid("guid")
+	};
 
 	for (var index = 0; index < len(args); index++) {
 		var arg = args[index];
 		if (isFunction(arg)) {
 			conf.ondone = arg;
-		} else if (isObject(arg) && arg.id && !(arg.adspaces || arg.wallpaper || arg.floating )) { 
+		} else if (isObject(arg) && arg.id && !(arg.adspaces || arg.wallpaper || arg.floating )) {
 			// single adspace expected
 			conf.adspaces = (conf.adspaces || []).concat(arg);
 		} else if (isObject(arg)) {

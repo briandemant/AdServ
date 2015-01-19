@@ -8,6 +8,9 @@
   "src_files_ignore": "js/toxic/*.js",
   "routes": {
     "/": "test/all_tests.html",
+    "/adserv": "test/examples/adserv/index.html",
+    "/responsive": "test/examples/responsive/index.html",
+    "/common": "test/examples/common/index.html",
     "/examples": "test/examples",
     "/helpers/js": "test/helpers/js",
     "/helpers/css": "test/helpers/css"

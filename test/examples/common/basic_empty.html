@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="../style.css"/>
+	<title>Empty loads</title>
+</head>
+<body>   
+	<script src="../example.setup.js"></script>
+	<script src="../example.run.js"></script>
+	
+	<div class="container">
+		<h3>Empty</h3>
+
+		<div class="banner" id="banner1">Banner 1 failed</div>
+		<div class="description">No banner should be displayed</div>
+	</div>
+ 
+	<div class="container">
+		<h3>Empty</h3>
+
+		<div class="banner" id="banner2">Banner 2 failed</div>
+		<div class="description">No banner should be displayed</div>
+	</div>
+ 
+	<div class="container">
+		<h3>Empty</h3>
+
+		<div class="banner" id="banner3">Banner 3 ignored</div>
+		<div class="description">No banner should be loaded</div>
+	</div> 
+
+	<script>
+		AdServ.load({
+			            "guid" : 'test',
+			            "baseUrl" : baseUrl,
+			            "keyword" : keyword,
+			            "adspaces" : [
+				            {'id' : 1, 'target' : 'banner1'},				             
+				            {'id' : 4, 'target' : 'banner2'},				             
+			            ]
+		            })
+		function flashCalled(token) {
+			console.log("got token:" ,token);
+			
+		}
+	</script>
+	<script>
+		top.postMessage(JSON.stringify({'source' : 'testpage', 'status' : 'ready'}), '*');
+	</script>
+</body>
+</html>

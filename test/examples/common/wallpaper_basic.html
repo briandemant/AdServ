@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="../style.css"/>
+	<title>Wallpaper features</title>
+</head>
+<body>
+	<script src="../example.setup.js"></script>
+	<script src="../example.run.js"></script>
+	<div id="fade"></div>
+	<div class="container">
+		<h3>A Banner</h3>
+
+		<div class="banner" id="banner1">Banner 1 failed</div>
+		<div class="description">a banner should be displayed</div>
+	</div>
+
+	<script>
+		AdServ.load({
+			            "guid" : 'test',
+			            "baseUrl" : baseUrl,
+			            "keyword" : keyword, 
+			            "wallpaper" : {
+				            'id' : 9
+			            },
+			            "adspaces" : [
+				            {'id' : 21, 'target' : 'banner1'}
+			            ]
+		            })
+	</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="../style.css"/>
+	<title>skin_unchanged_without_background</title>
+</head>
+<body>
+	<script src="../example.setup.js"></script>
+	<script src="../example.run.js"></script>
+
+	
+	<div class="container">
+		<h3>Loaded</h3>
+
+		<div class="banner" id="banner1">Banner 1 ok</div>
+		<div class="description">global context</div>
+	</div>
+
+	<div class="container">
+		<h3>High _GLOBAL_</h3>
+
+		<div class="banner" id="banner2">Banner 2 failed</div>
+		<div class="description">global context</div>
+	</div>
+
+	<div class="container">
+		<h3>Loaded</h3>
+
+		<div class="banner" id="banner3">Banner 3 ok</div>
+		<div class="description">group 1 context</div>
+	</div>
+
+
+	<script type="text/javascript">
+		// simulate skin
+		// uncomment to fail test
+//		document.body.style.backgroundImage = 'url(//127.0.0.1:1337/banner/wide/4.jpg)';
+	</script>
+	<script>
+		var adServingLoad = "expected";
+ 
+		AdServ.load({
+			            "guid" : 'test',
+			            "baseUrl" : baseUrl,
+			            "keyword" : keyword, 
+			            "adspaces" : [
+				            {'id' : 10, 'target' : 'banner1', excludeOnWallpaper : true},
+				            {'id' : 21, 'target' : 'banner2'},
+				            {'id' : 14, 'target' : 'banner3', context : 'group1', excludeOnWallpaper : true}
+			            ]
+		            })
+	</script>
+</body>
+</html>

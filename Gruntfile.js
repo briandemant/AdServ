@@ -31,7 +31,7 @@ module.exports = function(grunt) {
 					}
 				},
 				files : {
-					//'build/responsive.min.js' : ['build/responsive.js'],
+					'build/responsive.min.js' : ['build/responsive.js'],
 					'build/adserv.min.js' : ['build/adserv.js'] 
 				}
 			}
@@ -49,17 +49,19 @@ module.exports = function(grunt) {
 					       src.replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1').replace(/(^|\n)/g, '$1\t').replace(/(\n\t){2,}/g, '\n\n\t') + '\n';
 				}
 			},
-			//responsive : { 
-			//	src : ['src/common/constants.js', 'src/common/legacy.js', 'src/common/utils.js', 'src/common/ready.js',
-			//	       'src/common/dom.js',
-			//	       'src/common/json.js',
-			//	       'src/common/event.js',
-			//	       'src/common/ajax.js',
-			//	       'src/common/flash.js',
-			//	       'src/common/render.js',
-			//	       'src/api/responsive.js'], 
-			//	dest : 'build/responsive.js'
-			//},
+			responsive : {
+				src : ['src/common/constants.js', 'src/common/legacy.js', 'src/common/utils.js', 'src/common/ready.js',
+				       'src/common/dom.js',
+				       'src/common/json.js',
+				       'src/common/event.js',
+				       'src/common/ajax.js',
+				       'src/common/flash.js',
+				       'src/common/render.js',
+				       'src/common/context.js',
+				       'src/api/responsive.api.js',
+				       'src/api/common.api.js'],
+				dest : 'build/responsive.js'
+			},
 			adserv : {
 				src : ['src/common/constants.js', 'src/common/legacy.js', 'src/common/utils.js', 'src/common/ready.js',
 				       'src/common/dom.js',
@@ -69,7 +71,8 @@ module.exports = function(grunt) {
 				       'src/common/flash.js',
 				       'src/common/render.js',
 				       'src/common/context.js',
-				       'src/api/adserv.api.js'],
+				       'src/api/adserv.api.js',
+				       'src/api/common.api.js'],
 				dest : 'build/adserv.js'
 			}
 		},

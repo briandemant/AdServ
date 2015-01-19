@@ -671,7 +671,7 @@
 	//						recheck = setInterval(function() {
 	////							console.log("recheck");
 	//							checkVisibility();
-	//							if (len(invisibleAdspaces) == 0) {
+	//							if (len(unrenderedAdspaces) == 0) {
 	//								console.log('No more adspaces to load');
 	//								clearInterval(recheck);
 	//							}
