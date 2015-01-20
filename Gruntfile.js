@@ -28,7 +28,7 @@ module.exports = function(grunt) {
 		},
 		logLevels : function() {
 			var dirty = dirtyGitFiles();
-			return dirty.length > 0 ? '{error:1,warn:1,info:1,debug:1,events:1}' : '{error:1,warn:1}';
+			return dirty.length > 0 ? '{error:1,warn:1,info:1,debug:1,events:1}' : '{error:1}';
 		},
 		// -------------------------------------------------------------------------------------
 		uglify : {
