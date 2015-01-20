@@ -119,7 +119,3 @@ if (AdServ.responsive) {
 } else {
 	console.debug("AdServ : v." + AdServ.version + " " + AdServ.released);
 }
-var dev = getCookie('AdServ:debug');
-console.error(dev);
-
-setCookie('AdServ:debug',new Date());

@@ -254,12 +254,24 @@ var evil = function(s) {
  *   getRequestParameter('foo');
  */
 function getRequestParameter(key) {
-	var qs = location.search + "&" + location.hash;
+	var qs = document.location.search.replace('?', '&') + document.location.hash.replace('#', '&');
+	//window.console.error('qs', qs);
+	AdServ.qs = qs;
 	if (len(qs) > 1) {
-		var start = qs.indexOf(key + "=");
+		var start = qs.indexOf("&" + key + "=");
+		if (start == -1) {
+			start = qs.indexOf("?" + key + "=");
+		}
+		//window.console.error('start', start);
 		if (start > -1) {
-			var end = (qs.indexOf("&", start) > -1) ? qs.indexOf("&", start) : len(qs);
-			return qs.substring(qs.indexOf("=", start) + 1, end);
+			var end = (qs.indexOf("&", start + 1) > -1) ? qs.indexOf("&", start + 1) : len(qs);
+			//window.console.error('qs.indexOf("&", start)', qs.indexOf("&", start));
+			//window.console.error('end', end);
+			if (start < end) {
+				return qs.substring(qs.indexOf("=", start) + 1, end);
+			} else {
+				return "";
+			}
 		}
 	}
 }
@@ -310,7 +322,6 @@ function getCookie(name) {
 		}
 		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
 	}
-	return null;
 }
 
 function removeCookie(name) {

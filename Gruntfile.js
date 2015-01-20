@@ -81,21 +81,28 @@ module.exports = function(grunt) {
 				}
 			},
 			responsive : {
-				src : ['src/common/constants.js', 'src/common/legacy.js', 'src/common/utils.js', 'src/common/ready.js',
+				src : ['src/common/constants.js',
+				       'src/common/debug.js', 
+				       'src/common/legacy.js', 
+				       'src/common/utils.js', 
+				       'src/common/ready.js',
 				       'src/common/dom.js',
 				       'src/common/json.js',
 				       'src/common/event.js',
 				       'src/common/ajax.js',
 				       'src/common/flash.js',
 				       'src/common/render.js',
-				       'src/common/context.js',
-				       'src/common/debug.js',
+				       'src/common/context.js', 
 				       'src/api/responsive.api.js',
 				       'src/api/common.api.js'],
 				dest : 'build/responsive.js'
 			},
 			adserv : {
-				src : ['src/common/constants.js', 'src/common/legacy.js', 'src/common/utils.js', 'src/common/ready.js',
+				src : ['src/common/constants.js',
+				       'src/common/debug.js',
+				       'src/common/legacy.js',
+				       'src/common/utils.js', 
+				       'src/common/ready.js',
 				       'src/common/dom.js',
 				       'src/common/json.js',
 				       'src/common/event.js',
@@ -103,7 +110,7 @@ module.exports = function(grunt) {
 				       'src/common/flash.js',
 				       'src/common/render.js',
 				       'src/common/context.js',
-				       'src/common/debug.js',
+				       
 				       'src/api/adserv.api.js',
 				       'src/api/common.api.js'],
 				dest : 'build/adserv.js'
