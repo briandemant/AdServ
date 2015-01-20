@@ -4,7 +4,7 @@
 
 		before(function(done) {
 			messages = [];
-			loadPage('/examples/common/basic_single.html?responsive=' + responsive, 800, 800, function(win, doc) {
+			loadPage('/examples/common/basic_single.html?responsive=' + responsive, sizes.LARGE, function(win, doc) {
 				var countDown = 6;
 				win.AdServ.on('debug:all:contexts:loaded', function(list) {
 					countDown--;

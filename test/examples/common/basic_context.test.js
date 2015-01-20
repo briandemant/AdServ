@@ -4,17 +4,17 @@
  
 			var contexts = {loaded : []};
 			before(function(done) {
-				loadPage('/examples/common/basic_context.html?responsive=' + responsive, 800, 800, function(win, doc) {
+				loadPage('/examples/common/basic_context.html?responsive=' + responsive, sizes.LARGE, function(win, doc) {
 					win.AdServ.on('debug:context:loaded', function(ctx) {
 						contexts.loaded.push(ctx);
 						contexts[ctx.name] = ctx;
 					});
-
+					
 					win.AdServ.on('debug:all:contexts:loaded', function() {
 						console.debug("done!!");
 						done();
 					})
-
+					
 				});
 			})
 

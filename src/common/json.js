@@ -1,4 +1,4 @@
-"use strict"; 
+"use strict";
 /**
  * a minimal JSON parser .. based on json2 (https://github.com/douglascrockford/JSON-js)
  *

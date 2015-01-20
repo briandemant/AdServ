@@ -32,7 +32,7 @@ function count() {
  *
  * @return    {String}                     something like `ad_FF40_47A1_0102_F034`
  */
-function guid() { 
+function guid() {
 	guid.count++;
 	if (!guid.date) {
 		// 1128117600000 == +new Date("2005-10-01 00:00")
@@ -47,7 +47,7 @@ function guid() {
 	result.push(count());
 	result.push(randhex(8));
 	return result.join("_");
-} 
+}
 
 function toArray(list) {
 	return slice.call(list, 0);
@@ -265,10 +265,10 @@ function getRequestParameter(key) {
 }
 
 function isSupportedBrowser() {
-	return   ( ('addEventListener' in window || 'attachEvent' in window)
-	           && ('querySelector' in document && 'querySelectorAll' in document)
-	           && ('JSON' in window && 'stringify' in JSON && 'parse' in JSON)
-	           && ('postMessage' in window)
+	return ( ('addEventListener' in window || 'attachEvent' in window)
+	         && ('querySelector' in document && 'querySelectorAll' in document)
+	         && ('JSON' in window && 'stringify' in JSON && 'parse' in JSON)
+	         && ('postMessage' in window)
 	);
 }
 AdServ.isSupportedBrowser = isSupportedBrowser;
@@ -280,7 +280,7 @@ function set(name, def, args) {
 
 function exclude(adspace, conf) {
 	//console.debug('ex', adspace.id, adspace.excludeOnWallpaper);
-	if (adspace.excludeOnWallpaper || adspace.isWallpaper) {  
+	if (adspace.excludeOnWallpaper || adspace.isWallpaper) {
 		if (AdServ.hasWallpaperChanged(conf['wallpaperTarget'], conf.originalWallpaper)) {
 			//console.debug('wallpaper excluded', adspace);
 			return true;
@@ -288,6 +288,34 @@ function exclude(adspace, conf) {
 	}
 }
 
+
+function setCookie(name, value, days) {
+	if (days) {
+		var date = new Date();
+		date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+		var expires = "; expires=" + date.toGMTString();
+	} else {
+		var expires = "";
+	}
+	document.cookie = name + "=" + value + expires + "; path=/";
+}
+
+function getCookie(name) {
+	var nameEQ = name + "=";
+	var ca = document.cookie.split(';');
+	for (var i = 0; i < ca.length; i++) {
+		var c = ca[i];
+		while (c.charAt(0) == ' ') {
+			c = c.substring(1, c.length);
+		}
+		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+	}
+	return null;
+}
+
+function removeCookie(name) {
+	setCookie(name, "", -1);
+}
 
 function logCampaign(ctx, campaign) {
 	var info = 'Adspace';

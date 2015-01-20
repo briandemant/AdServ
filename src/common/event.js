@@ -19,7 +19,7 @@ var on = AdServ.on = function(event, fn, context) {
 				return fn.apply(context || window, args);
 			});
 		} else {
-			eventHandlers[event].push(function(args,event) { 
+			eventHandlers[event].push(function(args, event) {
 				args.unshift(event);
 				return fn.apply(context || window, args);
 			});
@@ -37,7 +37,7 @@ var on = AdServ.on = function(event, fn, context) {
 //  * **context** *optional* scope to bind to .. defaults to window
 var once = AdServ.once = function(event, fn, context) {
 	on(event, function() {
-		fn();
+		fn.apply(context, arguments);
 		fn = noop;
 	}, context);
 };
@@ -61,7 +61,7 @@ var emit = AdServ.emit = function(event) {
 	if (typeof eventHandlers['*'] !== 'undefined') {
 		var args = slice.call(arguments, 1);
 		for (var i = 0; i < len(eventHandlers['*']); i++) {
-			eventHandlers['*'][i](args,event);
+			eventHandlers['*'][i](args, event);
 		}
 	}
 };

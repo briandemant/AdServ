@@ -1,5 +1,5 @@
 var puer = require("puer")
- 
+
 
 var express = require('express');
 
@@ -16,12 +16,12 @@ var server = http.createServer(app)
 
 var options = {
 	reload : process.argv.length > 2,
-	dir : __dirname + '/../../',
+	dir :    __dirname + '/../../',
 	ignored : /common/  //ignored file
 }
 
 if (options.reload) {
-	console.log("reload is turned on!"); 
+	console.log("reload is turned on!");
 }
 
 app.use(puer.connect(app, server, options))   //use as puer connect middleware

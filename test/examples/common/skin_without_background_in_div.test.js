@@ -4,18 +4,18 @@
 
 		var contexts = {loaded : []};
 		before(function(done) {
-			loadPage('/examples/common/skin_without_background_in_div.html?responsive=' + responsive, 800, 800, function(win, doc) {
+			loadPage('/examples/common/skin_without_background_in_div.html?responsive=' + responsive, sizes.LARGE, function(win, doc) {
 				win.AdServ.on('debug:context:loaded', function(ctx) {
 					console.debug(ctx);
 					contexts.loaded.push(ctx);
 					contexts[ctx.name] = ctx;
 				});
-
+				
 				win.AdServ.on('debug:all:contexts:loaded', function() {
 					console.debug("done!!");
 					done();
 				})
-
+				
 			});
 		});
  

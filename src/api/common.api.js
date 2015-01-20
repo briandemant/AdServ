@@ -2,32 +2,36 @@
 
 var unrenderedAdspaces = [];
 
- 
-var checkVisibility = throttle(function() {
+
+var checkVisibilityNow = function() {
 	if (len(unrenderedAdspaces) == 0) {
 		return;
 	}
 
-	var notVisible= [];
+	var notVisible = [];
 	for (var index = 0; index < len(unrenderedAdspaces); index++) {
 		var campaign = unrenderedAdspaces[index];
-		if (isVisible(campaign.elem)) { 
+		if (isVisible(campaign.elem)) {
 			render(campaign);
 		} else {
 			notVisible.push(campaign);
 		}
 	}
-	emit("debug:checkVisibility:leave", notVisible.length);
+	emit("debug:checkVisibility:done", notVisible.length);
 	unrenderedAdspaces = notVisible;
-}, 200);
+};
+var throttledCheckVisibility = throttle(checkVisibilityNow, 200);
 
-AdServ.on('page:resize', function() { 
-	checkVisibility();
+AdServ.on('debug:checkVisibility:now', function() {
+	checkVisibilityNow();
+});
+AdServ.on('page:resize', function() {
+	throttledCheckVisibility();
 });
 
 function renderAll() {
 	if (AdServ.responsive) {
-		checkVisibility();
+		throttledCheckVisibility();
 	} else {
 		var campaign;
 		while (campaign = unrenderedAdspaces.shift()) {
@@ -37,7 +41,6 @@ function renderAll() {
 }
 
 AdServ.loadAdspaces = AdServ.load = function load() {
-
 	var conf = prepareContexts(arguments);
 	var anyWaitingContexts = 0;
 	// count contexts
@@ -110,9 +113,13 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 
 	return conf;
 };
- 
-if (AdServ.responsive) { 
-	console.debug("AdServ(responsive) : v." + AdServ.version+" " + AdServ.released);
-} else  { 
-	console.debug("AdServ : v." + AdServ.version+" " + AdServ.released);
+
+if (AdServ.responsive) {
+	console.debug("AdServ(responsive) : v." + AdServ.version + " " + AdServ.released);
+} else {
+	console.debug("AdServ : v." + AdServ.version + " " + AdServ.released);
 }
+var dev = getCookie('AdServ:debug');
+console.error(dev);
+
+setCookie('AdServ:debug',new Date());

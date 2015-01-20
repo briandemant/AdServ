@@ -1,7 +1,7 @@
 {
   "name": "AdServ",
-  "version": "2.6.1",
-  "date": "2015-01-14 10:44:58 +00:00",
+  "version": "2.6.2",
+  "date": "2015-01-20 11:41:11 +00:00",
   "author": "Brian Demant <brian.demant@gmail.com>",
   "license": "Apache Licence 2.0",
   "description": "Adserving js frontends",
@@ -12,6 +12,7 @@
     "colors": "*",
     "cors": "*",
     "es5-shim": "*",
+    "exec-sync": "^0.1.6",
     "expect.js": "^0.3.1",
     "express": "*",
     "express-static": "^1.0.2",

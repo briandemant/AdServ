@@ -144,7 +144,7 @@ v2.get('/get/campaigns.json', function(req, res) {
 	if (req.query.wallpaper) {
 		var wallpaper
 		console.log(req.query.wallpaper);
-		
+
 		if (req.query.wallpaper < 10) {
 			wallpaper = imageCampaign('square', 150, 100, req, req.query.wallpaper, 0);
 

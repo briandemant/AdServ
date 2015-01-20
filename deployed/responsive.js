@@ -10,25 +10,14 @@
 	AdServ.version = '0.1.2';
 	AdServ.released = '2013-07-10 20:11:10';
 	window.AdServ = AdServ; 
-	// header ----------------------------------------------------------------------
-
-	// Source: src/legacy.js
-	// -----------------------------------------------------------------------------
 	var console = window.console;
 
 	if (!console) {
 		console = {};
 		console.log = console.error = function() {};
 	}
-	//console.log("using debug version");
 
 	window.adServingLoad = window.adServingLoad || '';
-
-
-
-	// Source: src/utils.js
-	// -----------------------------------------------------------------------------
-	// shortcuts 
 	var toString = Object.prototype.toString;
 	var slice = Array.prototype.slice;
 	var urlencode = encodeURIComponent; 
@@ -36,8 +25,6 @@
 	var activeX = window.ActiveXObject;
 	 
 	var noop = function() {};
-
-	// detectors
 	var isFunction = function(fn) {
 		return fn && typeof fn === "function";
 	};
@@ -65,8 +52,6 @@
 	var isNode = function(value) {
 		return value ? value.nodeType === 9 : false;
 	};
-
-	//tools
 	var guid = AdServ.guid = function() {
 		var guidPart = function() {
 			return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
@@ -105,89 +90,7 @@
 		}
 		return result;
 	};
-
-	
-
-
-
-	// Source: src/ready.js
-	// -----------------------------------------------------------------------------
-	/**
-	 * basic onload wrapper
-	 *
-	 * https://github.com/ded/domready
-	 * domready (c) Dustin Diaz 2012 - License MIT
-	 *
-	 * @param callback
-	 */ 
-	var ready = AdServ.ready = (function (ready) {
-		var fns = [], fn, f = false 
-				, testEl = document.documentElement
-				, hack = testEl.doScroll
-				, domContentLoaded = 'DOMContentLoaded'
-				, addEventListener = 'addEventListener'
-				, onreadystatechange = 'onreadystatechange'
-				, readyState = 'readyState'
-				, loaded = /^loade|c/.test(document[readyState]);
-
-		function flush(f) {
-			loaded = 1;
-			while (f = fns.shift()) {
-				f()
-			}
-		}
-
-		document[addEventListener] && document[addEventListener](domContentLoaded, fn = function () {
-			document.removeEventListener(domContentLoaded, fn, f)
-			flush();
-		}, f);
-	 
-		hack && document.attachEvent(onreadystatechange, fn = function () {
-			if (/^c/.test(document[readyState])) {
-				document.detachEvent(onreadystatechange, fn);
-				flush();
-			}
-		});
-
-		return (ready = hack ?
-		                function (fn) {
-			                self != top ?
-			                loaded ? fn() : fns.push(fn) :
-			                function () {
-				                try {
-					                testEl.doScroll('left')
-				                } catch (e) {
-					                return setTimeout(function () { ready(fn) }, 50)
-				                }
-				                fn()
-			                }()
-		                } :
-		                function (fn) {
-			                loaded ? fn() : fns.push(fn)
-		                })
-	})();
-
-
-
-	// Source: src/ajax.js
-	// -----------------------------------------------------------------------------
-	/**
-	 * basic AJAX get request .. aborts after 5 seconds 
-	 *
-	 * usage
-	 *
-	 * AdServ.get('http://something', function (err,data,xhr) {
-		 * if (err)
-		 *   alert(err)
-		 * else
-		 *    process(data);
-		 * });
-	 *
-	 * @param url
-	 * @param cb callback
-	 * @returns XMLHttpRequest
-	 */
-	var get = AdServ.get = function(url, cb) {
+		var get = AdServ.get = function(url, cb) {
 		var requestTimeout, xhr;
 		if (window.XDomainRequest) {
 			xhr = new XDomainRequest();
@@ -210,7 +113,6 @@
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState == 4) {
 				xhr.onload = noop; // onload reset as it will re-issue the cb
-	//			console.log('onreadystatechange ' + xhr.readyState);
 				clearTimeout(requestTimeout);
 				cb(xhr.status != 200 ? "err : " + xhr.status : null, xhr.responseText, xhr);
 			}
@@ -218,7 +120,6 @@
 		xhr.onload = function() {
 			clearTimeout(requestTimeout);
 			if (xhr.status) {
-				// will this ever happen?
 				for (var i = 0; i < 10; i++) {
 					console.log('onload with status');
 				}
@@ -233,10 +134,7 @@
 		return xhr;
 	};
 
-	/**
-	 * same as AdServ.get but data is passed as parsed json
-	 */
-	var getJSON = AdServ.getJSON = function(url, cb) {
+		var getJSON = AdServ.getJSON = function(url, cb) {
 		return get(url, function(err, value, xhr) {
 			var json = value;
 			if (!err) {
@@ -245,12 +143,6 @@
 			cb(err, json, xhr);
 		})
 	};
-	
-
-
-
-	// Source: src/dom.js
-	// -----------------------------------------------------------------------------
 	var $ = AdServ.$ = function(selector, el) {
 		if (isElement(selector)) {
 			return selector;
@@ -311,23 +203,9 @@
 		}
 		return isVisible(elem.parentNode);
 	};
-	 
-	
-
-
-
-	// Source: src/event.js
-	// -----------------------------------------------------------------------------
 	var eventHandlers = {};
 
-	/**
-	 *
-	 * @param event eventname
-	 * @param fn callback
-	 * @param context scope to bind to .. defaults to window
-	 */
-	var on = AdServ.on = function (event, fn, context) {
-		// initialze if first
+		var on = AdServ.on = function (event, fn, context) {
 		eventHandlers[event] = (typeof eventHandlers[event] === 'undefined') ? [] : eventHandlers[event];
 
 		eventHandlers[event].push(function (args) {
@@ -342,10 +220,7 @@
 		}, context);
 	};
 
-	/**
-	 * @param event name of event
-	 */
-	var emit = AdServ.emit = function (event) {
+		var emit = AdServ.emit = function (event) {
 		if (typeof eventHandlers[event] !== 'undefined') {
 			var args = slice.call(arguments, 1);
 			for (var i = 0; i < len(eventHandlers[event]); i++) {
@@ -353,35 +228,18 @@
 			}
 		}
 	};
-
-	// 
 	var originalResize = window['onresize'] || noop;
 	window.onresize = function () {
 		try {
 			originalResize();
 		} catch (e) {}
-		//console.log('Adserv.emit : resize'); 
 		emit('resize');
 	};
 
 	ready(function () {
 		emit('load');
 	}); 
-
-
-
-	// Source: src/flash.js
-	// -----------------------------------------------------------------------------
-	/**
-	 * SWFObject v1.4: Flash Player detection and embed - http://blog.deconcept.com/swfobject/
-	 *
-	 * SWFObject is (c) 2006 Geoff Stearns and is released under the MIT License:
-	 * http://www.opensource.org/licenses/mit-license.php
-	 *
-	 * **SWFObject is the SWF embed script formarly known as FlashObject. The name was changed for
-	 *   legal reasons.
-	 */
-	var playerVersion = "0";
+		var playerVersion = "0";
 
 	if (activeX) {
 		try {
@@ -425,7 +283,6 @@
 			var queryString = [];
 			var key;
 			for (key in this.vars) {
-				//noinspection JSUnfilteredForInLoop
 				queryString.push(key + "=" + this.vars[key]);
 			}
 			return queryString;
@@ -442,7 +299,6 @@
 					       + '><param name="movie" value="' + attrs["swf"] + '" />';
 
 				for (key in params) {
-					//noinspection JSUnfilteredForInLoop
 					html += '<param name="' + key + '" value="' + params[key] + '" />';
 				}
 
@@ -453,7 +309,6 @@
 			} else {
 				html = '<embed type="application/x-shockwave-flash" src="' + attrs["swf"] + '"' + common;
 				for (var key in params) {
-					//noinspection JSUnfilteredForInLoop
 					html += key + '="' + params[key] + '" ';
 				}
 
@@ -472,22 +327,8 @@
 			return false;
 		}
 	};
-
-	// legacy support 
 	window.baSWFObject = Flash;
-
-
-
-	// Source: src/json.js
-	// -----------------------------------------------------------------------------
-	// IE7 was the last not to have JSON.parse so we can remove the backup (loog in git if you need it)
 	var parseJSON = AdServ.parseJSON = JSON.parse;
-	 
-
-
-
-	// Source: src/api.js
-	// -----------------------------------------------------------------------------
 	var prepareContexts = function(args) {
 		AdServ.baseUrl = AdServ.baseUrl || '';
 		var conf = { baseUrl : AdServ.baseUrl, xhrTimeout : 5000 };
@@ -568,7 +409,6 @@
 				script.async = false;
 				script.onload = script.onreadystatechange = (function(cmp, ctx2) {
 					return function() {
-						// called several times
 					};
 				})(campaign, ctx);
 				script.src = conf.baseUrl + '/api/v2/get/js_banner'
@@ -581,18 +421,8 @@
 				var elem = document.getElementById(adspace.target);
 				elem.innerHTML = "";
 				elem.parentNode.insertBefore(script, elem);
-	//
-	//			url = conf.baseUrl + '/api/v2/count/view?adspaceid=' + campaign.adspace
-	//				      + '&campaignid=' + urlencode(campaign.campaign)
-	//				      + '&bannerid=' + urlencode(campaign.banner)
-	//				      + '&keyword=' + urlencode(ctx.keyword)
-	//				      + '&searchword=' + urlencode(ctx.searchword);
-	//			get(url, function(err, data) {
-	//				console.log(data);
-	//			})
 			} else {
 				console.error("already loaded " + id);
-				// emit_campaign.waiting--;
 			}
 		} else {
 			url = conf.baseUrl + '/api/v2/count/load?adspaceid=' + campaign.adspace
@@ -635,13 +465,11 @@
 		var conf = prepareContexts(arguments); 
 		
 		var anyWaiting = 0;
-		// count contexts
 		for (var x in conf.contexts) {
 			anyWaiting++;
 		}
 
 		for (var ctxName in conf.contexts) {
-			//noinspection JSUnfilteredForInLoop
 			var ctx = conf.contexts[ctxName];
 			var url = conf.baseUrl + '/api/v2/get/campaigns.json?adspaces=' + ctx.ids.join(',')
 				          + '&adServingLoad=' + urlencode(ctx.adServingLoad)
@@ -665,17 +493,7 @@
 					--anyWaiting;
 					if (!anyWaiting) {
 						ready(function() {
-	////					console.timeEnd("ready");
-	//						console.log("ready");
 							checkVisibility();
-	//						recheck = setInterval(function() {
-	////							console.log("recheck");
-	//							checkVisibility();
-	//							if (len(unrenderedAdspaces) == 0) {
-	//								console.log('No more adspaces to load');
-	//								clearInterval(recheck);
-	//							}
-	//						}, 1000);
 						});
 					}
 				};
@@ -684,7 +502,5 @@
 
 		return conf;
 	};
-
-	// footer ----------------------------------------------------------------------
 	return AdServ; 
 });

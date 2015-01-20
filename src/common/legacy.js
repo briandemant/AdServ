@@ -32,7 +32,7 @@ if (!Date.now) {
 	};
 }
 
-function detectIEversion() { 
+function detectIEversion() {
 	var ie = false;
 	(function(ua) {
 		var result;

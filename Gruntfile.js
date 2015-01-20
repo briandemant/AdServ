@@ -1,6 +1,35 @@
+var execSync = require('exec-sync');
+function dirtyGitFiles() {
+	var raw = execSync('git status --porcelain 2>/dev/null');
+	if (raw == '') {
+		return []
+	} else {
+		return raw.split("\n");
+	}
+}
 module.exports = function(grunt) {
 	var config = {
 		pkg : grunt.file.readJSON('package.json'),
+		commit : function() {
+			var dirty = dirtyGitFiles();
+			if (dirty.length > 0) {
+				return 'After ' + execSync('git rev-parse HEAD') + ' (' + dirty.length + ')';
+			} else {
+				return execSync('git rev-parse HEAD');
+			}
+		},
+		devVersion : function() {
+			var dirty = dirtyGitFiles();
+			if (dirty.length > 0) {
+				return '.dev (' + dirty.length + ' changed)';
+			} else {
+				return '';
+			}
+		},
+		logLevels : function() {
+			var dirty = dirtyGitFiles();
+			return dirty.length > 0 ? '{error:1,warn:1,info:1,debug:1,events:1}' : '{error:1,warn:1}';
+		},
 		// -------------------------------------------------------------------------------------
 		uglify : {
 			max : {
@@ -32,7 +61,7 @@ module.exports = function(grunt) {
 				},
 				files : {
 					'build/responsive.min.js' : ['build/responsive.js'],
-					'build/adserv.min.js' : ['build/adserv.js'] 
+					'build/adserv.min.js' : ['build/adserv.js']
 				}
 			}
 		},
@@ -41,7 +70,9 @@ module.exports = function(grunt) {
 		concat : {
 			options : {
 				banner : grunt.file.read('src/templates/header.js.tmpl')
-					.replace(/VERSION/g, '<%= pkg.version %>')
+					.replace(/VERSION/g, '<%= pkg.version + devVersion() %>')
+					.replace(/COMMIT/g, '<%= commit() %>')
+					.replace(/LOGLEVELS/g, '<%= logLevels() %>')
 					.replace(/DATE/g, '<%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %>'),
 				footer : grunt.file.read('src/templates/footer.js.tmpl'),
 				process : function(src, filepath) {
@@ -58,6 +89,7 @@ module.exports = function(grunt) {
 				       'src/common/flash.js',
 				       'src/common/render.js',
 				       'src/common/context.js',
+				       'src/common/debug.js',
 				       'src/api/responsive.api.js',
 				       'src/api/common.api.js'],
 				dest : 'build/responsive.js'
@@ -71,6 +103,7 @@ module.exports = function(grunt) {
 				       'src/common/flash.js',
 				       'src/common/render.js',
 				       'src/common/context.js',
+				       'src/common/debug.js',
 				       'src/api/adserv.api.js',
 				       'src/api/common.api.js'],
 				dest : 'build/adserv.js'
@@ -149,7 +182,7 @@ module.exports = function(grunt) {
 					singleline : true,
 					multiline : true
 				},
-				src : ['build/adserv*.js', 'deployed/adserv*.js'] // files to remove comments from
+				src : ['build/*.js', 'deployed/*.js'] // files to remove comments from
 			}
 		},
 		// -------------------------------------------------------------------------------------
@@ -183,33 +216,41 @@ module.exports = function(grunt) {
 	grunt.registerTask('updatePkg', function() {
 		grunt.config.set('pkg', grunt.file.readJSON('package.json'));
 	});
+	grunt.registerTask('commitAll', function() {
+		execSync('git commit -a -m"Released ' + grunt.config.get('pkg').version + '"');
+	});
 
 	// usage:
 	// grunt release         <- patch   release
 	// grunt release:minor   <- feature release
 	// grunt release:major   <- major   release
 	grunt.registerTask('release', function(type) {
+		var dirty = dirtyGitFiles();
+		if (dirty.length > 0) {
+			throw new Error('cant release while ' + dirty.length + ' dirty files are present!\n')
+		}
 		type = type ? type : 'patch';     // Set the release type
 		grunt.task.run('bumpup:' + type); // Bump up the version
 		grunt.task.run('updatePkg');      // update package.json
+		grunt.task.run('commitAll');      // update package.json 
 		grunt.task.run('build');          // build
 		grunt.task.run('copy');           // copy to deployed and operation dir
 	});
 
 
 	grunt.registerTask('output', function() {
-		 
+
 		var done = this.async();
-      var fs = require('fs');
-		
-		var result = grunt.file.read('build/test.min.js').substr(0,500);
-		var cmd = require('child_process').spawn('ls', ['-lh','build/test.js','build/test.min.js'])
+		var fs = require('fs');
+
+		var result = grunt.file.read('build/test.min.js').substr(0, 500);
+		var cmd = require('child_process').spawn('ls', ['-lh', 'build/test.js', 'build/test.min.js'])
 		cmd.stdout.on('data', function(data) {
-			console.log(  data.toString() );
+			console.log(data.toString());
 		});
 
 		cmd.stderr.on('data', function(data) {
-			console.log("ERROR"+ data);
+			console.log("ERROR" + data);
 		});
 
 		cmd.on('exit', function(err) {
@@ -217,7 +258,7 @@ module.exports = function(grunt) {
 				throw err;
 			}
 			console.log(result);
-			
+
 			done();
 		})
 	});
@@ -232,14 +273,14 @@ module.exports = function(grunt) {
 		            'build/adserv.js'
 		];
 		require('child_process').spawn('./node_modules/groc/bin/groc',
-		                               args).on('exit', function(err) {
-			                                        if (err) {
-				                                        throw "Could not generate docs\n ./node_modules/groc/bin/groc " + args.join(" ");
-			                                        }
+			args).on('exit', function(err) {
+				if (err) {
+					throw "Could not generate docs\n ./node_modules/groc/bin/groc " + args.join(" ");
+				}
 
-			                                        grunt.log.writeln('...done!');
-			                                        done();
-		                                        })
+				grunt.log.writeln('...done!');
+				done();
+			})
 	});
 
 	grunt.registerTask('diff', 'diff deploy with build', function() {
@@ -250,11 +291,11 @@ module.exports = function(grunt) {
 		            'deployed/responsive.js'
 		];
 		require('child_process').spawn('pstorm',
-		                               args).on('exit', function(err) {
-			                                        if (err) {
-				                                        throw "Could not generate docs\n ./node_modules/groc/bin/groc " + args.join(" ");
-			                                        }
-		                                        })
+			args).on('exit', function(err) {
+				if (err) {
+					throw "Could not generate docs\n ./node_modules/groc/bin/groc " + args.join(" ");
+				}
+			})
 	});
 
 	// Default task(s).
@@ -265,6 +306,6 @@ module.exports = function(grunt) {
 	grunt.registerTask('dev', ['concat', 'comments', 'uglify', 'watch:normal']);
 	grunt.registerTask('devdiff', ['concat', 'comments', 'watch:diff']);
 	grunt.registerTask('devdocs', ['docs', 'watch:docs']);
-	grunt.registerTask('devop', ['concat', 'comments','uglify', 'copy:to_operation', 'watch:operation']);
+	grunt.registerTask('devop', ['concat', 'comments', 'uglify', 'copy:to_operation', 'watch:operation']);
 
 };

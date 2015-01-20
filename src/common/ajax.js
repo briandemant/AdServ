@@ -44,7 +44,7 @@ function get(url, cb) {
 		clearTimeout(requestTimeout);
 	}
 
-	xhr.onreadystatechange = function() { 
+	xhr.onreadystatechange = function() {
 		if (xhr.readyState == 4) {
 			/* `onload` reset as it will re-issue the cb */
 			xhr.onload = noop;
@@ -54,13 +54,13 @@ function get(url, cb) {
 			cb(xhr.status != 200 ? "err : " + xhr.status : null, xhr.responseText, xhr);
 		}
 	};
- 
-	xhr.onload = function() { 
+
+	xhr.onload = function() {
 		cancelAbort();
 		if (xhr.status) {
 			// Will this ever happen?  
 			cb(xhr.status != 200 ? "err : " + xhr.status : null, xhr.responseText, xhr);
-		} else { 
+		} else {
 			cb(xhr.responseText ? null : "err : no response", xhr.responseText, xhr);
 		}
 	};
@@ -70,7 +70,6 @@ function get(url, cb) {
 	return xhr;
 };
 AdServ.get = get;
-
 
 
 // ### AdServ.getJSON
@@ -86,7 +85,7 @@ AdServ.get = get;
 //  
 function getJSON(url, cb) {
 	return get(url, function(err, value, xhr) {
- 
+
 		var json = value;
 		if (!err) {
 			try {

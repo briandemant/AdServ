@@ -4,7 +4,7 @@
 
 		before(function(done) {
 			messages = [];
-			loadPage('/examples/common/basic_common.html?responsive=' + responsive, 800, 800, function(win, doc) {
+			loadPage('/examples/common/basic_common.html?responsive=' + responsive, sizes.LARGE, function(win, doc) {
 				win.AdServ.on('debug:all:contexts:loaded', function() {
 					console.debug("go test!!");
 					done();

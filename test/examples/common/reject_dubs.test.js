@@ -3,7 +3,7 @@
 	describe('reject: dub functionality ' + (responsive ? '(responsive)' : '(async)'), function() {
 
 		before(function(done) {
-			loadPage('/examples/common/reject_dubs.html?responsive=' + responsive, 800, 800, function(win, doc) {
+			loadPage('/examples/common/reject_dubs.html?responsive=' + responsive, sizes.LARGE, function(win, doc) {
 				var contexts = 8;
 				win.AdServ.on('debug:all:contexts:loaded', function() {
 					if (--contexts == 7) {

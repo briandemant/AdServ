@@ -11,7 +11,10 @@
 	window.AdServ = definition(window, window.document); 
 })(window,  function (window, document) { 
 	var AdServ = window.AdServ || {};
+	
 	AdServ.version = 'VERSION';
 	AdServ.released = 'DATE';
-	window.AdServ = AdServ;  
+	AdServ.commit = 'COMMIT';
+	AdServ.logLevels = LOGLEVELS;
 	
+	window.AdServ = AdServ;

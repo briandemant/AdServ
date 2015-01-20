@@ -102,7 +102,7 @@ AdServ.hasWallpaperChanged = function(target, original) {
 			var regExp = new RegExp(original + '\\)$');
 			AdServ.hasWallpaperChanged.changed = !regExp.test(wallpaper);
 		}
-		
+
 		//console.debug('target', target);
 		//console.debug('original', original);
 		//console.debug('wallpaper', wallpaper);
@@ -110,16 +110,16 @@ AdServ.hasWallpaperChanged = function(target, original) {
 		if (!AdServ.hasWallpaperChanged.changed) {
 			// hardcode support for providers
 			var htmlEl = document.body.parentNode;
-			if (htmlEl){
+			if (htmlEl) {
 				if (htmlEl.className.match('adform-wallpaper')) {
-					console.debug('html.adform-wallpaper-xxxx DETECTED'); 
+					console.debug('html.adform-wallpaper-xxxx DETECTED');
 					AdServ.hasWallpaperChanged.changed = true;
 				}
 			}
 			// could maybe also be used
 			//console.debug(document.getElementById('adform-wallpaper-left'));
 			//console.debug(document.getElementById('adform-wallpaper-right'));
-			
+
 		}
 		if (AdServ.hasWallpaperChanged.changed) {
 			var classes = document.body.getAttribute('class');

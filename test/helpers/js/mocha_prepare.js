@@ -1,9 +1,14 @@
 assert = chai.assert;
 mocha.setup('bdd');
 
+var sizes = {
+	LARGE : 700,
+	MEDIUM : 570,
+	SMALL : 520
+}
 var currentIframe, win, doc;
 
-function loadPage(page, width, height, cb) {
+function loadPage(page, width, cb) {
 	console.debug("loading : " + page);
 
 	var testarea = document.getElementById("testarea");
@@ -11,7 +16,7 @@ function loadPage(page, width, height, cb) {
 	var ifrm = document.createElement("iframe");
 
 	ifrm.style.width = width + "px";
-	ifrm.style.height = height + "px";
+	ifrm.style.height = "900px";
 	ifrm.style.border = 0;
 	ifrm.style.borderStyle = "none";
 	ifrm.frameBorder = 0;
@@ -31,6 +36,17 @@ function loadPage(page, width, height, cb) {
 	testarea.appendChild(ifrm);
 }
 
+function resizePage(width, cb, done) {
+	currentIframe.style.width = width + "px";
+	win.AdServ.once('debug:checkVisibility:done', function(rest) { 
+		try { cb(rest); } catch (e) { return done(e);}
+		done();
+	})
+	setTimeout(function() {
+		win.AdServ.emit('debug:checkVisibility:now'); 
+	},10)
+}
+
 function getBannerElem(idx) {
 	if (+idx === idx) {
 		return doc.getElementById('banner' + idx);
@@ -43,16 +59,17 @@ function getBannerElem(idx) {
 }
 function getBannerInfo(div) {
 	div = getBannerElem(div);
-	var result = {id : div.id, prev : []};
+	var result = {id : div.id, prev : [], contentNodes : []};
 	var i = div.childNodes.length;
 	var node;
 	var pattern = new RegExp('([A-Za-z]+): (\\d+)', 'g');
 	var match = null;
-	var first = true;
+	var first = true; 
 	while (--i >= 0) {
 		node = div.childNodes[i];
 		var comment = node.textContent;
-		result.empty = /empty/.test(comment);
+		result.empty = /empty/.test(comment); 
+
 		if (node.nodeType == 8 && /^ Adspace:/.test(comment)) {
 			var data = {};
 			while (match = pattern.exec(comment)) {
@@ -63,8 +80,10 @@ function getBannerInfo(div) {
 			}
 			first = false;
 			result.prev.push(data)
+		} else {
+			result.contentNodes.push(node);
 		}
-	}
+	} 
 	return result;
 }
 
@@ -84,18 +103,17 @@ window.addEventListener("message", function(event) {
 		} else if (!payload.source) {
 			console.debug("got top message", event.data);
 		} else {
-			//console.warn("got debug message", event.data);
+			console.warn("got debug message", event.data);
 		}
 	} catch (e) {
 		console.error("got message", event.data);
 	}
 	messages.push(payload);
 }, false);
- 
- 
+
 
 function waitForMessages(source, count, timeout) {
-	console.debug("wait for " + count + ' messages from ' + source); 
+	console.debug("wait for " + count + ' messages from ' + source);
 	var start = Date.now();
 	return new Q.Promise(function(resolve, reject) {
 		var checkMessages = function() {
@@ -105,14 +123,14 @@ function waitForMessages(source, count, timeout) {
 					result.push(message);
 				}
 			});
-			if (result.length >= count){
+			if (result.length >= count) {
 				console.debug("got " + result.length + ' messages from ' + source);
-				
+
 				resolve(result);
-			} else  {
+			} else {
 				if (timeout < Date.now() - start) {
-					console.error("wait for " + count + ' messages from ' + source +" >> timeout exceeded (" + timeout + ")"); 
-								reject(new Error("waitForMessages:timeout exceeded (" + timeout + ")"));
+					console.error("wait for " + count + ' messages from ' + source + " >> timeout exceeded (" + timeout + ")");
+					reject(new Error("waitForMessages:timeout exceeded (" + timeout + ")"));
 				} else {
 					setTimeout(checkMessages, 50);
 				}

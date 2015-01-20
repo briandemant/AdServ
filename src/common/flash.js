@@ -41,7 +41,7 @@ var isFlashSupported = AdServ.flash = playerVersion >= 6 ? playerVersion : false
 //
 var Flash = function(url, id, width, height) {
 	this.params = {quality : 'best', allowscriptaccess : 'always', wmode : 'opaque'};
-	this.vars = { };
+	this.vars = {};
 	this.attrs = {
 		swf : url,
 		id : id,
@@ -92,7 +92,7 @@ Flash.prototype = {
 		var html;
 		var params = this.params;
 		var attrs = this.attrs;
-		var vars = this.getVars().join("&"); 
+		var vars = this.getVars().join("&");
 		var common = ' width="' + attrs["w"] + '" height="' + attrs["h"] + '" id="' + attrs["id"] + '" name="' + attrs["id"] + '" ';
 
 		if (activeX) {
@@ -133,8 +133,8 @@ Flash.prototype = {
 	write : function(target) {
 		if (isFlashSupported) {
 			var elem = $ID(target);
-			if (elem) { 
-				elem.innerHTML = this.getSWFHTML(); 
+			if (elem) {
+				elem.innerHTML = this.getSWFHTML();
 				return true;
 			}
 		}
