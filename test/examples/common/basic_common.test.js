@@ -1,18 +1,15 @@
 [false, true].forEach(function(responsive) {
-
-	describe('basic: common functionality ' + (responsive ? '(responsive)' : '(async)'), function() {
-
-		before(function(done) {
+	describe('basic: common functionality ' + (responsive ? '(responsive)' : '(async)'), function() {  
+		before(function(done) { 
 			messages = [];
 			loadPage('/examples/common/basic_common.html?responsive=' + responsive, sizes.LARGE, function(win, doc) {
-				win.AdServ.on('debug:all:contexts:loaded', function() {
-					console.debug("go test!!");
+				win.AdServ.on('debug:all:contexts:loaded', function() { 
 					done();
 				})
 			});
 		})
 
-		it('AdServ should exist', function() {
+		it('AdServ should exist', function() { 
 			assert.isDefined(win.AdServ, 'AdServ should be a global object');
 		});
 
@@ -26,7 +23,7 @@
 		});
 
 
-		it('should first to be empty', function() {
+		it('should first to be empty', function() { 
 			var elem = getBannerElem(1);
 			var info = getBannerInfo(elem);
 			assert.equal(elem.id, 'banner1');
@@ -107,7 +104,8 @@
 				assert.equal(banner.click, 'click:' + exp.expect, "banner " + exp.banner + " should have the correct click path");
 			})
 		});
-
+		
+		 
 	});
 
 });

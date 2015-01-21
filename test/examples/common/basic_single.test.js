@@ -7,11 +7,9 @@
 			loadPage('/examples/common/basic_single.html?responsive=' + responsive, sizes.LARGE, function(win, doc) {
 				var countDown = 6;
 				win.AdServ.on('debug:all:contexts:loaded', function(list) {
-					countDown--;
-					console.debug("countDown", countDown);
-					if (countDown == 0) {
-						console.debug("go test!!", list);
-						console.debug(arguments);
+					countDown--; 
+					if (countDown == 0) { 
+						//console.debug(arguments);
 						done();
 					}
 				})

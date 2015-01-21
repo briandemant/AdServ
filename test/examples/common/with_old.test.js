@@ -5,14 +5,12 @@
 		var contexts = {loaded : []};
 		before(function(done) {
 			loadPage('/examples/common/with_old.html?responsive=' + responsive, sizes.LARGE, function(win, doc) {
-				win.AdServ.on('debug:context:loaded', function(ctx) {
-					console.debug(ctx);
+				win.AdServ.on('debug:context:loaded', function(ctx) { 
 					contexts.loaded.push(ctx);
 					contexts[ctx.name] = ctx;
 				});
 				
-				win.AdServ.on('debug:all:contexts:loaded', function() {
-					console.debug("done!!");
+				win.AdServ.on('debug:all:contexts:loaded', function() { 
 					done();
 				})
 				

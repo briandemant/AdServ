@@ -2,11 +2,11 @@
 
 	describe('reject: basic functionality ' + (responsive ? '(responsive)' : '(async)'), function() {
 		before(function(done) {
+			this.timeout(5000);
 			loadPage('/examples/common/reject_basic.html?responsive=' + responsive, sizes.LARGE, function(win, doc) {
-				var first = true;
+				var contexts = 1;
 				win.AdServ.on('debug:all:contexts:loaded', function() {
-					if (first) {
-						first = false;
+					if (--contexts == 0) {
 						done();
 					}
 				})

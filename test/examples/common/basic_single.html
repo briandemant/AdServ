@@ -114,8 +114,7 @@
 		 {'id' : 50, 'target' : 'banner10'},
 		 {'id' : 51, 'target' : 'banner11'},
 		 {'id' : 60, 'target' : 'banner12'}].forEach(function(adspace, idx) {
-			                                             setTimeout(function() {
-				                                             console.log(idx, adspace);
+			                                             setTimeout(function() { 
 				                                             AdServ.load(adspace);
 			                                             }, 10 + idx);
 		                                             })

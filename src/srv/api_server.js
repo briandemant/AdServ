@@ -65,7 +65,7 @@ var campaignMakers = {
 	"5" : function(req, adspace, keyword, idx) {
 		var campaign = startCampaign('html', req, adspace, idx);
 		campaign.html = "<b><center>Banner " + adspace + "_" + campaign.group + "</center></b>" +
-		                "<script>console.log('js inline for adspace ' + " + adspace + ")</script>" +
+		                "<script>//console.log('js inline for adspace ' + " + adspace + ")</script>" +
 		                "<script src='" + req.urlRoot + "/jsurl?adspace=" + adspace + "&keyword=" + keyword + "'>alert('ERROR:DO NOT RUN THIS')</script>";
 		campaign.width = 150;
 		campaign.height = 150;

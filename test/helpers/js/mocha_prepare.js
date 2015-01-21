@@ -9,7 +9,7 @@ var sizes = {
 var currentIframe, win, doc;
 
 function loadPage(page, width, cb) {
-	console.debug("loading : " + page);
+	//console.debug("loading : " + page);
 
 	var testarea = document.getElementById("testarea");
 	testarea.innerHTML = '';
@@ -22,8 +22,7 @@ function loadPage(page, width, cb) {
 	ifrm.frameBorder = 0;
 	ifrm.scrolling = "no";
 
-	ifrm.onload = function() {
-		console.debug('ifrm.onload ')
+	ifrm.onload = function() { 
 		win = currentIframe.contentWindow;
 		doc = win.document;
 		cb(win, doc);
@@ -98,12 +97,12 @@ window.addEventListener("message", function(event) {
 	try {
 		payload = JSON.parse(event.data);
 		if (payload.next && payload.target) {
-			console.debug("got rejected", event.data);
+			//console.debug("got rejected", event.data);
 			win.postMessage(event.data, '*')
 		} else if (!payload.source) {
 			console.debug("got top message", event.data);
 		} else {
-			console.warn("got debug message", event.data);
+			//console.warn("got debug message", event.data);
 		}
 	} catch (e) {
 		console.error("got message", event.data);
@@ -113,7 +112,7 @@ window.addEventListener("message", function(event) {
 
 
 function waitForMessages(source, count, timeout) {
-	console.debug("wait for " + count + ' messages from ' + source);
+	//console.debug("wait for " + count + ' messages from ' + source);
 	var start = Date.now();
 	return new Q.Promise(function(resolve, reject) {
 		var checkMessages = function() {
@@ -124,7 +123,7 @@ function waitForMessages(source, count, timeout) {
 				}
 			});
 			if (result.length >= count) {
-				console.debug("got " + result.length + ' messages from ' + source);
+				//console.debug("got " + result.length + ' messages from ' + source);
 
 				resolve(result);
 			} else {

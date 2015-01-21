@@ -11,7 +11,7 @@
 					});
 					
 					win.AdServ.on('debug:all:contexts:loaded', function() {
-						console.debug("done!!");
+						
 						done();
 					})
 					

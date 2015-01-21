@@ -48,9 +48,15 @@ AdServ.replayLog = function(logLevels) {
 	})
 	window.console.groupEnd && window.console.groupEnd();
 };
+
 AdServ.enableLog = function() {
-	var was = document.location.search;
+	var was = document.location.search.replace(/&*AdServ.logLevels=[^&]+/g, '');
 	document.location.href = document.location.pathname + was + (was.length == 0 ? '?' : '&') + 'AdServ.logLevels=error,warn,info,debug,log'
+}
+
+AdServ.disableLog = function() {
+	var was = document.location.search.replace(/&*AdServ.logLevels=[^&]*/g,''); 
+	document.location.href = document.location.pathname + was + (was.length == 0 ? '?' : '&') + 'AdServ.logLevels=error'
 }
 
 function makeLogger(level) {
@@ -58,7 +64,7 @@ function makeLogger(level) {
 	if (AdServ.logLevels[level]) {
 		return function say() {
 			var args = [].slice.call(arguments);
-			AdServ.log_history.push([level, args]);
+			AdServ.log_history.push([level, args]); 
 			window.console[level].apply(window.console, args);
 		}
 	} else {

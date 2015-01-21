@@ -4,7 +4,8 @@ var link = document.createElement("a");
 link.href = '//' + document.location.hostname + ':3000' + document.location.pathname;
 link.target = document.location.pathname;
 link.appendChild(title);
-document.body.appendChild(link);
+document.body.appendChild(link); 
+console.log('%c'+document.title + (responsive? ' (responsive)': ' (async)'),'color:yellow;background:black');
 
 
 function flashCalled(token, click) {

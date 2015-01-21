@@ -63,13 +63,13 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 
 		//console.debug('load',url);
 
-		getJSON(url, (function(ctx) {
+		getJSON(url, (function(ctx,url) {
 			ctx.conf = conf;
 			return function(err, data) {
 
 				//console.debug('got', data);
 				if (err) {
-					console.error(err);
+					console.error(err, url,ctx);
 				} else {
 					var campaigns = data.campaigns;
 					ctx.adServingLoad = data.meta.adServingLoad;
@@ -108,7 +108,7 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 					});
 				}
 			};
-		})(ctx));
+		})(ctx,url));
 	}
 
 	return conf;
