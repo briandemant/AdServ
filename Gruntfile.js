@@ -72,6 +72,7 @@ module.exports = function(grunt) {
 				banner : grunt.file.read('src/templates/header.js.tmpl')
 					.replace(/VERSION/g, '<%= pkg.version + devVersion() %>')
 					.replace(/COMMIT/g, '<%= commit() %>')
+					.replace(/DEVELOP/g, '<%= devVersion() !== "" %>')
 					.replace(/LOGLEVELS/g, '<%= logLevels() %>')
 					.replace(/DATE/g, '<%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %>'),
 				footer : grunt.file.read('src/templates/footer.js.tmpl'),

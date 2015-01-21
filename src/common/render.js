@@ -175,7 +175,7 @@ engines["html"] = function renderHtml(elem, campaign) {
 	for (var i = 0; i < length; i++) {
 		original = scripts[i];
 		if (original.src) {
-			//console.warn("original.src", original);
+			console.warn("original.src", original);
 			script = document.createElement("script");
 			script.id = uid + "_" + i;
 			script.src = original.src;
@@ -183,7 +183,7 @@ engines["html"] = function renderHtml(elem, campaign) {
 			// which browser  allow running of src + inline???? 
 			//}   if (original.innerText) {
 		} else if (original.innerText) {
-			//console.warn("original.txt", original);
+			console.warn("original.txt", original);
 			script = document.createElement("script");
 			script.id = uid + "_" + i;
 			script.innerText = safeScriptContent(original.innerText);
@@ -385,13 +385,11 @@ function render(campaign) {
 			           + "&bannerid=" + campaign.banner
 			           + "&target=" + campaign.target;
 			//console.debug("src", ifrm.src);
-			//ifrm.onload = function() {
-			//console.debug("load");
-			//	
-			//}
-			bindReject(window, targetElem, campaign, ifrm);
 			emit('debug:wrapped', campaign, ifrm, ifrm.contentDocument.body);
-			emit('debug:after:render', campaign, true);
+			ifrm.onload = function() {
+				emit('debug:after:render', campaign, true);
+			}
+			bindReject(window, targetElem, campaign, ifrm);
 		} else {
 			var engine = engines[campaign.banner_type];
 			if (engine) {

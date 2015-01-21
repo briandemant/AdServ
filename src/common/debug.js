@@ -55,7 +55,7 @@ AdServ.enableLog = function() {
 }
 
 AdServ.disableLog = function() {
-	var was = document.location.search.replace(/&*AdServ.logLevels=[^&]*/g,''); 
+	var was = document.location.search.replace(/&*AdServ.logLevels=[^&]*/g, '');
 	document.location.href = document.location.pathname + was + (was.length == 0 ? '?' : '&') + 'AdServ.logLevels=error'
 }
 
@@ -64,7 +64,7 @@ function makeLogger(level) {
 	if (AdServ.logLevels[level]) {
 		return function say() {
 			var args = [].slice.call(arguments);
-			AdServ.log_history.push([level, args]); 
+			AdServ.log_history.push([level, args]);
 			window.console[level].apply(window.console, args);
 		}
 	} else {
@@ -74,11 +74,15 @@ function makeLogger(level) {
 		}
 	}
 }
-
-var console = {
-	log : makeLogger('log'),
-	info : makeLogger('info'),
-	debug : makeLogger('debug'),
-	error : makeLogger('error'),
-	warn : makeLogger('warn')
-};
+var console;
+if (AdServ.develop) {
+	console = window.console;
+}else {
+	  console = {
+		log : makeLogger('log'),
+		info : makeLogger('info'),
+		debug : makeLogger('debug'),
+		error : makeLogger('error'),
+		warn : makeLogger('warn')
+	};
+}
