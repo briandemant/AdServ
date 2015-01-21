@@ -9,17 +9,17 @@ describe('responsive: common functionality', function() {
 	})
 
 	function assertAdspaceIsLoaded(index, adspace) {
-		//var elem = getBannerElem(index);
-		//var info = getBannerInfo(elem);
-		//assert.equal(info.adspace, adspace, 'expected Adspace:  ' + adspace + ' but got ' + info.adspace);
-		//assert.equal(info.contentNodes.length, 1, 'expected only one load pr banner space got ' + info.prev.length);
+		var elem = getBannerElem(index);
+		var info = getBannerInfo(elem);
+		assert.equal(info.adspace, adspace, 'expected Adspace:  ' + adspace + ' but got ' + info.adspace);
+		assert.equal(info.contentNodes.length, 1, 'expected only one load pr banner space got '  );
 	}
 
 	function assertAdspaceIsNotLoaded(index, adspace) {
-		//var elem = getBannerElem(index);
-		//var info = getBannerInfo(elem);
-		//assert.equal(info.adspace, adspace, 'expected Adspace:  ' + adspace + ' but got ' + info.adspace);
-		//assert.equal(info.contentNodes.length, 0, 'expected only zero load pr banner space got ' + info.prev.length);
+		var elem = getBannerElem(index);
+		var info = getBannerInfo(elem);
+		assert.equal(info.adspace, adspace, 'expected Adspace:  ' + adspace + ' but got ' + info.adspace);
+		assert.equal(info.contentNodes.length, 0, 'expected no load pr banner space got ' + info.prev.length);
 	}
 
 	it('Only banner destined for LARGE should be loaded', function(done) {
