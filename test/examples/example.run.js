@@ -23,6 +23,11 @@ AdServ.on('debug:wrapped', function(ctx, elem) {
 AdServ.on('*', function(event, args) {
 	//console.debug(event,args); 
 })
+
+AdServ.on('debug:count', function(event, args) {
+	//console.debug(event,args); 
+})
+
 AdServ.on('debug:after:render', function(campaign) {
 	//console.debug('debug:after:render', campaign); 
 })

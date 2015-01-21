@@ -12,14 +12,14 @@ var eventHandlers = {};
 //  * **context** *optional* scope to bind to .. defaults to window
 var on = AdServ.on = function(event, fn, context) {
 	if (event && fn) {
-		eventHandlers[event] = (typeof eventHandlers[event] === 'undefined') ? [] : eventHandlers[event];
-
+		eventHandlers[event] = (typeof eventHandlers[event] === undefined) ? [] : eventHandlers[event];
+		
 		if (event !== '*') {
 			eventHandlers[event].push(function(args) {
 				return fn.apply(context || window, args);
 			});
 		} else {
-			eventHandlers[event].push(function(args, event) {
+			eventHandlers[event].push(function(event, args) {
 				args.unshift(event);
 				return fn.apply(context || window, args);
 			});
@@ -51,17 +51,17 @@ var once = AdServ.once = function(event, fn, context) {
 //  * **arguments** *optional* all other arguments are passed on to the callback
 var emit = AdServ.emit = function(event) {
 	//console.log(event, slice.call(arguments, 1));
-
-	if (typeof eventHandlers[event] !== 'undefined') {
+	
+	if (typeof eventHandlers[event] !== undefined) {
 		var args = slice.call(arguments, 1);
 		for (var i = 0; i < len(eventHandlers[event]); i++) {
 			eventHandlers[event][i](args);
 		}
 	}
-	if (typeof eventHandlers['*'] !== 'undefined') {
+	if (typeof eventHandlers['*'] !== undefined) {
 		var args = slice.call(arguments, 1);
 		for (var i = 0; i < len(eventHandlers['*']); i++) {
-			eventHandlers['*'][i](args, event);
+			eventHandlers['*'][i](event, args);
 		}
 	}
 };

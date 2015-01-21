@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="../style.css"/>
+	<title>Count features</title>
+</head>
+<body>
+	<script src="../example.setup.js"></script>
+	<script src="../example.run.js"></script>
+
+	<div class="debug_responsive">
+		<span class="display_on_small">display_on_small</span>
+		<span class="display_on_medium">display_on_medium</span>
+		<span class="display_on_large">display_on_large</span>
+		<br/>
+		<span class="vis_on_small">vis_on_small</span>
+		<span class="vis_on_medium">vis_on_medium</span>
+		<span class="vis_on_large">vis_on_large</span>
+		<br/>
+		<span class="op_on_small">op_on_small</span>
+		<span class="op_on_medium">op_on_medium</span>
+		<span class="op_on_large">op_on_large</span>
+	</div>
+
+	<div class="section">
+		<div class="container">
+			<h3>display_on_all</h3>
+
+			<div class="banner" id="banner1">Banner 1 failed</div>
+			<div class="description">display_on_all</div>
+		</div>
+	</div>
+	<div class="fixed_section">
+		<div class="container">
+			<h3>display_on_small</h3>
+
+			<div class="banner display_on_small" id="banner2">Banner 2 failed</div>
+			<div class="description">display_on_small</div>
+		</div>
+
+		<div class="container">
+			<h3>display_on_medium</h3>
+
+			<div class="banner display_on_medium" id="banner3">Banner 3 failed</div>
+			<div class="description">display_on_medium</div>
+		</div>
+
+		<div class="container">
+			<h3>display_on_large</h3>
+
+			<div class="banner display_on_large" id="banner4">Banner 4 failed</div>
+			<div class="description">display_on_large</div>
+		</div>
+	</div>
+	<div class="fixed_section">
+		<div class="container">
+			<h3>display_on_small</h3>
+
+			<div class="banner display_on_small" id="banner5">Banner 5 failed</div>
+			<div class="description">display_on_small</div>
+		</div>
+
+		<div class="container">
+			<h3>display_on_medium</h3>
+
+			<div class="banner display_on_medium" id="banner6">Banner 6 failed</div>
+			<div class="description">display_on_medium</div>
+		</div>
+
+		<div class="container">
+			<h3>display_on_large</h3>
+
+			<div class="banner display_on_large" id="banner7">Banner 7 failed</div>
+			<div class="description">display_on_large</div>
+		</div>
+	</div> 
+	<script> 
+		
+		AdServ.load({
+			            "baseUrl" : baseUrl,
+			            "keyword" : keyword,
+			            "adspaces" : [
+				            {'id' : 11, 'target' : 'banner1'},
+				            {'id' : 13, 'target' : 'banner2'},
+				            {'id' : 15, 'target' : 'banner3'},
+				            {'id' : 17, 'target' : 'banner4'},
+				            {'id' : 3, 'target' : 'banner5'},
+				            {'id' : 5, 'target' : 'banner6'},
+				            {'id' : 7, 'target' : 'banner7'} 
+			            ]
+		            })
+	</script>
+</body>
+</html>

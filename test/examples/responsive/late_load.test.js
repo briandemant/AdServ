@@ -1,7 +1,6 @@
-describe('responsive: common functionality', function() {
-	before(function(done) {
-		messages = [];
-		loadPage('/examples/responsive/basic.html?responsive=true', sizes.LARGE, function(win, doc) {
+describe('responsive: late load functionality', function() {
+	before(function(done) { 
+		loadPage('/examples/responsive/late_load.html?responsive=true', sizes.LARGE, function(win, doc) { 
 			win.AdServ.on('debug:all:contexts:loaded', function() {
 				done();
 			})

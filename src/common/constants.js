@@ -4,7 +4,7 @@ var
 	domContentLoaded = 'DOMContentLoaded',
 	addEventListener = 'addEventListener',
 	onreadystatechange = 'onreadystatechange',
-	readyState = 'readyState'
-	; 
+	readyState = 'readyState',
+	undefined = 'undefined'; 
 	
  

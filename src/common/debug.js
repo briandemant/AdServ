@@ -2,7 +2,7 @@
 
 var newLevels = getRequestParameter('AdServ.logLevels');
 
-if (typeof newLevels !== 'undefined' && newLevels !== '') {
+if (typeof newLevels !== undefined && newLevels !== '') {
 	//window.console.warn('READ LOGLEVELS FROM QS');
 	AdServ.logLevels = {};
 	newLevels.split(',').forEach(function(level) {
@@ -14,7 +14,7 @@ if (typeof newLevels !== 'undefined' && newLevels !== '') {
 	removeCookie('AdServ:logLevels');
 } else {
 	var newLevels = getCookie('AdServ:logLevels');
-	if (typeof newLevels !== 'undefined') {
+	if (typeof newLevels !== undefined) {
 		//window.console.warn('READ LOGLEVELS FROM COOKIE');
 		try {
 			AdServ.logLevels = JSON.parse(newLevels);
@@ -30,7 +30,7 @@ if (typeof newLevels !== 'undefined' && newLevels !== '') {
 // Protect against missing console.log 
 AdServ.log_history = [];
 
-if (typeof window.console === 'undefined') {
+if (typeof window.console === undefined) {
 	window.console = {};
 }
 

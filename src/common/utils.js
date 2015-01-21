@@ -336,7 +336,7 @@ function logCampaign(ctx, campaign) {
 		info += '(' + ctx.name + '): ';
 	}
 
-	if (campaign.type != 'undefined') {
+	if (campaign.type != undefined) {
 		console.info(info + campaign.adspace + " " + campaign.type + ( campaign.iframe ? "" : " in iframe"), campaign.elem);
 	} else {
 		console.info(info + campaign.adspace + " is EMPTY", campaign.elem);

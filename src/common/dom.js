@@ -94,9 +94,9 @@ var isVisible = AdServ.isVisible = function(elemOrSelector) {
 
 
 AdServ.hasWallpaperChanged = function(target, original) {
-	if (typeof AdServ.hasWallpaperChanged.changed == 'undefined') {
+	if (typeof AdServ.hasWallpaperChanged.changed == undefined) {
 		var wallpaper = AdServ.css(target, 'background-image');
-		if (typeof original == 'undefined' && wallpaper == 'none') {
+		if (typeof original == undefined && wallpaper == 'none') {
 			AdServ.hasWallpaperChanged.changed = false;
 		} else {
 			var regExp = new RegExp(original + '\\)$');
