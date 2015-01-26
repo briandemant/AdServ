@@ -7,39 +7,23 @@ AdServ.responsive = true;
 var unrenderedAdspaces = [];
 
 function countCampaign(campaign) {
-	var url;
-	var ctx = campaign.ctx;
-	var conf = ctx.conf;
-	//console.log('please count ', campaign);
 	emit("debug:count", campaign);
-	if (campaign.campaign && campaign.banner) {
-		emit("debug:count:view", campaign);
-		url = conf.baseUrl + '/api/v2/count/view?adspaceid=' + campaign.adspace
-		      + '&bannerid=' + urlencode(campaign.banner)
-		      + '&campaignid=' + urlencode(campaign.campaign)
-		      + '&keyword=' + urlencode(ctx.keyword)
-		      + '&searchword=' + urlencode(ctx.searchword);
-	} else {
-		emit("debug:count:load", campaign);
-		url = conf.baseUrl + '/api/v2/count/load?adspaceid=' + campaign.adspace
-		      + '&keyword=' + urlencode(ctx.keyword)
-		      + '&searchword=' + urlencode(ctx.searchword);
-	}
-	get(url, function(err, data) {
+	get(campaign.count, function(err, data) {
 		if (err) {
-			console.error(err, campaign);
-		} 
+			console.error(err, campaign, data);
+		}
 	})
 }
 var checkVisibilityNow = function() {
+	console.debug('checkVisibilityNow'); 
 	if (len(unrenderedAdspaces) == 0) {
 		return;
 	}
-	
+
 	var notVisible = [];
 	for (var index = 0; index < len(unrenderedAdspaces); index++) {
 		var campaign = unrenderedAdspaces[index];
-		if (isVisible(campaign.elem)) { 
+		if (isVisible(campaign.elem)) {
 			countCampaign(campaign);
 			if (campaign.campaign && campaign.banner) {
 				render(campaign);
@@ -61,5 +45,8 @@ AdServ.on('page:resize', function() {
 });
 
 function renderAll() {
+	console.debug('renderAll 1');
 	throttledCheckVisibility();
+	console.debug('renderAll 2');
+	checkVisibilityNow();
 }

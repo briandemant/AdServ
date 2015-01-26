@@ -361,8 +361,7 @@ function addDebugComment(campaign) {
 	}
 	return comment;
 }
-
-
+ 
 function render(campaign) {
 	emit('debug:before:render', campaign);
 

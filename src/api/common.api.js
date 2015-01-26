@@ -8,7 +8,7 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 	for (var x in conf.contexts) {
 		anyWaitingContexts++;
 	}
-	
+	console.log("conf",conf);
 	for (var ctxName in conf.contexts) {
 		//noinspection JSUnfilteredForInLoop
 		var ctx = conf.contexts[ctxName];
@@ -71,6 +71,8 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 				}
 				emit('debug:context:loaded', ctx);
 				--anyWaitingContexts;
+				console.log("anyWaitingContexts",anyWaitingContexts);
+				
 				if (!anyWaitingContexts) {
 					ready(function() {
 						renderAll();

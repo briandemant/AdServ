@@ -5,7 +5,7 @@
 	<link rel="stylesheet" href="../style.css"/>
 	<title>Mix adServingLoad features</title>
 </head>
-<body>
+<body class="background">
 	<script src="../example.setup.js"></script>
 	<script src="../example.run.js"></script>
 
@@ -28,8 +28,7 @@
 
 		<div class="banner" id="banner3">Banner 3 failed</div>
 		<div class="description">group 1 context with other keyword</div>
-	</div> 
-
+	</div>
 
 
 	<script>
@@ -37,9 +36,9 @@
 		var ba_adspaces = [
 			{'id' : 10, 'target' : 'banner1', "keyword" : keyword},
 			{'id' : 21, 'target' : 'banner2'},
-			{'id' : 14, 'target' : 'banner3', context : 'group1', "keyword" : keyword+'_v2'}
+			{'id' : 14, 'target' : 'banner3', context : 'group1', "keyword" : keyword + '_v2'}
 		];
-		var ba_wallpaper =[];
+		var ba_wallpaper =  {'id' : 2}
 		var adServingLoad = "expected";
 		AdServ.baseUrl = baseUrl;
 		AdServ.load();

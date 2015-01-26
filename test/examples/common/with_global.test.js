@@ -1,10 +1,10 @@
 [false, true].forEach(function(responsive) {
 	
-	describe('combine with old ' + (responsive ? '(responsive)' : '(async)'), function() {
+	describe('with global ' + (responsive ? '(responsive)' : '(async)'), function() {
 		
 		var contexts = {loaded : []};
 		before(function(done) {
-			loadPage('/examples/common/with_old.html?responsive=' + responsive, sizes.LARGE, function(win, doc) {
+			loadPage('/examples/common/with_global.html?responsive=' + responsive, sizes.LARGE, function(win, doc) {
 				win.AdServ.on('debug:context:loaded', function(ctx) { 
 					contexts.loaded.push(ctx);
 					contexts[ctx.name] = ctx;

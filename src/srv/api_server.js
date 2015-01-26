@@ -1,6 +1,7 @@
 var express = require('express');
 var static = require('express-static');
 var morgan = require('morgan');
+var fs = require('fs');
 
 var app = express();
 var root = express.Router();
@@ -175,7 +176,7 @@ v2.get('/get/campaigns.json', function(req, res) {
 });
 
 v2.get("/count/*", function(req, res) {
-	res.setHeader("Cache-Control", "public, max-age=600");
+	res.setHeader("Cache-Control", "public, max-age=6000");
 	res.send("ok");
 });
 
@@ -223,6 +224,46 @@ root.get('/jsurl', function(req, res) {
 	res.setHeader("Cache-Control", "public, max-age=600");
 	res.setHeader("Content-Type", "text/javascript");
 	res.send("top.postMessage(JSON.stringify({source : 'jsurl', adspace:" + req.query.adspace + ", keyword:'" + req.query.keyword + "'}),'*')");
+});
+
+root.get('/tests.js', function(req, res) {
+	// YEAH .. too lazy to use promises :)
+	res.setHeader("Content-Type", "text/javascript");
+	var all = [];
+	fs.readdir(__dirname + '/../../test/examples/responsive', function(err, files) {
+		if (err) {
+			return res.send("console.error(" + JSON.stringify(err) + ")");
+		}
+		if (req.query.all || req.query.responsive) {
+			var tests = files.filter(function(name) { return name.match(/test.js$/) }).map(function(filename) {
+				return "/examples/responsive/" + filename;
+			});
+			all = all.concat(tests);
+		}
+		fs.readdir(__dirname + '/../../test/examples/adserv', function(err, files) {
+			if (err) {
+				return res.send("console.error(" + JSON.stringify(err) + ")");
+			}
+			if (req.query.all || req.query.adserv) {
+				var tests = files.filter(function(name) { return name.match(/test.js$/) }).map(function(filename) {
+					return "/examples/adserv/" + filename;
+				});
+				all = all.concat(tests);
+			}
+			fs.readdir(__dirname + '/../../test/examples/common', function(err, files) {
+				if (err) {
+					return res.send("console.error(" + JSON.stringify(err) + ")");
+				}
+				if (req.query.all || req.query.common) {
+					var tests = files.filter(function(name) { return name.match(/test.js$/) }).map(function(filename) {
+						return "/examples/common/" + filename;
+					});
+					all = all.concat(tests);
+				}
+				res.send("var testFiles = " + JSON.stringify(all));
+			})
+		})
+	})
 });
 app.use('/', root);
 app.use('/api/v2', v2);

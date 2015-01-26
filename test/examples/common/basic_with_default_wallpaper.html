@@ -3,9 +3,9 @@
 <head>
 	<meta charset="UTF-8">
 	<link rel="stylesheet" href="../style.css"/>
-	<title>Loading single adspace later</title>
+	<title>Basic with default wallpaper features</title>
 </head>
-<body>
+<body class="background">
 	<script src="../example.setup.js"></script>
 	<script src="../example.run.js"></script>
 
@@ -33,7 +33,7 @@
 		<div class="banner" id="banner3">Banner 3 failed</div>
 		<div class="description">Square iframe</div>
 	</div>
-
+	
 	<div class="container">
 		<h3>Wide iframe</h3>
 
@@ -92,32 +92,34 @@
 		<div class="banner" id="banner12">Banner 12 failed</div>
 		<div class="description">flash banner</div>
 	</div>
+	<div class="container">
+		<h3>flash banner</h3>
 
+		<div class="banner" id="banner13">Banner 13 failed</div>
+		<div class="description">flash banner in iframe</div>
+	</div>
+ 
 	<script>
 		AdServ.load({
-			"guid" : 'test',
-			"baseUrl" : baseUrl,
-			"keyword" : keyword,
-			"adspaces" : [
-				{'id' : 1, 'target' : 'banner1'},
-				{'id' : 20, 'target' : 'banner2'},
-				{'id' : 30, 'target' : 'banner3'},
-				{'id' : 10, 'target' : 'banner4'},
-				{'id' : 21, 'target' : 'banner5'},
-				{'id' : 31, 'target' : 'banner6'},
-				{'id' : 11, 'target' : 'banner7'},
-
-			]
-		})
-		AdServ.load({'id' : 40, 'target' : 'banner8'});
-		[{'id' : 41, 'target' : 'banner9'},
-		 {'id' : 50, 'target' : 'banner10'},
-		 {'id' : 51, 'target' : 'banner11'},
-		 {'id' : 60, 'target' : 'banner12'}].forEach(function(adspace, idx) {
-					  setTimeout(function() {
-						  AdServ.load(adspace);
-					  }, 10 + idx);
-				  })
-	</script>
+			            "guid" : 'test',
+			            "baseUrl" : baseUrl,
+			            "keyword" : keyword,
+			            "adspaces" : [
+				            {'id' : 1,  'target' : 'banner1'},
+				            {'id' : 20, 'target' : 'banner2'},
+				            {'id' : 30, 'target' : 'banner3'},
+				            {'id' : 10, 'target' : 'banner4'},
+				            {'id' : 21, 'target' : 'banner5'},
+				            {'id' : 31, 'target' : 'banner6'},
+				            {'id' : 11, 'target' : 'banner7'},
+				            {'id' : 40, 'target' : 'banner8'},
+				            {'id' : 41, 'target' : 'banner9'},
+				            {'id' : 50, 'target' : 'banner10'},
+				            {'id' : 51, 'target' : 'banner11'},
+				            {'id' : 60, 'target' : 'banner12'},
+				            {'id' : 61, 'target' : 'banner13'}, 
+			            ]
+		            })
+	</script> 
 </body>
 </html>

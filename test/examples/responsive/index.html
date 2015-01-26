@@ -58,13 +58,18 @@
 	<script src="/helpers/js/jquery-1.11.1.min.js"></script>
 	<script src="/helpers/js/q-1.1.1.min.js"></script>
 	<script src="/helpers/js/mocha_prepare.js"></script>
-	
-	<!-- basic --> 
-	<script src="/examples/responsive/late_load.test.js"></script>  
-	<script src="/examples/responsive/count.test.js"></script>  
-	
-	<script src="/helpers/js/mocha_run.js"></script>
-	
+	 
+	<script>
+		console.log('//' + document.location.hostname + ':1337/all_tests.js');
+		document.write('<scrip' + 't src="//' + document.location.hostname + ':1337/tests.js?responsive=true"></' + 'script>');
+	</script>
+	<script>
+		testFiles.forEach(function(test) {
+			document.write('<scrip' + 't src="//' + document.location.hostname + ':7357' + test + '"></' + 'script>');
+		})
+	</script>
+	 
+	<script src="/helpers/js/mocha_run.js"></script> 
 	<script src="/testem.js"></script>
 </body>
 </html> 

@@ -36,6 +36,8 @@ function addLegacyGlobals(conf) {
 
 	if (!conf['wallpaper']) {
 		var global = window['ba_wallpaper'];
+		console.log("wallpaper",global);
+		
 		if (!global || len(global) === 0 || global.added) {
 //			console.warn('no wallpaper');
 		} else {
@@ -43,7 +45,7 @@ function addLegacyGlobals(conf) {
 			conf['wallpaper'] = global;
 			conf['wallpaper'].target = conf['wallpaper'].target
 			                           || conf['wallpaper'].wallpaperTarget
-			                           || conf['wallpaperTarget'];
+			                           || conf['wallpaperTarget'] || document.body;
 			delete conf['wallpaper'].wallpaperTarget;
 		}
 	}
@@ -96,12 +98,17 @@ var prepareContexts = function(args) {
 
 
 	for (index = 0; index < len(adspaces); index++) {
+
 		var adspace = adspaces[index];
+		console.log("adspace", adspace);
 		if (adspace.id > 0) {
 			if (exclude(adspace, conf)) {
+				console.warn("SKIP");
 				continue;
 			}
+			console.warn("contexts", contexts);
 			getContext(adspace, contexts);
+			console.warn("contexts", contexts);
 			adspace.context.ids.push(adspace.id);
 			adspace.context.adspaces.push(adspace);
 

@@ -28,11 +28,13 @@
 			padding-bottom: 18px;
 			margin: 30px 20px;
 		}
+
 		#mocha-report {
 			background: white;
 		}
+
 		#frame {
-			width: 610px;  
+			width: 610px;
 			border: 1px solid #808080;
 			border: 1px solid red;
 		}
@@ -40,14 +42,14 @@
 		#testarea {
 			display: block;
 			position: absolute;
-			padding: 70px 0 0 610px; 
-		}  
+			padding: 70px 0 0 610px;
+		}
 	</style>
 </head>
 <body>
 
 	<div id="testarea">
-		
+
 	</div>
 	<div id="result">
 		<div id="mocha"></div>
@@ -58,51 +60,19 @@
 	<script src="/helpers/js/jquery-1.11.1.min.js"></script>
 	<script src="/helpers/js/q-1.1.1.min.js"></script>
 	<script src="/helpers/js/mocha_prepare.js"></script>
-	
-	<!-- responsive -->
-	<script src="/examples/responsive/late_load.test.js"></script>
-	<script src="/examples/responsive/count.test.js"></script>
-	
-	
-	<!-- adserv -->
-	<!--<script src="/examples/adserv/late_load.test.js"></script>-->
-	
-	
-	
-	<!-- basic -->
-	<script src="/examples/common/basic_empty.test.js"></script>  
-	<script src="/examples/common/basic_common.test.js"></script>  
-	<script src="/examples/common/basic_context.test.js"></script>  
-	<script src="/examples/common/basic_single.test.js"></script>  
-	
-	<!-- wallpaper -->
-	<script src="/examples/common/wallpaper_basic.test.js"></script>  
-	<script src="/examples/common/wallpaper_target.test.js"></script>  
-	<script src="/examples/common/wallpaper_empty.test.js"></script>  
-	<script src="/examples/common/wallpaper_empty_target.test.js"></script>  
-	
-	<!-- rejected -->
-	<script src="/examples/common/reject_basic.test.js"></script>  
-	<script src="/examples/common/reject_nested.test.js"></script>  
-	<script src="/examples/common/reject_dubs.test.js"></script>
- 
-	<!-- skin -->
-	<script src="/examples/common/skin_with_background.test.js"></script>
-	<script src="/examples/common/skin_without_background.test.js"></script> 
-	<script src="/examples/common/skin_unchanged_with_background.test.js"></script> 
-	<script src="/examples/common/skin_unchanged_without_background.test.js"></script> 
-	
-	<script src="/examples/common/skin_with_background_in_div.test.js"></script>
-	<script src="/examples/common/skin_without_background_in_div.test.js"></script> 
-	<script src="/examples/common/skin_unchanged_with_background_in_div.test.js"></script> 
-	<script src="/examples/common/skin_unchanged_without_background_in_div.test.js"></script> 
-	
-	<!-- special cases  --> 
-	<script src="/examples/common/with_old.test.js"></script>  
-	<script src="/examples/common/with_dubs.test.js"></script> 
-	
+
+	<script>
+		console.log('//' + document.location.hostname + ':1337/all_tests.js');
+		document.write('<scrip' + 't src="//' + document.location.hostname + ':1337/tests.js?all=true"></' + 'script>');
+	</script>
+	<script>
+		testFiles.forEach(function(test) {
+			document.write('<scrip' + 't src="//' + document.location.hostname + ':7357' + test + '"></' + 'script>');
+		})
+	</script>
+
 	<script src="/helpers/js/mocha_run.js"></script>
-	
+
 	<script src="/testem.js"></script>
 </body>
 </html> 
