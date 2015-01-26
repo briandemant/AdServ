@@ -95,6 +95,7 @@ var isVisible = AdServ.isVisible = function(elemOrSelector) {
 
 AdServ.hasWallpaperChanged = function(target, original) {
 	if (typeof AdServ.hasWallpaperChanged.changed == undefined) {
+		if (original === '') original = 'none';
 		var wallpaper = AdServ.css(target, 'background-image');
 		if (typeof original == undefined && wallpaper == 'none') {
 			AdServ.hasWallpaperChanged.changed = false;
@@ -102,7 +103,7 @@ AdServ.hasWallpaperChanged = function(target, original) {
 			var regExp = new RegExp(original + '\\)$');
 			AdServ.hasWallpaperChanged.changed = !regExp.test(wallpaper);
 		}
-
+ 
 		//console.debug('target', target);
 		//console.debug('original', original);
 		//console.debug('wallpaper', wallpaper);
@@ -118,10 +119,10 @@ AdServ.hasWallpaperChanged = function(target, original) {
 			}
 			// could maybe also be used
 			//console.debug(document.getElementById('adform-wallpaper-left'));
-			//console.debug(document.getElementById('adform-wallpaper-right'));
-
+			//console.debug(document.getElementById('adform-wallpaper-right')); 
 		}
 		if (AdServ.hasWallpaperChanged.changed) {
+			console.debug('hasWallpaperChanged', wallpaper);
 			var classes = document.body.getAttribute('class');
 			document.body.setAttribute('class', (classes || '') + ' adserving_wallpaper_loaded');
 			emit('wallpaper:loaded', {skin : true});

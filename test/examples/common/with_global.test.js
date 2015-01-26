@@ -1,6 +1,6 @@
 [false, true].forEach(function(responsive) {
 	
-	describe('with global ' + (responsive ? '(responsive)' : '(async)'), function() {
+	describe('special: with global ' + (responsive ? '(responsive)' : '(async)'), function() {
 		
 		var contexts = {loaded : []};
 		before(function(done) {
@@ -21,7 +21,7 @@
 		it('should add global adServingLoad to global context', function() {
 			var context = contexts['_GLOBAL_'];
 			assert.isDefined(context, 'expected _GLOBAL_ to exists');
-			assert.deepEqual(context.adServingLoad, "expected,i100,e211", 'expected _GLOBAL_ to contain global adServingLoad');
+			assert.deepEqual(context.adServingLoad, "expected,i100,e211,n20", 'expected _GLOBAL_ to contain global adServingLoad');
 		});
 		
 		it('should use group1 context (adServingLoad,keyword)', function() {

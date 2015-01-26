@@ -1,6 +1,6 @@
 [false, true].forEach(function(responsive) {
 	
-	describe('support dub adspaceid ' + (responsive ? '(responsive)' : '(async)'), function() {
+	describe('special: with dub adspaceid ' + (responsive ? '(responsive)' : '(async)'), function() {
 		
 		var contexts = {loaded : []};
 		before(function(done) {
