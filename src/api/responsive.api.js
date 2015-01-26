@@ -15,7 +15,6 @@ function countCampaign(campaign) {
 	})
 }
 var checkVisibilityNow = function() {
-	console.debug('checkVisibilityNow'); 
 	if (len(unrenderedAdspaces) == 0) {
 		return;
 	}
@@ -26,7 +25,10 @@ var checkVisibilityNow = function() {
 		if (isVisible(campaign.elem)) {
 			countCampaign(campaign);
 			if (campaign.campaign && campaign.banner) {
+				console.debug('render:', campaign.adspace, campaign.elem);
 				render(campaign);
+			} else { 
+				console.debug('render: (empty)', campaign.adspace, campaign.elem);
 			}
 		} else {
 			notVisible.push(campaign);
@@ -34,6 +36,7 @@ var checkVisibilityNow = function() {
 	}
 	emit("debug:checkVisibility:done", notVisible.length);
 	unrenderedAdspaces = notVisible;
+	//console.debug('checkVisibilityNow after:', unrenderedAdspaces);
 };
 var throttledCheckVisibility = throttle(checkVisibilityNow, 200);
 
@@ -45,8 +48,5 @@ AdServ.on('page:resize', function() {
 });
 
 function renderAll() {
-	console.debug('renderAll 1');
 	throttledCheckVisibility();
-	console.debug('renderAll 2');
-	checkVisibilityNow();
 }

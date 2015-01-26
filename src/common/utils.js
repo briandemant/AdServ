@@ -166,15 +166,34 @@ function isNode(item) {
  * @param     {Function}  ms    minimum ms between calls to the fn
  */
 function throttle(fn, ms) {
+	//ms = ms * 10;
+	//if (fn.toString().match(/page:resize/)) { 
+	//	return function() {
+	//		fn();
+	//	};
+	//}
+	
 	var disabled = false;
+	var runNextTime = false;
+
+	function delayed() {
+		if (runNextTime) { 
+			setTimeout(delayed, ms);
+			runNextTime = false; 
+			fn();
+		} else { 
+			disabled = false;
+		}
+	}
+ 
 	return function() {
 		if (!disabled) {
+			setTimeout(delayed, ms);
 			disabled = true;
+			runNextTime = false; 
 			fn();
-			setTimeout(function() {
-				fn();
-				disabled = false;
-			}, ms);
+		} else { 
+			runNextTime = true;
 		}
 	};
 }
