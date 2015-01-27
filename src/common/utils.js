@@ -92,7 +92,7 @@ function isObject(item) {
  * @return    {Boolean}
  */
 function isArray(item) {
-	return item && typeof item === "object" && toString.call(item) === "[object Array]";
+	return Array.isArray(item);
 }
 
 
@@ -122,7 +122,7 @@ function isString(item) {
  * @return    {Boolean}
  */
 function isUndefined(item) {
-	return item && typeof item === "undefined";
+	return  typeof item === "undefined";
 }
 
 
@@ -172,27 +172,27 @@ function throttle(fn, ms) {
 	//		fn();
 	//	};
 	//}
-	
+
 	var disabled = false;
 	var runNextTime = false;
 
 	function delayed() {
-		if (runNextTime) { 
+		if (runNextTime) {
 			setTimeout(delayed, ms);
-			runNextTime = false; 
+			runNextTime = false;
 			fn();
-		} else { 
+		} else {
 			disabled = false;
 		}
 	}
- 
+
 	return function() {
 		if (!disabled) {
 			setTimeout(delayed, ms);
 			disabled = true;
-			runNextTime = false; 
+			runNextTime = false;
 			fn();
-		} else { 
+		} else {
 			runNextTime = true;
 		}
 	};
@@ -310,9 +310,13 @@ function set(name, def, args) {
 
 
 function exclude(adspace, conf) {
-	if (typeof conf.originalWallpaper !== 'undefined') {
+	if (!isUndefined(conf.originalWallpaper)) {
+		//if (typeof conf.originalWallpaper !== 'undefined') {
+		
+		if (conf['excludeOnWallpaper'].indexOf(adspace.id) != -1) adspace.excludeOnWallpaper = true;
+		
 		console.debug('ex', adspace.id, adspace.excludeOnWallpaper);
-		if (adspace.excludeOnWallpaper || adspace.isWallpaper) {  
+		if (adspace.excludeOnWallpaper || adspace.isWallpaper) {
 			if (AdServ.hasWallpaperChanged(conf['wallpaperTarget'], conf.originalWallpaper)) {
 				//console.debug('wallpaper excluded', adspace);
 				return true;
@@ -357,10 +361,10 @@ function logCampaign(ctx, campaign) {
 		info += '(' + ctx.name + '): ';
 	}
 
-	if (campaign.type != undefined) {
-		console.info(info + campaign.adspace + " " + campaign.type + ( campaign.iframe ? "" : " in iframe"), campaign.elem);
-	} else {
+	if (isUndefined(campaign.type)) {
 		console.info(info + campaign.adspace + " is EMPTY", campaign.elem);
+	} else {
+		console.info(info + campaign.adspace + " " + campaign.type + ( campaign.iframe ? "" : " in iframe"), campaign.elem);
 	}
 	return info;
 }

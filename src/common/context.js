@@ -86,22 +86,19 @@ var prepareContexts = function(args) {
 			conf['adspaces'] = arg;
 		}
 	}
-
+	conf['excludeOnWallpaper'] = (isArray(conf['excludeOnWallpaper']) ? conf['excludeOnWallpaper'] : [conf['excludeOnWallpaper']]); 
+	
 	addLegacyGlobals(conf);
 
 	// support legacy and use document.body as default target  
 	conf['wallpaperTarget'] = conf['wallpaperTarget'] || (conf['wallpaper'] && conf['wallpaper'].target) || document.body;
-
+	
 
 	var contexts = conf.contexts = {};
-	var adspaces = conf.adspaces;
-
-
-	for (index = 0; index < len(adspaces); index++) {
-
-		var adspace = adspaces[index];
-		console.log("adspace", adspace);
-		if (adspace.id > 0) {
+	var adspaces = conf.adspaces; 
+	for (index = 0; index < len(adspaces); index++) { 
+		var adspace = adspaces[index]; 
+		if (adspace.id > 0) { 
 			if (exclude(adspace, conf)) {
 				console.warn("SKIP", adspace);
 				continue;
@@ -122,13 +119,13 @@ var prepareContexts = function(args) {
 		conf['wallpaper'].target = conf['wallpaper'].target || conf['wallpaperTarget'];
 
 		if (adspace.id > 0) {
-			if (!exclude(adspace, conf)) {
+			if (exclude(adspace, conf)) {
+				console.warn("SKIP WALLPAPER", adspace);
+				delete conf['wallpaper'];
+			} else {
 				getContext(adspace, contexts);
 				adspace.context.wallpaper = adspace;
 				adspace.context.adspaces.push(adspace);
-			} else {
-				console.warn("SKIP WALLPAPER", adspace);
-				delete conf['wallpaper'];
 			}
 		} else {
 			// console.error('no id', adspace);
