@@ -86,19 +86,28 @@ var prepareContexts = function(args) {
 			conf['adspaces'] = arg;
 		}
 	}
-	conf['excludeOnWallpaper'] = (isArray(conf['excludeOnWallpaper']) ? conf['excludeOnWallpaper'] : [conf['excludeOnWallpaper']]); 
-	
+	conf['excludeOnWallpaper'] = (isArray(conf['excludeOnWallpaper']) ? conf['excludeOnWallpaper'] : [conf['excludeOnWallpaper']]);
+
 	addLegacyGlobals(conf);
 
 	// support legacy and use document.body as default target  
 	conf['wallpaperTarget'] = conf['wallpaperTarget'] || (conf['wallpaper'] && conf['wallpaper'].target) || document.body;
-	
 
+
+	if (!isUndefined(conf.originalWallpaper)) {
+		console.warn(
+			'EXCLUDE ENABLED',
+			'changed:' + AdServ.hasWallpaperChanged(conf['wallpaperTarget'], conf.originalWallpaper),
+			'target:' + conf['wallpaperTarget'],
+			'originalWallpaper:' + conf.originalWallpaper,
+			'now:' + AdServ.css(conf['wallpaperTarget'], 'background-image') 
+		);
+	}
 	var contexts = conf.contexts = {};
-	var adspaces = conf.adspaces; 
-	for (index = 0; index < len(adspaces); index++) { 
-		var adspace = adspaces[index]; 
-		if (adspace.id > 0) { 
+	var adspaces = conf.adspaces;
+	for (index = 0; index < len(adspaces); index++) {
+		var adspace = adspaces[index];
+		if (adspace.id > 0) {
 			if (exclude(adspace, conf)) {
 				console.warn("SKIP", adspace);
 				continue;

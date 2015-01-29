@@ -94,42 +94,42 @@ var isVisible = AdServ.isVisible = function(elemOrSelector) {
 
 
 AdServ.hasWallpaperChanged = function(target, original) {
-	if (typeof AdServ.hasWallpaperChanged.changed == undefined) {
-		if (original === '') original = 'none';
-		var wallpaper = AdServ.css(target, 'background-image');
-		if (typeof original == undefined && wallpaper == 'none') {
-			AdServ.hasWallpaperChanged.changed = false;
-		} else {
-			var regExp = new RegExp(original + '\\)$');
-			AdServ.hasWallpaperChanged.changed = !regExp.test(wallpaper);
-		}
- 
-		//console.debug('target', target);
-		//console.debug('original', original);
-		//console.debug('wallpaper', wallpaper);
-
-		if (!AdServ.hasWallpaperChanged.changed) {
-			// hardcode support for providers
-			var htmlEl = document.body.parentNode;
-			if (htmlEl) {
-				if (htmlEl.className.match('adform-wallpaper')) {
-					console.debug('html.adform-wallpaper-xxxx DETECTED');
-					AdServ.hasWallpaperChanged.changed = true;
-				}
-			}
-			// could maybe also be used
-			//console.debug(document.getElementById('adform-wallpaper-left'));
-			//console.debug(document.getElementById('adform-wallpaper-right')); 
-		}
-		if (AdServ.hasWallpaperChanged.changed) {
-			console.debug('hasWallpaperChanged', wallpaper);
-			var classes = document.body.getAttribute('class');
-			document.body.setAttribute('class', (classes || '') + ' adserving_wallpaper_loaded');
-			emit('wallpaper:loaded', {skin : true});
-		}
+	if (original == '' || isUndefined(original)) original = 'none';
+	
+	var wallpaper = AdServ.css(target, 'background-image');
+	var changed;
+	if (original == 'none' && wallpaper == 'none') {
+		changed = false;
+	} else {
+		var regExp = new RegExp(original + '\\)$');
+		changed = !regExp.test(wallpaper);
 	}
-	//console.debug('changed', AdServ.hasWallpaperChanged.changed);
-	return AdServ.hasWallpaperChanged.changed;
+
+	//console.debug('target', target);
+	//console.debug('original', original);
+	//console.debug('wallpaper', wallpaper);
+
+	if (!changed) {
+		// hardcode support for providers
+		var htmlEl = document.body.parentNode;
+		if (htmlEl) {
+			if (htmlEl.className.match('adform-wallpaper')) {
+				console.debug('html.adform-wallpaper-xxxx DETECTED');
+				AdServ.hasWallpaperChanged.changed = true;
+			}
+		}
+		// could maybe also be used
+		//console.debug(document.getElementById('adform-wallpaper-left'));
+		//console.debug(document.getElementById('adform-wallpaper-right')); 
+	}
+	if (changed && !AdServ.hasWallpaperChanged.event_fired) {
+		console.debug('hasWallpaperChanged', wallpaper);
+		var classes = document.body.getAttribute('class');
+		document.body.setAttribute('class', (classes || '') + ' adserving_wallpaper_loaded');
+		emit('wallpaper:loaded', {skin : true});
+		AdServ.hasWallpaperChanged.event_fired = true;
+	}
+	return changed;
 };
 
 function viewport() {

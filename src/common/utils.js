@@ -122,7 +122,7 @@ function isString(item) {
  * @return    {Boolean}
  */
 function isUndefined(item) {
-	return  typeof item === "undefined";
+	return typeof item === "undefined";
 }
 
 
@@ -311,12 +311,11 @@ function set(name, def, args) {
 
 function exclude(adspace, conf) {
 	if (!isUndefined(conf.originalWallpaper)) {
-		//if (typeof conf.originalWallpaper !== 'undefined') {
-		
+		//if (typeof conf.originalWallpaper !== 'undefined') { 
 		if (conf['excludeOnWallpaper'].indexOf(adspace.id) != -1) adspace.excludeOnWallpaper = true;
-		
 		console.debug('ex', adspace.id, adspace.excludeOnWallpaper);
-		if (adspace.excludeOnWallpaper || adspace.isWallpaper) {
+		if (adspace.excludeOnWallpaper) {
+			//console.debug('changed?', AdServ.hasWallpaperChanged(conf['wallpaperTarget'], conf.originalWallpaper));
 			if (AdServ.hasWallpaperChanged(conf['wallpaperTarget'], conf.originalWallpaper)) {
 				//console.debug('wallpaper excluded', adspace);
 				return true;
