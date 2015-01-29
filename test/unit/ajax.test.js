@@ -3,11 +3,6 @@ var assert = helpers.assert;
 
 describe('ajax.js', function() {
 	describe('ajax', function() {
-		it.skip('should be tested', function() {
-			helpers.run("./src/ajax.js", assert, function() {
-			}, function() {
-				 assert.ok(AdServ.guid);
-			});
-		});
+		it.skip('should be tested in browser', function() { });
 	});
 });

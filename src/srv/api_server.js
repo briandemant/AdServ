@@ -260,7 +260,18 @@ root.get('/tests.js', function(req, res) {
 					});
 					all = all.concat(tests);
 				}
-				res.send("var testFiles = " + JSON.stringify(all));
+				fs.readdir(__dirname + '/../../test/examples/units', function(err, files) {
+					if (err) {
+						return res.send("console.error(" + JSON.stringify(err) + ")");
+					}
+					if (req.query.all || req.query.units) {
+						var tests = files.filter(function(name) { return name.match(/test.js$/) }).map(function(filename) {
+							return "/examples/units/" + filename;
+						});
+						all = all.concat(tests);
+					}
+					res.send("var testFiles = " + JSON.stringify(all));
+				})
 			})
 		})
 	})

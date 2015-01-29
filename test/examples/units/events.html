@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="../style.css"/>
+	<title>event features</title>
+</head>
+<body>
+	<ul>
+		<li><b>On org Load:</b> <span id="orgload">FAILED</span></li>
+		<li><b>On org Resize:</b> <span id="orgresize">FAILED</span></li>
+		<li><b>On Load:</b> <span id="load">FAILED</span></li>
+		<li><b>On Resize:</b> <span id="resize">FAILED</span></li>
+	</ul>
+	<script>
+		window.onload = function() {
+			document.getElementById('orgload').innerHTML = 'OK';
+		};
+		window.onresize = function() {
+			document.getElementById('orgresize').innerHTML = 'OK';
+		};
+	</script>
+	<script src="../example.setup.js"></script>
+	<script src="../example.run.js"></script>
+	<script>
+		AdServ.on('page:loaded', function() {
+			document.getElementById('load').innerHTML = 'OK';
+		})
+		AdServ.on('page:resize', function() {
+			document.getElementById('resize').innerHTML = 'OK';
+		})
+	</script>
+</body>
+</html>

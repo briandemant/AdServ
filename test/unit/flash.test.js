@@ -3,11 +3,6 @@ var assert = helpers.assert;
 
 describe('flash.js', function() {
 	describe('flash', function() {
-		it.skip('should be tested', function() {
-			helpers.run("./src/flash.js", assert, function() {
-			}, function() {
-				assert.ok(AdServ.guid);
-			});
-		});
+		it.skip('should be tested in browser', function() { });
 	});
 });

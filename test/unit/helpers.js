@@ -14,20 +14,41 @@ var prepareGlobals = function(globals) {
 		globals = {assert : globals};
 	}
 
+	var fakeConsole = {
+		log : function(msg) {
+			var args = [].splice.apply(arguments, [0]);
+			args.unshift("console.log  :".green);
+			console.error.apply(console, args);
+		},
+		debug : function(msg) {
+			var args = [].splice.apply(arguments, [0]);
+			args.unshift("console.error:".yellow);
+			console.error.apply(console, args);
+		},
+		warn : function(msg) {
+			var args = [].splice.apply(arguments, [0]);
+			args.unshift("console.error:".blue);
+			console.error.apply(console, args);
+		},
+		error : function(msg) {
+			var args = [].splice.apply(arguments, [0]);
+			args.unshift("console.error:".red);
+			console.error.apply(console, args);
+		}
+	};
+ 
 	var defaultGlobals = {
 		alert : function(msg) {
 			throw "alert called: " + msg;
 		},
-		console : {
-			log : function(msg) {
-				console.error("console.log  :".yellow, msg);
-			}, error : function(msg) {
-				console.error("console.error:".red, msg);
-			}},
-		window : {},
-		JSON : {parse : function(msg) {
-			throw "JSON.parse called: " + msg;
-		}},
+		console : fakeConsole,
+		window : {console : fakeConsole},
+		document : {},
+		JSON : {
+			parse : function(msg) {
+				throw "JSON.parse called: " + msg;
+			}
+		},
 		AdServ : {},
 		helpers : helpers,
 		slice : slice,
@@ -72,7 +93,7 @@ helpers.createElement = function(name, parent, style) {
 			return this.elems[key];
 		},
 		getElementById : function(key) {
-			return this.elems["#"+key];
+			return this.elems["#" + key];
 		},
 		querySelectorAll : function(key) {
 			var result = [];
@@ -99,8 +120,8 @@ helpers.createElement = function(name, parent, style) {
 	}
 };
 
-helpers.run = function(file, globals, beforeFn, afterFn) { 
-	var source = fs.readFileSync(path.join(__dirname , "../../" , file), "utf8");
+helpers.run = function(file, globals, beforeFn, afterFn) {
+	var source = fs.readFileSync(path.join(__dirname, "../../", file), "utf8");
 	var before = "";
 	var after = "";
 	if (afterFn != void 0) {
@@ -110,9 +131,9 @@ helpers.run = function(file, globals, beforeFn, afterFn) {
 		before += beforeFn.toString().replace(/^[^\{]*\{/, "").replace(/\}[^\}]*$/, "");
 	}
 
-	var prepared = prepareGlobals(globals); 
-	
-	var value = (new Function(prepared.names, before + source + after)).apply({}, prepared.values); 
-	return  value;
+	var prepared = prepareGlobals(globals);
+
+	var value = (new Function(prepared.names, before + source + after)).apply({}, prepared.values);
+	return value;
 };
  

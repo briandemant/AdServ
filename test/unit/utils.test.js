@@ -12,6 +12,15 @@ describe('utils.js', function() {
 		});
 	});
 
+	describe('throttle', function() {
+		it('should provide', function() {
+			helpers.run("./src/common/utils.js", assert, function() {
+			}, function() {
+				assert.ok(AdServ.isSupportedBrowser);
+			});
+		});
+	});
+
 	describe('guid', function() {
 		it('should be added to AdServ public api', function() {
 			helpers.run("./src/common/utils.js", assert, function() {
@@ -20,7 +29,7 @@ describe('utils.js', function() {
 			});
 		});
 
-		it('should return a random string', function() { 
+		it('should return a random string', function() {
 			helpers.run("./src/common/utils.js", assert, function() {
 				// fixing random to be the predictable  
 				var next = 0.98;
@@ -65,9 +74,13 @@ describe('utils.js', function() {
 
 	describe('getRequestParameter', function() {
 		it('location.search is searched', function() {
-			helpers.run("./src/common/utils.js", assert, function() {
-				var location = {search : 'a=1&b=2&b=3&c=&d'};
-			}, function() {
+			var globals = {
+				assert : assert,
+				document : {
+					location : {search : '?a=1&b=2&b=3&c=&d', hash : ''}
+				}
+			};
+			helpers.run("./src/common/utils.js", globals, function() {
 				assert.equal(getRequestParameter("a"), 1);
 				assert.equal(getRequestParameter("b"), 2);
 				assert.equal(getRequestParameter("c"), "");
@@ -76,9 +89,13 @@ describe('utils.js', function() {
 			});
 		});
 		it('location.hash is searched', function() {
-			helpers.run("./src/common/utils.js", assert, function() {
-				var location = {hash : 'a=1&b=2&b=3&c=&d'};
-			}, function() {
+			var globals = {
+				assert : assert,
+				document : {
+					location : {search : '', hash : '#a=1&b=2&b=3&c=&d'}
+				}
+			};
+			helpers.run("./src/common/utils.js", globals, function() {
 				assert.equal(getRequestParameter("a"), 1);
 				assert.equal(getRequestParameter("b"), 2);
 				assert.equal(getRequestParameter("c"), "");
@@ -87,15 +104,21 @@ describe('utils.js', function() {
 			});
 		});
 		it('searched is searched before hash', function() {
-			helpers.run("./src/common/utils.js", assert, function() {
-				var location = {hash : 'a=1&b=2&b=3&c=&d=8', search : 'a=4&b=5&c=7&d'};
-			}, function() {
-				assert.equal(getRequestParameter("a"), 4);
-				assert.equal(getRequestParameter("b"), 5);
-				assert.equal(getRequestParameter("c"), 7);
-				assert.equal(getRequestParameter("d"), 8);
-				assert.equal(getRequestParameter("e"), void 0);
-			});
+			var globals = {
+				assert : assert,
+				document : {
+					location : {hash : '#a=1&b=2&b=3&c=&d=8', search : '?a=4&b=5&c=7&d'}
+				}
+			};
+			helpers.run("./src/common/utils.js", globals, function() {
+					assert.equal(getRequestParameter("a"), 4);
+					assert.equal(getRequestParameter("b"), 5);
+					assert.equal(getRequestParameter("c"), 7);
+					assert.equal(getRequestParameter("d"), 8);
+					assert.equal(getRequestParameter("e"), void 0);
+				}
+			)
+			;
 		});
 	});
 });

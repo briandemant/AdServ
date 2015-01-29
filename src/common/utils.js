@@ -274,14 +274,14 @@ var evil = function(s) {
  */
 function getRequestParameter(key) {
 	var qs = document.location.search.replace('?', '&') + document.location.hash.replace('#', '&');
-	//window.console.error('qs', qs);
+	//window.console.error('qs', qs); 
 	AdServ.qs = qs;
 	if (len(qs) > 1) {
 		var start = qs.indexOf("&" + key + "=");
 		if (start == -1) {
 			start = qs.indexOf("?" + key + "=");
 		}
-		//window.console.error('start', start);
+		//window.console.error('start', start); 
 		if (start > -1) {
 			var end = (qs.indexOf("&", start + 1) > -1) ? qs.indexOf("&", start + 1) : len(qs);
 			//window.console.error('qs.indexOf("&", start)', qs.indexOf("&", start));

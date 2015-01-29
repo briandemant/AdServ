@@ -22,7 +22,7 @@ function loadPage(page, width, cb) {
 	ifrm.frameBorder = 0;
 	ifrm.scrolling = "no";
 
-	ifrm.onload = function() { 
+	ifrm.onload = function() {
 		win = currentIframe.contentWindow;
 		doc = win.document;
 		cb(win, doc);
@@ -37,13 +37,13 @@ function loadPage(page, width, cb) {
 
 function resizePage(width, cb, done) {
 	currentIframe.style.width = width + "px";
-	win.AdServ.once('debug:checkVisibility:done', function(rest) { 
+	win.AdServ.once('debug:checkVisibility:done', function(rest) {
 		try { cb(rest); } catch (e) { return done(e);}
 		done();
-	})
+	});
 	setTimeout(function() {
-		win.AdServ.emit('debug:checkVisibility:now'); 
-	},10)
+		win.AdServ.emit('debug:checkVisibility:now');
+	}, 1);
 }
 
 function getBannerElem(idx) {
@@ -63,11 +63,11 @@ function getBannerInfo(div) {
 	var node;
 	var pattern = new RegExp('([A-Za-z]+): (\\d+)', 'g');
 	var match = null;
-	var first = true; 
+	var first = true;
 	while (--i >= 0) {
 		node = div.childNodes[i];
 		var comment = node.textContent;
-		result.empty = /empty/.test(comment); 
+		result.empty = /empty/.test(comment);
 
 		if (node.nodeType == 8 && /^ Adspace:/.test(comment)) {
 			var data = {};
@@ -82,7 +82,7 @@ function getBannerInfo(div) {
 		} else {
 			result.contentNodes.push(node);
 		}
-	} 
+	}
 	return result;
 }
 
