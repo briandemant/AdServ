@@ -12,7 +12,7 @@ describe('json.js', function() {
 		it('should create JSON.parse shorcut', function() {
 			helpers.run("./src/common/json.js", assert, function() {
 			}, function() {
-				assert.ok(parseJSON === JSON.parse); 
+				assert.ok(parseJSON === JSON.parse);
 			});
 		});
 	});

@@ -1,14 +1,15 @@
 [false, true].forEach(function(responsive) {
-	describe('basic: empty load ' + (responsive ? '(responsive)' : '(async)'), function() { 
-		before(function(done) { 
+	describe('basic: empty load ' + (responsive ? '(responsive)' : '(async)'), function() {
+		before(function(done) {
 			loadPage('/examples/common/basic_empty.html?responsive=' + responsive, sizes.LARGE, function(win, doc) {
-				win.AdServ.on('debug:all:contexts:loaded', function() { 
+				if (!win.AdServ) { throw "AdServ is not defined" }
+				win.AdServ.on('debug:all:contexts:loaded', function() {
 					done();
 				})
 			});
-		}) 
- 
-		it('should first to be empty', function() { 
+		})
+
+		it('should first to be empty', function() {
 			var elem = getBannerElem(1);
 			var info = getBannerInfo(elem);
 			assert.equal(elem.id, 'banner1');
@@ -30,7 +31,7 @@
 			assert.match(elem.innerText, /ignored/, 'banner3 should not be loaded');
 			assert.isUndefined(info.adspace, 'banner3 should not be loaded');
 		});
-		 
+
 	});
-	
+
 });

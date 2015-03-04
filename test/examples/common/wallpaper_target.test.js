@@ -5,7 +5,8 @@
 		before(function(done) {
 			messages = [];
 			loadPage('/examples/common/wallpaper_target.html?responsive=' + responsive, 450, function(win, doc) {
-				win.AdServ.on('debug:all:contexts:loaded', function() { 
+				if (!win.AdServ) { throw "AdServ is not defined" }
+				win.AdServ.on('debug:all:contexts:loaded', function() {
 					done();
 				})
 			});

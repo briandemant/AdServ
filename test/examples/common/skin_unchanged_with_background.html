@@ -11,7 +11,7 @@
 	<script type="text/javascript">
 		// simulate skin
 		// uncomment to break test
-//		document.body.style.backgroundImage = 'url(//127.0.0.1:1337/banner/wide/4.jpg)';
+		//		document.body.style.backgroundImage = 'url(//127.0.0.1:1337/banner/wide/4.jpg)';
 	</script>
 	<div class="container">
 		<h3>Loaded</h3>
@@ -45,16 +45,16 @@
 		//			console.log(AdServ.css(document.body, 'background-image'));
 		//		},2000)
 		AdServ.load({
-			            "guid" : 'test',
-			            "baseUrl" : baseUrl,
-			            "keyword" : keyword,
-			            "originalWallpaper" : 'banner/wide/1.jpg', 
-			            "adspaces" : [
-				            {'id' : 10, 'target' : 'banner1', excludeOnWallpaper : true},
-				            {'id' : 21, 'target' : 'banner2'},
-				            {'id' : 14, 'target' : 'banner3', context : 'group1', excludeOnWallpaper : true}
-			            ]
-		            })
+			"guid" : 'test',
+			"baseUrl" : baseUrl,
+			"keyword" : keyword,
+			"originalWallpaper" : 'banner/wide/1.jpg',
+			"adspaces" : [
+				{'id' : 10, 'target' : 'banner1', excludeOnWallpaper : true},
+				{'id' : 21, 'target' : 'banner2'},
+				{'id' : 14, 'target' : 'banner3', context : 'group1', excludeOnWallpaper : true}
+			]
+		})
 	</script>
 </body>
 </html>

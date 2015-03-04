@@ -5,6 +5,7 @@
 		before(function(done) {
 			messages = [];
 			loadPage('/examples/common/wallpaper_basic.html?responsive=' + responsive, 450, function(win, doc) {
+				if (!win.AdServ) { throw "AdServ is not defined" }
 				win.AdServ.on('debug:all:contexts:loaded', function() {
 					//console.debug("go test!!");
 					done();
@@ -24,8 +25,8 @@
 
 
 		it('should have a wallpaper', function() {
-			var body = $('body', doc) 
-			assert.match(body.css('background-image'), /9.jpg/, 'expected an background to be loaded'); 
+			var body = $('body', doc)
+			assert.match(body.css('background-image'), /9.jpg/, 'expected an background to be loaded');
 		});
 	});
 });

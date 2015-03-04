@@ -9,16 +9,18 @@ describe('helpers.js', function() {
 			assert.assertCounts = 0;
 			helpers.run("./test/unit/dummy.js", {
 				assert : assert,
-				console : {log : function() {
-					assert.assertCounts++;
-				}},
+				console : {
+					log : function() {
+						assert.assertCounts++;
+					}
+				},
 				alert : function() {
 					assert.assertCounts++;
 				},
 				Math : {
 					random : function() {
 						assert.assertCounts++;
-						return  42;
+						return 42;
 					}
 				},
 				JSON : {

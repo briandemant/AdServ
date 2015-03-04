@@ -28,11 +28,13 @@
 			padding-bottom: 18px;
 			margin: 30px 20px;
 		}
+
 		#mocha-report {
 			background: white;
 		}
+
 		#frame {
-			width: 610px;  
+			width: 610px;
 			border: 1px solid #808080;
 			border: 1px solid red;
 		}
@@ -40,14 +42,14 @@
 		#testarea {
 			display: block;
 			position: absolute;
-			padding: 70px 0 0 610px; 
-		}  
+			padding: 70px 0 0 610px;
+		}
 	</style>
 </head>
 <body>
 
 	<div id="testarea">
-		
+
 	</div>
 	<div id="result">
 		<div id="mocha"></div>
@@ -58,7 +60,7 @@
 	<script src="/helpers/js/jquery-1.11.1.min.js"></script>
 	<script src="/helpers/js/q-1.1.1.min.js"></script>
 	<script src="/helpers/js/mocha_prepare.js"></script>
-	 
+
 	<script>
 		console.log('//' + document.location.hostname + ':1337/all_tests.js');
 		document.write('<scrip' + 't src="//' + document.location.hostname + ':1337/tests.js?responsive=true"></' + 'script>');
@@ -68,8 +70,8 @@
 			document.write('<scrip' + 't src="//' + document.location.hostname + ':7357' + test + '"></' + 'script>');
 		})
 	</script>
-	 
-	<script src="/helpers/js/mocha_run.js"></script> 
+
+	<script src="/helpers/js/mocha_run.js"></script>
 	<script src="/testem.js"></script>
 </body>
 </html> 

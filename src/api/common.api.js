@@ -8,7 +8,7 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 	for (var x in conf.contexts) {
 		anyWaitingContexts++;
 	}
-	console.log("conf",conf);
+	console.log("conf", conf);
 	for (var ctxName in conf.contexts) {
 		//noinspection JSUnfilteredForInLoop
 		var ctx = conf.contexts[ctxName];
@@ -21,16 +21,16 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 		          + '&sw=' + urlencode(ctx.searchword)
 		          + ( ctxName != '_GLOBAL_' ? '&context=' + ctxName : '')
 		          + '&guid=' + conf.guid;
-		
+
 		if (!AdServ.responsive) {
 			url += '&count';
 		}
 		//console.debug('load',url);
-		
+
 		getJSON(url, (function(ctx, url) {
 			ctx.conf = conf;
 			return function(err, data) {
-				
+
 				//console.debug('got', data);
 				if (err) {
 					console.error(err, url, ctx);
@@ -39,21 +39,22 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 					ctx.adServingLoad = data.meta.adServingLoad;
 					for (var index = 0; index < len(campaigns); index++) {
 						var campaign = campaigns[index];
-						
+
 						ctx.adspaces[index].guid = campaign.guid = conf.guid;
 						campaign.ctx = ctx;
 						campaign.target = ctx.adspaces[index].target;
-						if (ctx.adspaces[index].isWallpaper) {
-							campaign.isWallpaper = true;
-						}
+					 
+							campaign.isWallpaper = ctx.adspaces[index].isWallpaper;
+							campaign.isFloating = ctx.adspaces[index].isFloating;
+						 
 						campaign.type = (campaign.wallpaper ? "wallpaper:" : "") + (campaign.floating ? "floating:" : "") + campaign.banner_type;
 						campaign.elem = $ID(campaign.target);
-						if (campaign.elem) {
+						if (campaign.elem || campaign.isWallpaper || campaign.isWallpaper) {
 							clearTarget(campaign);
-							
+
 							addDebugComment(campaign);
 							logCampaign(ctx, campaign);
-							
+
 							emit('adspace:loaded', campaign);
 							if (AdServ.responsive) {
 								if (campaign.adspace) {
@@ -71,8 +72,8 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 				}
 				emit('debug:context:loaded', ctx);
 				--anyWaitingContexts;
-				console.log("anyWaitingContexts",anyWaitingContexts);
-				
+				console.log("anyWaitingContexts", anyWaitingContexts);
+
 				if (!anyWaitingContexts) {
 					ready(function() {
 						renderAll();
@@ -82,7 +83,7 @@ AdServ.loadAdspaces = AdServ.load = function load() {
 			};
 		})(ctx, url));
 	}
-	
+
 	return conf;
 };
 

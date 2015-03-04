@@ -95,7 +95,7 @@ var isVisible = AdServ.isVisible = function(elemOrSelector) {
 
 AdServ.hasWallpaperChanged = function(target, original) {
 	if (original == '' || isUndefined(original)) original = 'none';
-	
+
 	var wallpaper = AdServ.css(target, 'background-image');
 	var changed;
 	if (original == 'none' && wallpaper == 'none') {

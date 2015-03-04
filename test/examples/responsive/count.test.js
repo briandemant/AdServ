@@ -3,6 +3,7 @@ describe('responsive: count functionality', function() {
 	var countLog = {view : [], load : []};
 	before(function(done) {
 		loadPage('/examples/responsive/count.html?responsive=true', sizes.LARGE, function(win, doc) {
+			if (!win.AdServ) { throw "AdServ is not defined" }
 			win.AdServ.on('debug:checkVisibility:done', function(ctx) {
 				done()
 			})

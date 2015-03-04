@@ -100,7 +100,7 @@ var prepareContexts = function(args) {
 			'changed:' + AdServ.hasWallpaperChanged(conf['wallpaperTarget'], conf.originalWallpaper),
 			'target:' + conf['wallpaperTarget'],
 			'originalWallpaper:' + conf.originalWallpaper,
-			'now:' + AdServ.css(conf['wallpaperTarget'], 'background-image') 
+			'now:' + AdServ.css(conf['wallpaperTarget'], 'background-image')
 		);
 	}
 	var contexts = conf.contexts = {};
@@ -124,14 +124,13 @@ var prepareContexts = function(args) {
 	if (conf['wallpaper']) {
 		var adspace = conf['wallpaper'];
 		adspace.isWallpaper = true;
-
-		conf['wallpaper'].target = conf['wallpaper'].target || conf['wallpaperTarget'];
-
+		
 		if (adspace.id > 0) {
 			if (exclude(adspace, conf)) {
 				console.warn("SKIP WALLPAPER", adspace);
 				delete conf['wallpaper'];
 			} else {
+				conf['wallpaper'].target = conf['wallpaper'].target || conf['wallpaperTarget'];
 				getContext(adspace, contexts);
 				adspace.context.wallpaper = adspace;
 				adspace.context.adspaces.push(adspace);
@@ -143,14 +142,17 @@ var prepareContexts = function(args) {
 
 	if (conf['floating']) {
 		var adspace = conf['floating'];
+		adspace.isFloating = true;
+
 		if (adspace.id > 0) {
-			if (!exclude(adspace, conf)) {
+			if (exclude(adspace, conf)) {
+				console.warn("SKIP FLOATING", adspace);
+				delete conf['floating'];
+			} else {
+				conf['floating'].target = conf['floating'].target || document.body;
 				getContext(adspace, contexts);
 				adspace.context.floating = adspace;
 				adspace.context.adspaces.push(adspace);
-			} else {
-				console.warn("SKIP FLOATING", adspace);
-				delete conf['floating'];
 			}
 		} else {
 			// console.error('no id', adspace);

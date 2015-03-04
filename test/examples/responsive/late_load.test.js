@@ -1,6 +1,7 @@
 describe('responsive: late load functionality', function() {
-	before(function(done) { 
-		loadPage('/examples/responsive/late_load.html?responsive=true', sizes.LARGE, function(win, doc) { 
+	before(function(done) {
+		loadPage('/examples/responsive/late_load.html?responsive=true', sizes.LARGE, function(win, doc) {
+			if (!win.AdServ) { throw "AdServ is not defined" }
 			win.AdServ.on('debug:all:contexts:loaded', function() {
 				done();
 			})
@@ -11,7 +12,7 @@ describe('responsive: late load functionality', function() {
 		var elem = getBannerElem(index);
 		var info = getBannerInfo(elem);
 		assert.equal(info.adspace, adspace, 'expected Adspace:  ' + adspace + ' but got ' + info.adspace);
-		assert.equal(info.contentNodes.length, 1, 'expected only one load pr banner space got '  );
+		assert.equal(info.contentNodes.length, 1, 'expected only one load pr banner space got ');
 	}
 
 	function assertAdspaceIsNotLoaded(index, adspace) {
@@ -39,8 +40,8 @@ describe('responsive: late load functionality', function() {
 			assertAdspaceIsNotLoaded(9, 35);
 			assertAdspaceIsLoaded(10, 37);
 		}, done);
-	}); 
-	
+	});
+
 	it('Only banner destined for MEDIUM should be loaded', function(done) {
 		resizePage(sizes.MEDIUM, function(unrendered) {
 			assert.equal(unrendered, 3, 'expected ' + unrendered + ' unrendered adspaces');

@@ -15,7 +15,7 @@ domGlobals.document.createElement("#first", {width : 42}).createElements("#sub1"
 	.createElement("#hidden", {visible : 'hidden'}).createElement("#visible").createElement("#visible").parentNode
 	.createElement("#display").createElement("#notDisplayed", {display : 'none'}).createElement("#display").parentNode
 	.createElement("#notDisplayed", {display : 'none'}).createElement("#display").createElement("#visible");
- 
+
 
 describe('dom.js', function() {
 	describe('$', function() {
@@ -62,7 +62,7 @@ describe('dom.js', function() {
 			it('should use query the document on selector ', function() {
 				assert.isDefined(AdServ.$ID("first"));
 				assert.equal(AdServ.$ID("first").nodeName, "#first");
-			}); 
+			});
 		});
 	});
 
@@ -81,7 +81,7 @@ describe('dom.js', function() {
 				assert.equal(AdServ.$$(".ir")[0].nodeName, "#first");
 			});
 			it('should use query the document on selector ', function() {
-				assert.notEqual(AdServ.$$(".sec"), void 0); 
+				assert.notEqual(AdServ.$$(".sec"), void 0);
 				assert.equal(AdServ.$$(".sec").length, 1);
 				assert.equal(AdServ.$$(".sec")[0].nodeName, "#second");
 			});
@@ -127,7 +127,7 @@ describe('dom.js', function() {
 				assert.strictEqual(AdServ.isVisible, isVisible);
 			});
 			describe('visibility', function() {
-				it('should return false when not "hidden"', function() { 
+				it('should return false when not "hidden"', function() {
 					assert.isTrue(AdServ.isVisible("first"));
 				});
 				it('should return false when not "hidden"', function() {
@@ -136,7 +136,7 @@ describe('dom.js', function() {
 				it('should return true when "hidden"', function() {
 					assert.isTrue(AdServ.isVisible("visible"));
 				});
-			}); 
+			});
 		});
 	});
 

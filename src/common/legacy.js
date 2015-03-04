@@ -1,4 +1,4 @@
-"use strict"; 
+"use strict";
 
 // Protect against missing globals
 window.adServingLoad = window.adServingLoad || '';

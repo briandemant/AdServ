@@ -6,8 +6,9 @@
 			this.timeout(5000);
 			loadPage('/examples/common/reject_dubs.html?responsive=' + responsive, sizes.LARGE, function(win, doc) {
 				var contexts = 8;
+				if (!win.AdServ) { throw "AdServ is not defined" }
 				win.AdServ.on('debug:all:contexts:loaded', function() {
-					if (--contexts == 0) { 
+					if (--contexts == 0) {
 						done();
 					}
 				})

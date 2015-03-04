@@ -77,8 +77,8 @@ function makeLogger(level) {
 var console;
 if (AdServ.develop) {
 	console = window.console;
-}else {
-	  console = {
+} else {
+	console = {
 		log : makeLogger('log'),
 		info : makeLogger('info'),
 		debug : makeLogger('debug'),

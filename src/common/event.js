@@ -10,8 +10,8 @@ var eventHandlers = {};
 //  * **event** eventname
 //  * **fn** callback
 //  * **context** *optional* scope to bind to .. defaults to window
-var on = AdServ.on = function(event, fn, context) { 
-	if (event && fn) { 
+var on = AdServ.on = function(event, fn, context) {
+	if (event && fn) {
 		eventHandlers[event] = eventHandlers[event] || [];
 
 		if (event !== '*') {
@@ -86,7 +86,7 @@ var unbind = AdServ.unbind = function(elem, type, handler) {
 // Save original `onresize`
 var originalResize = window['onresize'] || noop;
 
-var emitResize = throttle(function() { 
+var emitResize = throttle(function() {
 	emit('page:resize', viewport());
 }, 200);
 
@@ -100,6 +100,6 @@ window.onresize = function() {
 
 // Emit load event when dom is loaded 
 
-ready(function() { 
+ready(function() {
 	emit('page:loaded');
 }); 

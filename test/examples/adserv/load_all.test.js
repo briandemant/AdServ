@@ -1,6 +1,9 @@
 describe('adserv: load functionality', function() {
 	before(function(done) {
 		loadPage('/examples/adserv/load_all.html', sizes.LARGE, function(win, doc) {
+			console.log(win);
+
+			if (!win.AdServ) { throw "AdServ is not defined" }
 			win.AdServ.on('debug:all:contexts:loaded', function() {
 				done();
 			})
@@ -22,7 +25,7 @@ describe('adserv: load functionality', function() {
 	}
 
 	it('all (even hidden) banners should be loaded', function() {
-		assertAdspaceIsLoaded(1, 11); 
+		assertAdspaceIsLoaded(1, 11);
 		// display
 		assertAdspaceIsLoaded(2, 13);
 		assertAdspaceIsLoaded(3, 15);

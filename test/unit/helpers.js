@@ -36,7 +36,7 @@ var prepareGlobals = function(globals) {
 			console.error.apply(console, args);
 		}
 	};
- 
+
 	var defaultGlobals = {
 		alert : function(msg) {
 			throw "alert called: " + msg;

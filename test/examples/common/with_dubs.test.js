@@ -1,35 +1,36 @@
 [false, true].forEach(function(responsive) {
-	
+
 	describe('special: with dub adspaceid ' + (responsive ? '(responsive)' : '(async)'), function() {
-		
+
 		var contexts = {loaded : []};
 		before(function(done) {
 			loadPage('/examples/common/with_dubs.html?responsive=' + responsive, sizes.LARGE, function(win, doc) {
-				win.AdServ.on('debug:context:loaded', function(ctx) { 
+				if (!win.AdServ) { throw "AdServ is not defined" }
+				win.AdServ.on('debug:context:loaded', function(ctx) {
 					contexts.loaded.push(ctx);
 					contexts[ctx.name] = ctx;
 				});
-				
-				win.AdServ.on('debug:all:contexts:loaded', function() { 
+
+				win.AdServ.on('debug:all:contexts:loaded', function() {
 					done();
-				}) 
+				})
 			});
 		})
-		
-		
+
+
 		it('should add global adServingLoad to global context', function() {
 			var context = contexts['_GLOBAL_'];
 			assert.isDefined(context, 'expected _GLOBAL_ to exists');
 			assert.deepEqual(context.adServingLoad, ",i110,e111", 'expected _GLOBAL_ to get 2 campaigns');
 		});
-		
+
 		it('should not global adServingLoad to group1 context', function() {
 			var context = contexts['group1'];
 			assert.isDefined(context, 'expected group1 to exists');
 			assert.deepEqual(context.adServingLoad, ",i110", 'expected group1 to get 1 campaign');
 		});
 		it('should not global adServingLoad to group1 context', function() {
-			var promises = []; 
+			var promises = [];
 			[1, 2, 3].forEach(function(id) {
 				var imglist = $(getBannerElem(id)).find('a').find('img');
 				assert.equal(imglist.length, 1, "banner" + id + " should be 1 image with link");
@@ -49,10 +50,10 @@
 					promises.push(promise);
 				}
 			});
-			
+
 			return Q.all(promises);
 		});
-		
+
 	});
 }); 
  

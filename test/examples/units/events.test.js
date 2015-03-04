@@ -2,6 +2,7 @@ describe('unit: event functionality', function() {
 	var resized = false;
 	before(function(done) {
 		loadPage('/examples/units/events.html', sizes.LARGE, function(win, doc) {
+			if (!win.AdServ) { throw "AdServ is not defined" }
 			win.AdServ.on('page:resize', function() {
 				// adserv does not emit this on resize; 
 				resized = true;

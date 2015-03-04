@@ -27,7 +27,7 @@ var checkVisibilityNow = function() {
 			if (campaign.campaign && campaign.banner) {
 				console.debug('render:', campaign.adspace, campaign.elem);
 				render(campaign);
-			} else { 
+			} else {
 				console.debug('render: (empty)', campaign.adspace, campaign.elem);
 			}
 		} else {

@@ -6,7 +6,7 @@ describe('legacy.js', function() {
 		it('should be tested', function() {
 			helpers.run("./src/common/legacy.js", assert, function() {
 			}, function() {
-				assert.isDefined(window.adServingLoad); 
+				assert.isDefined(window.adServingLoad);
 			});
 		});
 	});

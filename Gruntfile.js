@@ -1,34 +1,37 @@
-var execSync = require('exec-sync');
+var child_process = require('child_process');
 function dirtyGitFiles() {
-	var raw = execSync('git status --porcelain 2>/dev/null');
+	var raw = child_process.execSync('git status --porcelain 2>/dev/null').toString();
 	if (raw == '') {
 		return []
 	} else {
 		return raw.split("\n");
 	}
 }
+
 module.exports = function(grunt) {
 	var config = {
 		pkg : grunt.file.readJSON('package.json'),
-		commit : function() {
-			var dirty = dirtyGitFiles();
-			if (dirty.length > 0) {
-				return 'After ' + execSync('git rev-parse HEAD') + ' (' + dirty.length + ')';
-			} else {
-				return execSync('git rev-parse HEAD');
+		fn : {
+			commit : function() {
+				var dirty = dirtyGitFiles();
+				if (dirty.length > 0) {
+					return 'After ' + child_process.execSync('git rev-parse HEAD').toString().replace('\n','') + ' (' + dirty.length + ')';
+				} else {
+					return child_process.execSync('git rev-parse HEAD').toString();
+				}
+			},
+			devVersion : function() {
+				var dirty = dirtyGitFiles();
+				if (dirty.length > 0) {
+					return '.dev (' + dirty.length + ' changed)';
+				} else {
+					return '';
+				}
+			},
+			logLevels : function() {
+				var dirty = dirtyGitFiles();
+				return dirty.length > 0 ? '{error:1,warn:1,info:1,debug:1,events:1}' : '{error:1}';
 			}
-		},
-		devVersion : function() {
-			var dirty = dirtyGitFiles();
-			if (dirty.length > 0) {
-				return '.dev (' + dirty.length + ' changed)';
-			} else {
-				return '';
-			}
-		},
-		logLevels : function() {
-			var dirty = dirtyGitFiles();
-			return dirty.length > 0 ? '{error:1,warn:1,info:1,debug:1,events:1}' : '{error:1}';
 		},
 		// -------------------------------------------------------------------------------------
 		uglify : {
@@ -70,10 +73,10 @@ module.exports = function(grunt) {
 		concat : {
 			options : {
 				banner : grunt.file.read('src/templates/header.js.tmpl')
-					.replace(/VERSION/g, '<%= pkg.version + devVersion() %>')
-					.replace(/COMMIT/g, '<%= commit() %>')
-					.replace(/DEVELOP/g, '<%= devVersion() !== "" %>')
-					.replace(/LOGLEVELS/g, '<%= logLevels() %>')
+					.replace(/VERSION/g, '<%= pkg.version + fn.devVersion() %>')
+					.replace(/COMMIT/g, '<%=  fn.commit() %>')
+					.replace(/DEVELOP/g, '<%=  fn.devVersion() !== "" %>')
+					.replace(/LOGLEVELS/g, '<%=  fn.logLevels() %>')
 					.replace(/DATE/g, '<%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %>'),
 				footer : grunt.file.read('src/templates/footer.js.tmpl'),
 				process : function(src, filepath) {
@@ -83,26 +86,9 @@ module.exports = function(grunt) {
 			},
 			responsive : {
 				src : ['src/common/constants.js',
-				       'src/common/debug.js', 
-				       'src/common/legacy.js', 
-				       'src/common/utils.js', 
-				       'src/common/ready.js',
-				       'src/common/dom.js',
-				       'src/common/json.js',
-				       'src/common/event.js',
-				       'src/common/ajax.js',
-				       'src/common/flash.js',
-				       'src/common/render.js',
-				       'src/common/context.js', 
-				       'src/api/responsive.api.js',
-				       'src/api/common.api.js'],
-				dest : 'build/responsive.js'
-			},
-			adserv : {
-				src : ['src/common/constants.js',
 				       'src/common/debug.js',
 				       'src/common/legacy.js',
-				       'src/common/utils.js', 
+				       'src/common/utils.js',
 				       'src/common/ready.js',
 				       'src/common/dom.js',
 				       'src/common/json.js',
@@ -111,7 +97,24 @@ module.exports = function(grunt) {
 				       'src/common/flash.js',
 				       'src/common/render.js',
 				       'src/common/context.js',
-				       
+				       'src/api/responsive.api.js',
+				       'src/api/common.api.js'],
+				dest : 'build/responsive.js'
+			},
+			adserv : {
+				src : ['src/common/constants.js',
+				       'src/common/debug.js',
+				       'src/common/legacy.js',
+				       'src/common/utils.js',
+				       'src/common/ready.js',
+				       'src/common/dom.js',
+				       'src/common/json.js',
+				       'src/common/event.js',
+				       'src/common/ajax.js',
+				       'src/common/flash.js',
+				       'src/common/render.js',
+				       'src/common/context.js',
+
 				       'src/api/adserv.api.js',
 				       'src/api/common.api.js'],
 				dest : 'build/adserv.js'
@@ -216,7 +219,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-stripcomments');
-	grunt.loadNpmTasks('grunt-karma');
+	//grunt.loadNpmTasks('grunt-karma');
 
 
 	// https://github.com/Darsain/grunt-bumpup
@@ -225,7 +228,7 @@ module.exports = function(grunt) {
 		grunt.config.set('pkg', grunt.file.readJSON('package.json'));
 	});
 	grunt.registerTask('commitAll', function() {
-		execSync('git commit -a -m"Released ' + grunt.config.get('pkg').version + '"');
+		child_process.execSync('git commit -a -m"Released ' + grunt.config.get('pkg').version + '"');
 	});
 
 	// usage:
@@ -245,75 +248,11 @@ module.exports = function(grunt) {
 		grunt.task.run('copy');           // copy to deployed and operation dir
 	});
 
-
-	grunt.registerTask('output', function() {
-
-		var done = this.async();
-		var fs = require('fs');
-
-		var result = grunt.file.read('build/test.min.js').substr(0, 500);
-		var cmd = require('child_process').spawn('ls', ['-lh', 'build/test.js', 'build/test.min.js'])
-		cmd.stdout.on('data', function(data) {
-			console.log(data.toString());
-		});
-
-		cmd.stderr.on('data', function(data) {
-			console.log("ERROR" + data);
-		});
-
-		cmd.on('exit', function(err) {
-			if (err) {
-				throw err;
-			}
-			console.log(result);
-
-			done();
-		})
-	});
-	grunt.registerTask('groc', 'Generate documentation', function() {
-		var done = this.async();
-		grunt.log.write('Generating Documentation...');
-		var args = ['-o', 'docs',
-		            '-i', 'Usage.md',
-		            '-t', 'build',
-		            'Usage.md',
-			//'build/responsive.js',
-		            'build/adserv.js'
-		];
-		require('child_process').spawn('./node_modules/groc/bin/groc',
-			args).on('exit', function(err) {
-				if (err) {
-					throw "Could not generate docs\n ./node_modules/groc/bin/groc " + args.join(" ");
-				}
-
-				grunt.log.writeln('...done!');
-				done();
-			})
-	});
-
-	grunt.registerTask('diff', 'diff deploy with build', function() {
-
-		grunt.log.write('opening PhpStorm diff...');
-		var args = ['diff',
-		            'build/responsive.js',
-		            'deployed/responsive.js'
-		];
-		require('child_process').spawn('pstorm',
-			args).on('exit', function(err) {
-				if (err) {
-					throw "Could not generate docs\n ./node_modules/groc/bin/groc " + args.join(" ");
-				}
-			})
-	});
-
 	// Default task(s).
 	grunt.registerTask('default', ['build']);
-	grunt.registerTask('build', ['concat', 'comments', 'uglify']);
-	grunt.registerTask('docs', ['concat', 'groc']);
+	grunt.registerTask('build', ['concat', 'comments', 'uglify']); 
 
-	grunt.registerTask('dev', ['concat', 'comments', 'uglify', 'watch:normal']);
-	grunt.registerTask('devdiff', ['concat', 'comments', 'watch:diff']);
-	grunt.registerTask('devdocs', ['docs', 'watch:docs']);
+	grunt.registerTask('dev', ['concat', 'comments', 'uglify', 'watch:normal']); 
 	grunt.registerTask('devop', ['concat', 'comments', 'uglify', 'copy:to_operation', 'watch:operation']);
 
 };

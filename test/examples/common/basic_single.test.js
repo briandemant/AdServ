@@ -6,9 +6,10 @@
 			messages = [];
 			loadPage('/examples/common/basic_single.html?responsive=' + responsive, sizes.LARGE, function(win, doc) {
 				var countDown = 6;
+				if (!win.AdServ) { throw "AdServ is not defined" }
 				win.AdServ.on('debug:all:contexts:loaded', function(list) {
-					countDown--; 
-					if (countDown == 0) { 
+					countDown--;
+					if (countDown == 0) {
 						//console.debug(arguments);
 						done();
 					}

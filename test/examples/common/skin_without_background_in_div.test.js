@@ -5,19 +5,20 @@
 		var contexts = {loaded : []};
 		before(function(done) {
 			loadPage('/examples/common/skin_without_background_in_div.html?responsive=' + responsive, sizes.LARGE, function(win, doc) {
-				win.AdServ.on('debug:context:loaded', function(ctx) { 
+				if (!win.AdServ) { throw "AdServ is not defined" }
+				win.AdServ.on('debug:context:loaded', function(ctx) {
 					contexts.loaded.push(ctx);
 					contexts[ctx.name] = ctx;
 				});
-				
+
 				win.AdServ.on('debug:all:contexts:loaded', function() {
-					
+
 					done();
 				})
-				
+
 			});
 		});
- 
+
 
 		it('should add global adServingLoad to global context', function() {
 			var context = contexts['_GLOBAL_'];

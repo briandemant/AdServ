@@ -3,9 +3,9 @@ title.innerHTML = document.title;
 var link = document.createElement("a");
 link.href = '//' + document.location.hostname + ':3000' + document.location.pathname;
 link.target = document.location.pathname;
-link.appendChild(title); 
+link.appendChild(title);
 document.body.insertBefore(link, document.body.firstChild);
-console.log('%c'+document.title + (responsive? ' (responsive)': ' (async)'),'color:yellow;background:black');
+console.log('%c' + document.title + (responsive ? ' (responsive)' : ' (async)'), 'color:yellow;background:black');
 
 
 function flashCalled(token, click) {

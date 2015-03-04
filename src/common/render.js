@@ -132,7 +132,7 @@ engines["wallpaper"] = function renderwallpaper(elem, campaign) {
 	}
 
 	elem.style.backgroundImage = 'url(' + campaign.wallpaper + ')';
-	elem.style.backgroundRepeat = campaign.wallpaper_repeat || 'no-repeat';
+	elem.style.backgroundRepeat = campaign.wallpaper_repeat || 'no-repeat'; 
 	elem.onclick = adserving_bgclick;
 
 	var classes = document.body.getAttribute('class');
@@ -147,7 +147,7 @@ engines["html"] = function renderHtml(elem, campaign) {
 	function safeScriptContent(js) {
 		// remove document.write to avoid accidential dom rewrite
 		//		return js.replace('document.write(', 'console.log("WARNING : document.write -> "+');
-		return js.replace('document.write(', 'console.warn("WARNING : banner: ' + campaign.banner + ' uses document.write");document.write(');
+		return js.replace('document.write(', 'console.error("ERROR : adspace: ' + campaign.adspace + ', campaign: ' + campaign.campaign + ', banner: ' + campaign.banner + ' uses document.write");document.write(');
 		//		return js.replace('document.write(', 'console.warn("WARNING document.write");document.write(');
 		//		console.log(js);
 		//		
@@ -241,10 +241,11 @@ function wrapIframe(target, campaign) {
 }
 
 function makeFloat(campaign) {
-	console.log(campaign);
 
 	var uid = guid('float');
-	console.info("got a floating banner!", uid);
+
+	console.info("got a floating banner!", campaign);
+
 	//	console.log(" floating_close_position : " + campaign.floating_close_position);
 	//	console.log(" floating_position : " + campaign.floating_position);
 	//	console.log(" floating_time : " + campaign.floating_time);
@@ -274,7 +275,14 @@ function makeFloat(campaign) {
 		var coords = campaign.floating_position.split(".");
 		style += 'left:' + coords[0] + '; top:' + coords[1] + ';';
 	}
-	//	console.error('TODO: REMOVE YELLOW'); 
+
+	var overlayElem;
+	if (campaign.floating_cover) {
+		  overlayElem = document.createElement('div');
+		overlayElem.id = "floating_overlay_" + uid;
+		overlayElem.setAttribute('style', "display: block;position: fixed; top: 0;left: 0; height: 100%; width: 100%; z-index: 2147483640; background-color: " + campaign.floating_cover);
+		campaign.elem.appendChild(overlayElem);
+	}
 
 	var floatingElem = document.createElement('div');
 	floatingElem.id = "floating_" + uid;
@@ -285,6 +293,9 @@ function makeFloat(campaign) {
 
 		AdServ.emit("floating:close", campaign);
 		floatingElem.close = noop;
+		if (overlayElem) {
+			overlayElem.style.display = 'none';
+		}
 	};
 	floatingElem.timeout = setTimeout(floatingElem.close, 1000 * campaign.floating_time);
 
@@ -297,7 +308,7 @@ function makeFloat(campaign) {
 		var closeElem = document.createElement('div');
 		bind(closeElem, 'click', floatingElem.close);
 		closeElem.id = "close_" + uid;
-		var closeStyle = 'position:absolute; width:16px; height:16px;z-index:2147483646;border:0px; cursor:pointer;';
+		var closeStyle = 'position:absolute; width:29px; height:29px;z-index:2147483646;border:0px; cursor:pointer;';
 		style += "background:#fff;";
 		if (campaign.floating_close_position == 'top_left') {
 			closeStyle += 'left:0; top:0;';
@@ -310,7 +321,7 @@ function makeFloat(campaign) {
 		}
 		closeElem.setAttribute('style', closeStyle);
 		var closeImg = document.createElement('img');
-		closeImg.src = AdServ.baseUrl + '/close.gif';
+		closeImg.src = AdServ.baseUrl + '/close.png';
 		closeElem.appendChild(closeImg);
 		//		if (campaign.floating_close_position.indexOf('top') > -1) {
 		floatingElem.appendChild(closeElem);
@@ -329,7 +340,7 @@ function clearTarget(campaign) {
 		//console.error("NEVER REMOVE CONTENT OF BODY");
 		return;
 	}
-	if (campaign.isWallpaper) {
+	if (campaign.isWallpaper || campaign.isFloating) {
 		//console.error("NEVER REMOVE CONTENT OF wallpaper");
 		return;
 	}
@@ -361,7 +372,7 @@ function addDebugComment(campaign) {
 	}
 	return comment;
 }
- 
+
 function render(campaign) {
 	emit('debug:before:render', campaign);
 
