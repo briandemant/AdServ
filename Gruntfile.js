@@ -17,7 +17,7 @@ module.exports = function(grunt) {
 				if (dirty.length > 0) {
 					return 'After ' + child_process.execSync('git rev-parse HEAD').toString().replace('\n','') + ' (' + dirty.length + ')';
 				} else {
-					return child_process.execSync('git rev-parse HEAD').toString();
+					return child_process.execSync('git rev-parse HEAD').toString().replace('\n','');
 				}
 			},
 			devVersion : function() {
