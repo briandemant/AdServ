@@ -363,7 +363,7 @@ function logCampaign(ctx, campaign) {
 	if (isUndefined(campaign.type)) {
 		console.info(info + campaign.adspace + " is EMPTY", campaign.elem);
 	} else {
-		console.info(info + campaign.adspace + " " + campaign.type + ( campaign.iframe ? "" : " in iframe"), campaign.elem);
+		console.info(info + campaign.adspace + " " + campaign.type + ( campaign.iframe ? " in iframe" : ""), campaign.elem);
 	}
 	return info;
 }
