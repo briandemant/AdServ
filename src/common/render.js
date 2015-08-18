@@ -113,7 +113,7 @@ engines["flash"] = function renderFlash(elem, campaign) {
 	}
 }
 
-engines["txt"] = function renderImage(elem, campaign) {
+engines["txt"] = function renderTxt(elem, campaign) {
 	var text = document.createTextNode(campaign.txt);
 	var a = makeA(text, campaign);
 	elem.appendChild(a);
@@ -132,7 +132,7 @@ engines["wallpaper"] = function renderwallpaper(elem, campaign) {
 	}
 
 	elem.style.backgroundImage = 'url(' + campaign.wallpaper + ')';
-	elem.style.backgroundRepeat = campaign.wallpaper_repeat || 'no-repeat'; 
+	elem.style.backgroundRepeat = campaign.wallpaper_repeat || 'no-repeat';
 	elem.onclick = adserving_bgclick;
 
 	var classes = document.body.getAttribute('class');
@@ -200,7 +200,7 @@ engines["html"] = function renderHtml(elem, campaign) {
 	}
 
 }
-engines["iframe"] = function renderImage(elem, campaign) {
+engines["iframe"] = function renderIframe(elem, campaign) {
 	var ifrm = createIframe(campaign)
 
 	bindReject(window, elem, campaign, ifrm);
@@ -230,12 +230,12 @@ function bindReject(bindTo, target, campaign, ifrm) {
 
 }
 
-function wrapIframe(target, campaign) {
+function wrapIframe(elem, campaign) {
 	var ifrm = createIframe(campaign);
-	target.appendChild(ifrm);
+	elem.appendChild(ifrm);
 	ifrm.contentDocument.write('<!doctype html><body style="margin:0px;padding:0px;width:100%;height:100%;"></body>');
 
-	bindReject(window, target, campaign, ifrm);
+	bindReject(window, elem, campaign, ifrm);
 
 	return ifrm;
 }
@@ -278,7 +278,7 @@ function makeFloat(campaign) {
 
 	var overlayElem;
 	if (campaign.floating_cover) {
-		  overlayElem = document.createElement('div');
+		overlayElem = document.createElement('div');
 		overlayElem.id = "floating_overlay_" + uid;
 		overlayElem.setAttribute('style', "display: block;position: fixed; top: 0;left: 0; height: 100%; width: 100%; z-index: 2147483640; background-color: " + campaign.floating_cover);
 		campaign.elem.appendChild(overlayElem);
@@ -387,13 +387,21 @@ function render(campaign) {
 		if (campaign.iframe && campaign.banner_type !== 'iframe' && campaign.banner_type !== 'wallpaper') {
 			ifrm = createIframe(campaign);
 			targetElem.appendChild(ifrm);
-			//console.debug("append");
 
-			ifrm.contentDocument.write('<!doctype html><body style="margin:0px;padding:0px;width:100%;height:100%;" adserv="true"></body>');
-			ifrm.src = AdServ.baseUrl + "/show_campaign.php?nocount=1&adspaceid=" + campaign.adspace
-			           + "&campaignid=" + campaign.campaign
-			           + "&bannerid=" + campaign.banner
-			           + "&target=" + campaign.target;
+
+			var url = AdServ.baseUrl + "/api/v2/get/js_banner?nocount=1&adspaceid=" + campaign.adspace
+			          + "&campaignid=" + campaign.campaign
+			          + "&bannerid=" + campaign.banner
+			          + "&target=" + campaign.target;
+
+			var iframeBody = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body id=body style="margin:0;border:0;padding:0;"><scr' +
+			                 'ipt>var adServingLoad="";var inDapIF=true;document.write(\'<scr\'+\'ipt src="' + url + '"></scr\'+\'ipt>\');</scr' + 'ipt></body></html>';
+
+
+			ifrm.contentWindow.document.open('text/html', 'replace');
+			ifrm.contentWindow.document.write(iframeBody);
+			ifrm.contentWindow.document.close();
+
 			//console.debug("src", ifrm.src);
 			emit('debug:wrapped', campaign, ifrm, ifrm.contentDocument.body);
 			ifrm.onload = function() {

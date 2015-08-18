@@ -6,7 +6,7 @@
 				if (!win.AdServ) { throw "AdServ is not defined" }
 				win.AdServ.on('debug:all:contexts:loaded', function() {
 					done();
-				})
+				}) 
 			});
 		})
 

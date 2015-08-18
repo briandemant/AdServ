@@ -7,6 +7,7 @@ var sizes = {
 	SMALL : 520
 }
 var currentIframe, win, doc;
+var iframeWasHere = false;
 
 function loadPage(page, width, cb) {
 	//console.debug("loading : " + page);

@@ -25,8 +25,8 @@ function startCampaign(type, req, adspace, idx) {
 		"campaign" : campaign,
 		"banner" : banner,
 		"banner_type" : type,
-		"click" :  req.urlRoot + "/click.php?raw=" + campaign + "|" + banner + "|",
-		"count" :  req.urlRoot + "/api/v2/count/view/" + adspace + "/" + campaign + "/" + banner + "?keyword=",
+		"click" : req.urlRoot + "/click.php?raw=" + campaign + "|" + banner + "|",
+		"count" : req.urlRoot + "/api/v2/count/view/" + adspace + "/" + campaign + "/" + banner + "?keyword=",
 		"iframe" : adspace % 2 == 0
 	}
 }
@@ -184,8 +184,34 @@ function prettyJSON(query) {
 	return JSON.stringify(query).replace(/[{}]/g, '').replace(/,/g, "<br>").replace(/"([a-z]+)":/gi, "$1 : ");
 }
 v2.get('/get/js_banner', function(req, res) {
-	res.setHeader("Cache-Control", "public, max-age=60");
-	res.send("document.getElementById('" + req.query.appendTo + "').appendChild(document.createTextNode('" + prettyJSON(req.query) + "'))");
+
+	res.setHeader("Cache-Control", "public, max-age=600");
+	var adspace = req.query.adspaceid;
+
+	function sendMessage() {
+		return "this.addEventListener('message', function(m) {" +
+		       "\n   var payload = JSON.parse(m.data);" +
+		       "\n   payload.campaignid=" + req.query.campaignid + ";" +
+		       "\n   payload.bannerid=" + req.query.bannerid + ";" +
+		       "\n   payload.target='" + req.query.target + "';" +
+		       "\n   top.postMessage(JSON.stringify(payload), '*');" +
+		       "\n   /*console.log(payload);console.debug('show_campaign', Date.now()-payload.time);*/\n" +
+		       "\n});\n" +
+		       "\nthis.postMessage('{\"source\":\"show_campaign\",\"adspace\":" + req.query.adspaceid + ",\"time\":'+ Date.now()+'}','*')\n";
+	}
+
+	if (adspace >= 70) {
+		var next = adspace - 10;
+		if (next == 60) next = 1; // reject to empty
+		res.send( sendMessage() +'document.write("<b>Rejected</b><iframe src=\\\"' + req.urlRoot + '/api/v2/rejected?adspace=' + adspace + '&next=' + next + '\\\">")');
+	} else {
+		res.send("" +
+		         //"document.write('<b>js loaded..</b>');" +
+		         sendMessage() +
+		         "\nvar inDapIF = (typeof inDapIF == 'undefined') ? false : inDapIF;\n" + 
+		         "\nwindow.top.iframeWasHere=true;\n" + 
+		         "");
+	}
 });
 v2.get('/rejected', function(req, res) {
 	res.setHeader("Cache-Control", "public, max-age=600");
@@ -205,19 +231,23 @@ root.get('/banner/test.swf', function(req, res) {
 root.get('/show_campaign.php', function(req, res) {
 	res.setHeader("Cache-Control", "public, max-age=600");
 	var adspace = req.query.adspaceid;
-	var html = "<style>*{ font-size: 11px;}</style>\n<script>this.addEventListener('message', function(m) {\n var payload = JSON.parse(m.data);payload.campaignid=" + req.query.campaignid + ";payload.bannerid=" + req.query.bannerid + ";payload.target='" + req.query.target + "';top.postMessage(JSON.stringify(payload), '*');/*console.log(payload);console.debug('show_campaign', Date.now()-payload.time);*/}); </script><pre><h2>iframe</h2>" + JSON.stringify(req.query).replace(/([{}]|id)/g, '').replace(/,/g, "\n").replace(/"([a-z]+)":/ig, "$1: ") + '</pre>';
+	console.log(req.query);
+
+	var html = "<style>*{ font-size: 11px;}</style>\n" +
+	           "<script src='/api/v2/get/js_banner?nocount=" + req.query.nocount + "&adspaceid=" + req.query.adspaceid + "&campaignid=" + req.query.campaignid + "&bannerid=" + req.query.bannerid + "&target=" + req.query.target + "'></script><pre><h2>iframe</h2>" + JSON.stringify(req.query).replace(/([{}]|id)/g, '').replace(/,/g, "\n").replace(/"([a-z]+)":/ig, "$1: ") + '</pre>';
 
 
 	if (adspace >= 70) {
 		var next = adspace - 10;
 		if (next == 60) next = 1; // reject to empty
-		res.send(html + '<iframe src="' + req.urlRoot + '/api/v2/rejected?adspace=' + adspace + '&next=' + next + '">');
+		res.send('<h2>Rejected</h2>');
+		//res.send(  '<h2>Rejected</h2><iframe src="' + req.urlRoot + '/api/v2/rejected?adspace=' + adspace + '&next=' + next + '">');
 	} else {
 		var values = req.query;
 		values.source = 'show_campaign';
-		res.send(html + '<script>this.postMessage(\'{\"source\":\"show_campaign\",\"adspace\":' + adspace + ',\"time\":\'+ Date.now()+\'}\',"*")</script>');
+		res.send(html);
 	}
-});
+}); 
 
 
 root.get('/jsurl', function(req, res) {
@@ -258,7 +288,7 @@ root.get('/tests.js', function(req, res) {
 					var tests = files.filter(function(name) { return name.match(/test.js$/) }).map(function(filename) {
 						return "/examples/common/" + filename;
 					});
-					all = all.concat(tests);
+					all =tests.concat( all);
 				}
 				fs.readdir(__dirname + '/../../test/examples/units', function(err, files) {
 					if (err) {
@@ -268,7 +298,7 @@ root.get('/tests.js', function(req, res) {
 						var tests = files.filter(function(name) { return name.match(/test.js$/) }).map(function(filename) {
 							return "/examples/units/" + filename;
 						});
-						all = all.concat(tests);
+						all = tests.concat(all);
 					}
 					res.send("var testFiles = " + JSON.stringify(all));
 				})
