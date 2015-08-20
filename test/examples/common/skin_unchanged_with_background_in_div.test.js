@@ -11,8 +11,7 @@
 					contexts[ctx.name] = ctx;
 				});
 
-				win.AdServ.on('debug:all:contexts:loaded', function() {
-
+				win.AdServ.on('debug:all:contexts:loaded', function() { 
 					done();
 				})
 

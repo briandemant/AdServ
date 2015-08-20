@@ -4,6 +4,7 @@
 
 		var contexts = {loaded : []};
 		before(function(done) {
+			this.timeout(4000);
 			loadPage('/examples/common/skin_unchanged_with_background.html?responsive=' + responsive, sizes.LARGE, function(win, doc) {
 				if (!win.AdServ) { throw "AdServ is not defined" }
 				win.AdServ.on('debug:context:loaded', function(ctx) {
@@ -11,8 +12,7 @@
 					contexts[ctx.name] = ctx;
 				});
 
-				win.AdServ.on('debug:all:contexts:loaded', function() {
-
+				win.AdServ.on('debug:all:contexts:loaded', function() { 
 					done();
 				})
 

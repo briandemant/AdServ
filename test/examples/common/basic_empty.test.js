@@ -21,14 +21,15 @@
 			var info = getBannerInfo(elem);
 			assert.equal(elem.id, 'banner2');
 			assert.isTrue(info.empty, 'banner1 should be empty');
-			assert.notMatch(elem.innerText, /failed/, 'banner3 should not be loaded');
+			assert.notMatch(elem.innerHTML, /failed/, 'banner3 should not be loaded');
 			assert.equal(info.adspace, 4, 'banner2 should not be adspace 4');
 		});
 		it('should third to not be loaded', function() {
 			var elem = getBannerElem(3);
 			var info = getBannerInfo(elem);
 			assert.equal(elem.id, 'banner3');
-			assert.match(elem.innerText, /ignored/, 'banner3 should not be loaded');
+			 
+			assert.match(elem.innerHTML, /ignored/, 'banner3 should not be loaded');
 			assert.isUndefined(info.adspace, 'banner3 should not be loaded');
 		});
 

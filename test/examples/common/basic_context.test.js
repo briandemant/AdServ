@@ -9,10 +9,11 @@
 				win.AdServ.on('debug:context:loaded', function(ctx) {
 					contexts.loaded.push(ctx);
 					contexts[ctx.name] = ctx;
+					console.error("loaded ctx",ctx);
 				});
 
-				win.AdServ.on('debug:all:contexts:loaded', function() {
-
+				win.AdServ.on('debug:all:contexts:loaded', function() { 
+					console.error("loaded all");
 					done();
 				})
 
@@ -24,6 +25,8 @@
 		//});
 		//
 		it('should have loaded all 4 contexts', function() {
+			console.error("first test");
+			
 			assert.equal(contexts.loaded.length, 4, 'expected 4 contexts');
 		});
 

@@ -15,7 +15,9 @@ function flashCalled(token, click) {
 
 AdServ.on('debug:wrapped', function(ctx, elem) {
 	var flashScript = document.createElement("script");
-	flashScript.innerText = "function flashCalled(token, click) {top.postMessage(JSON.stringify({source : 'flash',token : token, click : click}), '*' )}";
+	var msgScript = "function flashCalled(token, click) {top.postMessage(JSON.stringify({source : 'flash',token : token, click : click}), '*' )}";
+ 
+		flashScript.innerText = msgScript; 
 	elem.contentDocument.body.appendChild(flashScript);
 })
 

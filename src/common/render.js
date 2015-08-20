@@ -202,8 +202,7 @@ engines["html"] = function renderHtml(elem, campaign) {
 
 }
 engines["iframe"] = function renderIframe(elem, campaign) {
-	var ifrm = createIframe(campaign)
-
+	var ifrm = createIframe(campaign);
 	elem.appendChild(ifrm);
 	bindReject(window, elem, campaign, ifrm);
 
@@ -218,6 +217,7 @@ engines["iframe"] = function renderIframe(elem, campaign) {
 	ifrm.contentWindow.document.open('text/html', 'replace');
 	ifrm.contentWindow.document.write(iframeBody);
 	ifrm.contentWindow.document.close();
+	
 	//	ifrm.src = campaign.iframe_src; 
 }
 

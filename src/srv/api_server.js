@@ -212,6 +212,9 @@ v2.get('/get/js_banner', function(req, res) {
 		if (next == 60) next = 1; // reject to empty
 		res.send( sendMessage() +'document.write("<b>Rejected</b><iframe src=\\\"' + req.urlRoot + '/api/v2/rejected?adspace=' + adspace + '&next=' + next + '\\\">")');
 	} else {
+		console.log(req.rawHeaders);
+		console.log(req.headers);
+		
 		res.send("" +
 		         //"document.write('<b>js loaded..</b>');" +
 		         sendMessage() +

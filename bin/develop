@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 type "grunt" &> /dev/null || echo "please install : npm -g install grunt-cli"
-grunt dev
+grunt dev$1
