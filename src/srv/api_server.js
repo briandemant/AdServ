@@ -106,6 +106,13 @@ var campaignMakers = {
 		campaign.height = 150;
 		return campaign;
 	},
+	"10" : function(req, adspace, keyword, idx) {
+		var campaign = startCampaign('iframe', req, adspace, idx);
+		campaign.iframe_src = req.urlRoot + "/get/iframe?adspace=" + adspace +"&campaign="+campaign.campaign+"&banner="+campaign.banner+"&group="+campaign.group;
+		campaign.width = 150;
+		campaign.height = 150;
+		return campaign;
+	},
 }
 
 v2.get('/js/:name', function(req, res) {
@@ -197,7 +204,7 @@ v2.get('/get/js_banner', function(req, res) {
 		       "\n   top.postMessage(JSON.stringify(payload), '*');" +
 		       "\n   /*console.log(payload);console.debug('show_campaign', Date.now()-payload.time);*/\n" +
 		       "\n});\n" +
-		       "\nthis.postMessage('{\"source\":\"show_campaign\",\"adspace\":" + req.query.adspaceid + ",\"time\":'+ Date.now()+'}','*')\n";
+		       "\nthis.postMessage('{\"source\":\"js_banner\",\"adspace\":" + req.query.adspaceid + ",\"time\":'+ Date.now()+'}','*')\n";
 	}
 
 	if (adspace >= 70) {
@@ -209,13 +216,29 @@ v2.get('/get/js_banner', function(req, res) {
 		         //"document.write('<b>js loaded..</b>');" +
 		         sendMessage() +
 		         "\nvar inDapIF = (typeof inDapIF == 'undefined') ? false : inDapIF;\n" + 
-		         "\nwindow.top.iframeWasHere=true;\n" + 
+		         "\ntry{window.top.iframeWasHere=true} catch(e){};\n" + 
+		         "\nthis.postMessage('{\"source\":\"referrer\",\"adspace\":" + req.query.adspaceid + ",\"referrer\":\""+req.headers.referer+"\",\"time\":'+ Date.now()+'}','*')\n" + 
+ 
+		         "\nconsole.info('req.referrer','"+req.headers.referer+"');\n" + 
+		         "\nconsole.info('doc.referrer',document.referrer);\n" + 
 		         "");
 	}
 });
+
 v2.get('/rejected', function(req, res) {
 	res.setHeader("Cache-Control", "public, max-age=600");
 	res.send("<script>parent.postMessage('{\"adspace\":" + req.query.adspace + ",\"next\":" + req.query.next + ",\"source\":\"rejected\",\"time\":'+Date.now()+'}',\"*\");</script>" + prettyJSON(req.query));
+});
+
+root.get('/get/iframe', function(req, res) {
+	res.setHeader("Cache-Control", "public, max-age=6");
+	res.send("wazzup? "+req.headers.referer +"<script>" +
+			"console.error(inDapIF);this.postMessage('{\"source\":\"get_iframe\",\"adspace\":" + req.query.adspaceid + ",\"time\":'+ Date.now()+'}','*')" +
+			"\nvar inDapIF = (typeof inDapIF == 'undefined') ? false : inDapIF;\n" + 
+					         "\ntry{window.top.iframeWasHere=true} catch(e){};\n" + 
+					         "\ntry{window.top.document.body.style.backgroundImage = 'url(//127.0.0.1:1337/banner/wide/4.jpg)';} catch(e){};\n" + 
+					         "\nthis.postMessage('{\"source\":\"referrer\",\"adspace\":" + req.query.adspaceid + ",\"referrer\":\""+req.headers.referer+"\",\"time\":'+ Date.now()+'}','*')\n" + 
+			"</script>");
 });
 
 root.get('/banner/:kind/:name', function(req, res) {
@@ -239,9 +262,9 @@ root.get('/show_campaign.php', function(req, res) {
 
 	if (adspace >= 70) {
 		var next = adspace - 10;
-		if (next == 60) next = 1; // reject to empty
-		res.send('<h2>Rejected</h2>');
-		//res.send(  '<h2>Rejected</h2><iframe src="' + req.urlRoot + '/api/v2/rejected?adspace=' + adspace + '&next=' + next + '">');
+		if (next == 60) next = 1; // reject to empty 
+		var html = "<style>*{ font-size: 11px;}</style>\n<script>this.addEventListener('message', function(m) {\n var payload = JSON.parse(m.data);payload.campaignid=" + req.query.campaignid + ";payload.bannerid=" + req.query.bannerid + ";payload.target='" + req.query.target + "';top.postMessage(JSON.stringify(payload), '*');/*console.log(payload);console.debug('show_campaign', Date.now()-payload.time);*/}); </script><pre><h2>iframe</h2>" + JSON.stringify(req.query).replace(/([{}]|id)/g, '').replace(/,/g, "\n").replace(/"([a-z]+)":/ig, "$1: ") + '</pre>';
+		res.send( html+ '<h2>Rejected</h2><iframe src="' + req.urlRoot + '/api/v2/rejected?adspace=' + adspace + '&next=' + next + '">');
 	} else {
 		var values = req.query;
 		values.source = 'show_campaign';

@@ -46,13 +46,13 @@ function passbackHandlerMaker(elem, campaign) {
 
 							//setTimeout(function() {
 							AdServ.load({
-								"guid" : campaign.guid + "_" + campaign.target,
+								"guid"   : campaign.guid + "_" + campaign.target,
 								adspaces : [
 									{
-										id : payload.next,
-										target : payload.target,
+										id            : payload.next,
+										target        : payload.target,
 										adServingLoad : campaign.ctx.adServingLoad,
-										context : 'Reject' + payload.adspace
+										context       : 'Reject' + payload.adspace
 									}
 								]
 							})
@@ -147,7 +147,8 @@ engines["html"] = function renderHtml(elem, campaign) {
 	function safeScriptContent(js) {
 		// remove document.write to avoid accidential dom rewrite
 		//		return js.replace('document.write(', 'console.log("WARNING : document.write -> "+');
-		return js.replace('document.write(', 'console.error("ERROR : adspace: ' + campaign.adspace + ', campaign: ' + campaign.campaign + ', banner: ' + campaign.banner + ' uses document.write");document.write(');
+		return js.replace('document.write(',
+				'console.error("ERROR : adspace: ' + campaign.adspace + ', campaign: ' + campaign.campaign + ', banner: ' + campaign.banner + ' uses document.write");document.write(');
 		//		return js.replace('document.write(', 'console.warn("WARNING document.write");document.write(');
 		//		console.log(js);
 		//		
@@ -203,12 +204,31 @@ engines["html"] = function renderHtml(elem, campaign) {
 engines["iframe"] = function renderIframe(elem, campaign) {
 	var ifrm = createIframe(campaign)
 
+	elem.appendChild(ifrm);
 	bindReject(window, elem, campaign, ifrm);
 
-	ifrm.src = campaign.iframe_src;
-	elem.appendChild(ifrm);
+	var iframeBody = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body id=body style="margin:0;border:0;padding:0;"><scr' +
+			'ipt>var adServingLoad="";var inDapIF=true;console.log(inDapIF);' +
+			'console.warn(document.location.href);' +
+			'console.warn("' + campaign.iframe_src + '");' +
+			'document.location.replace("' + campaign.iframe_src + '")' +
+			'</scr' + 'ipt></body></html>';
+
+
+	ifrm.contentWindow.document.open('text/html', 'replace');
+	ifrm.contentWindow.document.write(iframeBody);
+	ifrm.contentWindow.document.close();
+	//	ifrm.src = campaign.iframe_src; 
 }
 
+/**
+ * https://gist.github.com/jasdeepkhalsa/5141681
+ * http://downloads.pictela.net/publisher/iframeproxy.html
+ * http://www.aaronpeters.nl/blog/iframe-loading-techniques-performance#dynamic
+ * http://demant.fynskemedier.dk/spikes/friendlyiframe/
+ * @param campaign
+ * @returns {Element}
+ */
 function createIframe(campaign) {
 	var ifrm = document.createElement("iframe");
 	ifrm.id = guid('iframe', campaign.adspace, campaign.campaign);
@@ -225,20 +245,17 @@ function createIframe(campaign) {
 
 function bindReject(bindTo, target, campaign, ifrm) {
 	AdServ.bind(bindTo, "message", passbackHandlerMaker(target, campaign)(ifrm))
-
-	//AdServ.bind(ifrm.contentWindow, "message", passbackHandlerMaker(target, campaign)(ifrm))
-
 }
 
-function wrapIframe(elem, campaign) {
-	var ifrm = createIframe(campaign);
-	elem.appendChild(ifrm);
-	ifrm.contentDocument.write('<!doctype html><body style="margin:0px;padding:0px;width:100%;height:100%;"></body>');
-
-	bindReject(window, elem, campaign, ifrm);
-
-	return ifrm;
-}
+//function wrapIframe(elem, campaign) {
+//	var ifrm = createIframe(campaign);
+//	elem.appendChild(ifrm);
+//	ifrm.contentDocument.write('<!doctype html><body style="margin:0px;padding:0px;width:100%;height:100%;"></body>');
+//
+//	bindReject(window, elem, campaign, ifrm);
+//
+//	return ifrm;
+//}
 
 function makeFloat(campaign) {
 
@@ -253,11 +270,11 @@ function makeFloat(campaign) {
 
 	if (campaign.floating_position == 'centre') {
 		style += 'left:50%; top:50%;' +
-		         'margin-left:-' + (campaign.width / 2) + 'px;' +
-		         'margin-top:-' + ((campaign.height + 16) / 2) + 'px;';
+				'margin-left:-' + (campaign.width / 2) + 'px;' +
+				'margin-top:-' + ((campaign.height + 16) / 2) + 'px;';
 	} else if (campaign.floating_position == 'top_centre') {
 		style += 'left:50%; top:0;' +
-		         'margin-left:-' + (campaign.width / 2) + 'px;';
+				'margin-left:-' + (campaign.width / 2) + 'px;';
 	} else if (campaign.floating_position == 'top_left') {
 		style += 'left:0; top:0;';
 	} else if (campaign.floating_position == 'top_right') {
@@ -268,9 +285,9 @@ function makeFloat(campaign) {
 		style += 'right:0; bottom:0;';
 	} else if (campaign.floating_position == 'bottom_centre') {
 		style += 'left:50%; bottom:0;' +
-		         'margin-left:-' + (campaign.width / 2) + 'px;' +
-		         'margin-top:-' + (campaign.height / 2) + 'px;' +
-		         ';position:fixed !important;';
+				'margin-left:-' + (campaign.width / 2) + 'px;' +
+				'margin-top:-' + (campaign.height / 2) + 'px;' +
+				';position:fixed !important;';
 	} else if (campaign.floating_position.indexOf(".") > 0) {
 		var coords = campaign.floating_position.split(".");
 		style += 'left:' + coords[0] + '; top:' + coords[1] + ';';
@@ -362,9 +379,9 @@ function addComment(elem, comment) {
 function addDebugComment(campaign) {
 	if (campaign.campaign && campaign.banner && campaign.adspace) {
 		addComment(campaign.elem, ' Adspace: ' + campaign.adspace
-		                          + ' Group: ' + campaign.group
-		                          + ' Campaign: ' + campaign.campaign
-		                          + ' Banner: ' + campaign.banner + ' ');
+				+ ' Group: ' + campaign.group
+				+ ' Campaign: ' + campaign.campaign
+				+ ' Banner: ' + campaign.banner + ' ');
 	} else {
 		var comment = ' Adspace: ' + campaign.adspace + ' (empty)';
 
@@ -385,22 +402,34 @@ function render(campaign) {
 			targetElem = makeFloat(campaign);
 		}
 		if (campaign.iframe && campaign.banner_type !== 'iframe' && campaign.banner_type !== 'wallpaper') {
-			ifrm = createIframe(campaign);
-			targetElem.appendChild(ifrm);
+			if (false) { // old style
+				ifrm = createIframe(campaign);
+				targetElem.appendChild(ifrm);
+
+				//	ifrm.contentDocument.write('<!doctype html><body style="margin:0px;padding:0px;width:100%;height:100%;" adserv="true"></body>');
+				ifrm.src = AdServ.baseUrl + "/show_campaign.php?nocount=1&adspaceid=" + campaign.adspace
+						+ "&campaignid=" + campaign.campaign
+						+ "&bannerid=" + campaign.banner
+						+ "&target=" + campaign.target;
+			} else {
+
+				ifrm = createIframe(campaign);
+				targetElem.appendChild(ifrm);
 
 
-			var url = AdServ.baseUrl + "/api/v2/get/js_banner?nocount=1&adspaceid=" + campaign.adspace
-			          + "&campaignid=" + campaign.campaign
-			          + "&bannerid=" + campaign.banner
-			          + "&target=" + campaign.target;
+				var url = AdServ.baseUrl + "/api/v2/get/js_banner?nocount=1&adspaceid=" + campaign.adspace
+						+ "&campaignid=" + campaign.campaign
+						+ "&bannerid=" + campaign.banner
+						+ "&target=" + campaign.target;
 
-			var iframeBody = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body id=body style="margin:0;border:0;padding:0;"><scr' +
-			                 'ipt>var adServingLoad="";var inDapIF=true;document.write(\'<scr\'+\'ipt src="' + url + '"></scr\'+\'ipt>\');</scr' + 'ipt></body></html>';
+				var iframeBody = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body id=body style="margin:0;border:0;padding:0;"><scr' +
+						'ipt>var adServingLoad="";var referrer=10;var inDapIF=true;document.write(\'<scr\'+\'ipt src="' + url + '"></scr\'+\'ipt>\');</scr' + 'ipt></body></html>';
 
 
-			ifrm.contentWindow.document.open('text/html', 'replace');
-			ifrm.contentWindow.document.write(iframeBody);
-			ifrm.contentWindow.document.close();
+				ifrm.contentWindow.document.open('text/html', 'replace');
+				ifrm.contentWindow.document.write(iframeBody);
+				ifrm.contentWindow.document.close();
+			}
 
 			//console.debug("src", ifrm.src);
 			emit('debug:wrapped', campaign, ifrm, ifrm.contentDocument.body);

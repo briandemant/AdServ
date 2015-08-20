@@ -34,7 +34,7 @@
 
 		it('should have added some as iframes', function() {
 			var expected = [2, 3, 4, 8, 10, 12];
-			return waitForMessages('show_campaign', expected.length, 2500).then(function(messages) {
+			return waitForMessages('js_banner', expected.length, 2500).then(function(messages) {
 				var iframes = doc.getElementsByTagName('iframe');
 				assert.equal(iframes.length, expected.length, 'expected 6 banners to be loaded as iframes');
 				_.each(iframes, function(ifm, i) {
@@ -52,7 +52,7 @@
 				{banner : 2, expect : "20"}, {banner : 3, expect : "30"}, {banner : 4, expect : "10"},
 				{banner : 8, expect : "40"}, {banner : 10, expect : "50"}, {banner : 12, expect : "60"}
 			];
-			return waitForMessages('show_campaign', iframes.length, 2500).then(function(messages) {
+			return waitForMessages('js_banner', iframes.length, 2500).then(function(messages) {
 				//console.dir(messages);
 				assert.equal(messages.length, iframes.length, iframes.length + " iframes banner should have been loaded");
 

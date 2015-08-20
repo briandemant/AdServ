@@ -50,7 +50,9 @@ var once = AdServ.once = function(event, fn, context) {
 //  * **event** eventname 
 //  * **arguments** *optional* all other arguments are passed on to the callback
 var emit = AdServ.emit = function(event) {
-	//console.log(event, slice.call(arguments, 1));
+	//try {
+	//	console.log("EVENT",event, slice.call(arguments, 1));
+	//} catch (e) {}
 
 	if (typeof eventHandlers[event] !== undefined) {
 		var args = slice.call(arguments, 1);
