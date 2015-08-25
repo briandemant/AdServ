@@ -207,16 +207,16 @@ engines["iframe"] = function renderIframe(elem, campaign) {
 	bindReject(window, elem, campaign, ifrm);
 
 	var iframeBody = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body id=body style="margin:0;border:0;padding:0;"><scr' +
-			'ipt>var adServingLoad="";var inDapIF=true;console.log(inDapIF);' +
-			'console.warn(document.location.href);' +
-			'console.warn("' + campaign.iframe_src + '");' +
+			'ipt>var adServingLoad="";' +
+			'var inDapIF=false;' +
+			'try{window.top;inDapIF=true;} catch(e){};' +
 			'document.location.replace("' + campaign.iframe_src + '")' +
 			'</scr' + 'ipt></body></html>';
 
 
 	ifrm.contentWindow.document.open('text/html', 'replace');
 	ifrm.contentWindow.document.write(iframeBody);
-	ifrm.contentWindow.document.close();
+//	ifrm.contentWindow.document.close();
 
 	//	ifrm.src = campaign.iframe_src; 
 }
@@ -401,8 +401,8 @@ function render(campaign) {
 		if (campaign.floating) {
 			targetElem = makeFloat(campaign);
 		}
-		if (campaign.iframe && campaign.banner_type !== 'iframe' && campaign.banner_type !== 'wallpaper') { 
-			ifrm = createIframe(campaign); 
+		if (campaign.iframe && campaign.banner_type !== 'iframe' && campaign.banner_type !== 'wallpaper') {
+			ifrm = createIframe(campaign);
 			targetElem.appendChild(ifrm);
 
 			var html = campaign.html
