@@ -7,17 +7,16 @@ function passbackHandlerMaker(elem, campaign) {
 		var listener = function(m) {
 			var payload;
 			try {
-				payload = parseJSON(m.data);
+				payload = parseJSON(m.data); 
+				
+				if (payload.adspace && payload.next) { 
 
-				if (payload.target && payload.next) {
-					if (payload.target == campaign.target) {
-
-						//console.error('----', payload); 
+//						console.error('----', payload); 
 						//console.error('listener', Date.now()-payload.time);
 						//console.log(payload.adspace);
 						//console.log(payload.next);
 						//console.log(campaign.adspace);
-						if (payload.adspace == campaign.adspace && payload.target == campaign.target) {
+						if (payload.adspace == campaign.adspace && elem.id == campaign.target) {
 							elem['tried'] = elem['tried'] || [];
 							elem['tried'].push(payload.campaignid);
 							if (elem['tried'].length == 10) {
@@ -25,7 +24,7 @@ function passbackHandlerMaker(elem, campaign) {
 								return;
 							}
 
-							console.warn("passback from adspace " + campaign.adspace + " to " + payload.next + " in " + payload.target)
+							console.warn("passback from adspace " + campaign.adspace + " to " + payload.next + " in " + elem.id)
 							//			iframe.contentDocument.body.innerHTML = "<b>THIS WAS REJECTED</b>";
 							//console.warn("campaign rejected:", payload);
 							for (var i = 0; i < elem['tried'].length - 1; i++) {
@@ -50,20 +49,16 @@ function passbackHandlerMaker(elem, campaign) {
 								adspaces : [
 									{
 										id            : payload.next,
-										target        : payload.target,
+										target        : elem.id,
 										adServingLoad : campaign.ctx.adServingLoad,
 										context       : 'Reject' + payload.adspace
 									}
 								]
 							})
-							//}, 10)
-
-						} else {
-							//console.warn('ignored message .. wrong target', payload);
-						}
+							//}, 10) 
 					}
 				} else {
-					//console.warn('ignored message', payload);
+				//	console.warn('ignored message', payload);
 				}
 			} catch (e) {
 			}
@@ -246,7 +241,7 @@ function createIframe(campaign) {
 function bindReject(bindTo, target, campaign, ifrm) {
 	AdServ.bind(bindTo, "message", passbackHandlerMaker(target, campaign)(ifrm))
 }
-
+ 
 //function wrapIframe(elem, campaign) {
 //	var ifrm = createIframe(campaign);
 //	elem.appendChild(ifrm);
@@ -414,7 +409,7 @@ function render(campaign) {
 				html = '<scr' + 'ipt>document.write(\'<scr\'+\'ipt src="' + url + '"></scr\'+\'ipt>\');</scr' + 'ipt>';
 			}
 
-			var iframeBody = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;border:0;padding:0;"><scr' +
+			var iframeBody = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body id=body style="margin:0;border:0;padding:0;"><scr' +
 					'ipt>var adServingLoad="";var inDapIF=false;try{window.top;inDapIF=true;} catch(e){};</scr' + 'ipt>' + html + '</body></html>';
 
 			ifrm.contentWindow.document.open('text/html', 'replace');
