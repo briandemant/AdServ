@@ -217,7 +217,7 @@ engines["iframe"] = function renderIframe(elem, campaign) {
 	ifrm.contentWindow.document.open('text/html', 'replace');
 	ifrm.contentWindow.document.write(iframeBody);
 	ifrm.contentWindow.document.close();
-	
+
 	//	ifrm.src = campaign.iframe_src; 
 }
 
@@ -401,35 +401,25 @@ function render(campaign) {
 		if (campaign.floating) {
 			targetElem = makeFloat(campaign);
 		}
-		if (campaign.iframe && campaign.banner_type !== 'iframe' && campaign.banner_type !== 'wallpaper') {
-			if (false) { // old style
-				ifrm = createIframe(campaign);
-				targetElem.appendChild(ifrm);
+		if (campaign.iframe && campaign.banner_type !== 'iframe' && campaign.banner_type !== 'wallpaper') { 
+			ifrm = createIframe(campaign); 
+			targetElem.appendChild(ifrm);
 
-				//	ifrm.contentDocument.write('<!doctype html><body style="margin:0px;padding:0px;width:100%;height:100%;" adserv="true"></body>');
-				ifrm.src = AdServ.baseUrl + "/show_campaign.php?nocount=1&adspaceid=" + campaign.adspace
+			var html = campaign.html
+			if (!html) {
+				var url = AdServ.baseUrl + "/api/v2/get/js_banner?nocount=1"
+						+ "&adspaceid=" + campaign.adspace
 						+ "&campaignid=" + campaign.campaign
-						+ "&bannerid=" + campaign.banner
-						+ "&target=" + campaign.target;
-			} else {
-
-				ifrm = createIframe(campaign);
-				targetElem.appendChild(ifrm);
-
-
-				var url = AdServ.baseUrl + "/api/v2/get/js_banner?nocount=1&adspaceid=" + campaign.adspace
-						+ "&campaignid=" + campaign.campaign
-						+ "&bannerid=" + campaign.banner
-						+ "&target=" + campaign.target;
-
-				var iframeBody = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body id=body style="margin:0;border:0;padding:0;"><scr' +
-						'ipt>var adServingLoad="";var referrer=10;var inDapIF=true;document.write(\'<scr\'+\'ipt src="' + url + '"></scr\'+\'ipt>\');</scr' + 'ipt></body></html>';
-
-
-				ifrm.contentWindow.document.open('text/html', 'replace');
-				ifrm.contentWindow.document.write(iframeBody);
-				ifrm.contentWindow.document.close();
+						+ "&bannerid=" + campaign.banner;
+				html = '<scr' + 'ipt>document.write(\'<scr\'+\'ipt src="' + url + '"></scr\'+\'ipt>\');</scr' + 'ipt>';
 			}
+
+			var iframeBody = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;border:0;padding:0;"><scr' +
+					'ipt>var adServingLoad="";var inDapIF=false;try{window.top;inDapIF=true;} catch(e){};</scr' + 'ipt>' + html + '</body></html>';
+
+			ifrm.contentWindow.document.open('text/html', 'replace');
+			ifrm.contentWindow.document.write(iframeBody);
+			//			ifrm.contentWindow.document.close(); <-- destroys ie 
 
 			//console.debug("src", ifrm.src);
 			emit('debug:wrapped', campaign, ifrm, ifrm.contentDocument.body);

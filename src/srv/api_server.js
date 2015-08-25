@@ -222,6 +222,7 @@ v2.get('/get/js_banner', function(req, res) {
 		         "\ntry{window.top.iframeWasHere=true} catch(e){};\n" + 
 		         "\nthis.postMessage('{\"source\":\"referrer\",\"adspace\":" + req.query.adspaceid + ",\"referrer\":\""+req.headers.referer+"\",\"time\":'+ Date.now()+'}','*')\n" + 
  
+				(req.headers.referer ?"\nreferer='"+req.headers.referer+"';\n" :'')+ 
 		         "\nconsole.info('req.referrer','"+req.headers.referer+"');\n" + 
 		         "\nconsole.info('doc.referrer',document.referrer);\n" + 
 		         "");
